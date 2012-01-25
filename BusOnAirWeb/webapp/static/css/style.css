@@ -1,0 +1,862 @@
+
+/**
+ * html5doctor.com Reset Stylesheet (Eric Meyer's Reset Reloaded + HTML5 baseline)
+ * v1.6.1 2010-09-17 | Authors: Eric Meyer & Richard Clark
+ * html5doctor.com/html-5-reset-stylesheet/iphone
+ 
+ */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+article, aside, figure, footer, header, hgroup, nav, section {
+	display: block;
+}
+nav ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+a {
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+	
+}
+ins {
+	background-color: #ff9;
+	color: #000;
+	text-decoration: none;
+}
+mark {
+	background-color: #ff9;
+	color: #000;
+	font-style: italic;
+	font-weight: bold;
+}
+del {
+	text-decoration: line-through;
+}
+abbr[title], dfn[title] {
+	border-bottom: 1px dotted #000;
+	cursor: help;
+}
+/* tables still need cellspacing="0" in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+hr {
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 1px solid #ccc;
+	margin: 1em 0;
+	padding: 0;
+}
+input, select {
+	vertical-align: middle;
+}
+/* END RESET CSS */
+body {
+	font: 13px sans-serif;
+	*
+	font-size: small;
+	*
+	font: x-small;
+	line-height: 1.22;
+}
+table {
+	font-size: inherit;
+	font: 100%;
+}
+select, input, textarea {
+	font: 99% sans-serif;
+}
+/* Hide Y  scrollbar  */
+html {
+	overflow-y: hidden
+}
+pre, code, kbd, samp {
+	font-family: monospace, sans-serif;
+}
+body, select, input, textarea {
+	color: #444;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bold;
+	text-rendering: optimizeLegibility;
+}
+p {
+	margin: 5px 0 7px;
+}
+html { 
+	-webkit-font-smoothing: antialiased;
+}
+a:hover, a:active {
+	outline: none;
+}
+a, a:active, a:visited {
+	color: #607890;
+}
+a:hover {
+	color: #036;
+}
+ol {
+	margin-left: 30px;
+	list-style-type: decimal;
+}
+small {
+	font-size: 85%;
+}
+strong, th {
+	font-weight: bold;
+}
+td, td img {
+	vertical-align: top;
+}
+sub {
+	vertical-align: sub;
+	font-size: smaller;
+}
+sup {
+	vertical-align: super;
+	font-size: smaller;
+}
+pre {
+	padding: 15px;
+	/* www.pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap/ */
+	white-space: pre;
+	/* CSS2 */
+	white-space: pre-wrap;
+	/* CSS 2.1 */
+	white-space: pre-line;
+	/* CSS 3 (and 2.1 as well, actually) */
+	word-wrap: break-word;
+	/* IE */
+}
+/* align checkboxes, radios, text inputs with their label
+ by: Thierry Koblentz tjkdesign.com/ez-css/css/base.css  */
+input[type="radio"] {
+	vertical-align: text-bottom;
+}
+input[type="checkbox"] {
+	vertical-align: bottom;
+	*
+	vertical-align: baseline;
+}
+.ie6 input {
+	vertical-align: text-bottom;
+}
+/* hand cursor on clickable input elements */
+label, input[type=button], input[type=submit], button {
+	cursor: pointer;
+}
+/* These selection declarations have to be separate.
+ No text-shadow: twitter.com/miketaylr/status/12228805301
+ Also: hot pink. */
+::-moz-selection {
+	background: #FF5E99;
+	color: #fff;
+	text-shadow: none;
+}
+::selection {
+	background: #FF5E99;
+	color: #fff;
+	text-shadow: none;
+}
+/*  j.mp/webkit-tap-highlight-color */
+a:link {
+	-webkit-tap-highlight-color: #FF5E99;
+}
+/* make buttons play nice in IE:
+ www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
+button {
+	width: auto;
+	overflow: visible;
+}
+/* bicubic resizing for non-native sized IMG:
+ code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/ */
+.ie7 img {
+	-ms-interpolation-mode: bicubic;
+}
+/*
+ * Non-semantic helper classes
+ */
+/* for image replacement */
+.ir {
+	display: block;
+	text-indent: -999em;
+	overflow: hidden;
+	background-repeat: no-repeat;
+}
+/* Hide for both screenreaders and browsers
+ css-discuss.incutio.com/wiki/Screenreader_Visibility */
+.hidden {
+	display: none;
+	visibility: hidden;
+}
+.visuallyhidden {
+	position: absolute !important;
+	clip: rect(1px, 1px, 1px, 1px);
+	/* IE6, IE7 */
+	clip: rect(1px, 1px, 1px, 1px);
+}
+.invisible {
+	visibility: hidden;
+}
+/* >> The Magnificent CLEARFIX << */
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix {
+	display: inline-block;
+}
+* html .clearfix {
+	height: 1%;
+}
+/* Hides from IE-mac \*/
+.clearfix {
+	display: block;
+}
+body, select, input, textarea {
+	color: #444444;
+	font-family: 'Minion Pro', 'MinionProRegular', Georgia, serif;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bold;
+}
+
+a {
+	text-decoration: none;
+	-moz-transition: color 0.2s linear;
+	-webkit-transition: color 0.2s linear;
+	-o-transition: color 0.2s linear;
+	transition: color 0.2s linear;
+}
+a, a:active, a:visited {
+	color: #607890;
+}
+a:hover {
+	color: #6DCAFF;
+}
+/*****************************
+ Primary Styles
+ **********************************/
+
+html, body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	height: 100%;
+	background: #FFF;
+}
+#map_canvas {
+	position: relative;
+	height: 100%;
+}
+body {
+		background: url("../images/body.gif") repeat fixed 0 0 #FFF;
+}
+.container {
+	width: 360px;
+	float: left;
+	height: 100%;
+	max-height: 700px;
+	background: url("../images/transport_dublin_logo.png") no-repeat scroll -1px 1px transparent;
+	
+}
+/* Accordion
+ ***************************************************************************/
+#title {
+	margin-top: 65px;
+	
+}
+
+#infobar{
+	padding: 40px 40px 0 40px;
+}
+
+.ui-accordion-content {
+	background-color: #FFF;
+	clear: both;
+	padding: 0;
+	border-left: 1.5px solid #CCCCCC;
+    border-right: 1.5px solid #CCCCCC;
+	font-size: 15px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+.acc_container {
+	background-color: rgba(255, 255, 255, 0.85);
+}
+
+.acc_container p {
+	margin: 0 10px;
+}
+
+.acc_container h3 {
+	border-bottom: 1px dashed #CCCCCC;
+	font-size: 1em;
+	margin: 15px 30px 10px 20px;
+	padding: 0 0 5px;
+}
+
+.ui-accordion-header a, a:link, a:active, a:visited {
+	text-decoration: none;
+	font-size: 1em;
+	font-weight: bold !important;
+}
+
+.ui-accordion-header  {
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	padding-left: 50px;
+	margin: 0 2px;
+
+}
+
+.ui-accordion .ui-accordion-header {
+	filter: progid : DXImageTransform.Microsoft.gradient ( startColorstr = '#f8f8f8', endColorstr = '#F1F1F1' );
+	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8),	to(#F1F1F1) );
+	background: -moz-linear-gradient(center top , #f8f8f8 0%, #F1F1F1 100%) repeat scroll 0 0 transparent;
+	-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+	border: 1px solid #AAAAAA;
+	color: #555555 !important;
+	margin-bottom: 1px;	
+	font-size: 1em;
+	font-weight: bold !important;
+	height: auto;
+	line-height: 1.5;
+	overflow: hidden;
+	padding: 7px 10px 4px 15px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 0 1px #FFFFFF;
+
+}
+
+.ui-accordion-header a{
+	text-align:left;
+	margin: 0 0 0 10px;
+}
+
+.icon {
+	margin-right: 20px;
+	pt: 25px;
+	float: left;
+	display: block;
+	width: 270px;
+}
+
+.headerSpan{
+	padding-left: 30px;
+	font-size: 1.1em;
+}
+
+.tripPlannerIcon {
+	background: url("../images/direction.png") 0 0 no-repeat;
+	
+}
+.busRoutesIcon {
+	background: url("../images/magnifier.png") 0 0 no-repeat;
+}
+.informationIcon {
+	background: url("../images/information.png") 0 0 no-repeat;
+}
+
+/* Directions
+ ***************************************************************************/
+ 
+#directionsInput {
+	margin-bottom: 20px;
+}
+
+#directionsInput h4 {
+	border-bottom: 1px dashed #DDDDDD;
+	padding-bottom: 5px;
+}
+
+.directionsIcon {
+	float: left;
+}
+
+.directionsDisplayIcon {
+	display: block;
+	padding-left: 20px;
+	height: 22px;
+}
+
+.directionsWalkIcon {
+	background: url("../images/walk_icon.png") 0 0 no-repeat;
+}
+
+.directionsBusIcon {
+	background: url("../images/bus_icon.png") 0 0 no-repeat;
+}
+
+#address input.text {
+	background-color: rgba(255, 255, 255, 0.50);
+	color: rgba(14, 32, 59, 0.5);
+	height: 18px;
+	margin: 0 20px 15px 10px;
+	width: 260px;
+	padding: 4px;
+}
+
+#address input.text:hover {
+	color: rgba(14, 32, 59, 0.75);
+}
+
+#address input.text:active, #address input.text:focus {
+	background-color: #FFFFFF;
+	color: rgba(14, 32, 59, 0.75);
+}
+
+#address input {
+	border: 1px solid #CECECE;
+	background-color: : #F1F1F1;
+}
+
+#address input.error {
+	border: 1px solid red;
+}
+
+#address input:focus {
+	box-shadow: 0 0 2px 1.3px #CECECE;
+}
+
+#options {
+	margin-left: 40px;
+}
+
+#options input {
+	margin-left: 14px;
+	margin-top: 0;
+	height: 16px;
+	width: 70px;
+	padding-left: 3px;
+}
+
+#options select {
+	width: 100px;
+	margin-left: 10px;
+}
+
+/* button.submitDirections
+ *******************************************************************************/
+#options input.submitDirections {
+	margin-left: 10px;
+	width: 40px;
+	height: 25px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-shadow: 0 0 1px 1px #F6F6F6 inset;
+	-webkit-box-shadow: 0 0 1px 1px #F6F6F6;
+	box-shadow: 0 0 1px 1px #F6F6F6;
+	background: none repeat scroll 0 0 #E3E3E3;
+	border: 1px solid #BBBBBB;
+	color: #333333;
+	font-weight: bold;
+	line-height: 1;
+	padding: 2px 0;
+	text-align: center;
+	text-shadow: 0 1px 0 #FFFFFF;
+}
+
+input.submitDirections:hover {
+	background: #d9d9d9;
+	-moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+	-webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+	box-shadow: inset 0 0 1px 1px #eaeaea;
+	color: #222;
+	cursor: pointer;
+}
+
+input.submitDirections:active {
+	background: #d0d0d0;
+	-moz-box-shadow: inset 0 0 1px 1px #e3e3e3;
+	-webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;
+	box-shadow: inset 0 0 1px 1px #e3e3e3;
+	color: #000;
+}
+
+#address {
+	margin-left: 10px;	
+}
+
+/* Status Panel
+ ***************************************************************************/
+
+#statusPanel p {
+	border: 1px solid #BBBBBB;
+	padding: 5px;
+	color: red;
+}
+
+/* Directions Panel
+ ***************************************************************************/
+
+
+.stage {
+	margin: 0 30px 0 20px;
+}
+
+.stage:hover {
+	background: #F3F3F3;
+	cursor:pointer;
+	cursor:hand;
+}
+
+ui-state-hover{
+}
+
+.stage:active {
+	background: #d0d0d0;
+}
+
+.walk {
+	padding: 0px 0px 0px 10px;
+	border-left: 8px solid #cb005b;
+}
+
+.walk small {
+	padding: 0px 0px 0px 5px;
+	color: #cb005b;
+	font-size: 14px;
+}
+
+.walk p {
+	padding: 5px 0px 5px 20px;
+	font-size: 14px;
+}
+
+.bus {
+	padding: 0px 0px 0px 10px;
+	border-left: 8px solid #0064cb;
+}
+
+.bus small {
+	padding: 0px 0px 0px 5px;
+	color: #0064cb;
+	font-size: 14px;
+}
+
+.bus p {
+	padding: 5px 0px 5px 20px;
+	font-size: 14px;
+}
+
+/* Direction Tabs
+ ***************************************************************************/
+
+#tabstitle p {
+	float: left;
+	padding: 0;
+}
+
+.ui-tabs {
+	zoom: 1;
+}
+.ui-tabs .ui-tabs-nav {
+	list-style: none;
+	position: relative;
+	padding: 2px 2px 0;
+	overflow: hidden;
+	top: 1px;
+	height: 30px;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	position: relative;
+	float: left;
+	border-top: 1px dashed #CCCCCC;
+	border-bottom-width: 0 !important;
+	margin: 0 5px -1px 5px;
+	background: #F3F3F3;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	float: left;
+	text-decoration: none;
+	padding: 5px 10px;
+	color: black;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected {
+	padding-bottom: 1px;
+	border-left: 1px dashed #CCCCCC;
+	border-right: 1px dashed #CCCCCC;
+	border-bottom-width: 0;
+	background: white;
+}
+
+.ui-tabs .ui-tabs-panel {
+	display: block;
+	border-width: 0;
+	background: none;
+	border-top: 1px dashed #CCCCCC;
+	border-bottom: 1px dashed #CCCCCC;
+	position: relative;
+	min-height: 200px;
+	height: auto !important;
+	height: 200px;
+	padding: 10px;
+}
+
+.ui-tabs .ui-tabs-hide {
+	display: none !important;
+}
+
+.ui-tabs .ui-state-hover {
+	background: url("../../images/ui-bg_glass_100_fdf5ce_1x400.png") repeat-x
+	scroll 50% 50% #FDF5CE;
+	border: 0px;
+	color: #333;
+}
+
+/* Route Search
+ ***************************************************************************/
+
+#routeSearch {
+	width: 300px;
+}
+
+.dataTables_scrollHead {
+	width: 250px;
+	border-bottom: 1px solid black;
+}
+
+#example_filter input{	
+    width: 250px;
+    margin-left: 10px;
+}
+
+/*  Info Tab
+ ***************************************************************************/
+
+#footer {
+	margin: 50px 0 0 40px;
+}
+
+.twitterlink {
+    float: right;
+    margin: 0 50px 0 0;
+}
+
+/*  Google Map Context Menu
+ ***************************************************************************/
+
+#contextMenu {
+	position: absolute;
+	min-width: 100px;
+	z-index: 1000;
+	background: #fff;
+	border-top: solid 1px #CCC;
+	border-left: solid 1px #CCC;
+	border-bottom: solid 1px #676767;
+	border-right: solid 1px #676767;
+	padding: 0px;
+	margin: 0px;
+	display: none;
+}
+
+#contextMenu a {
+	color: #000;
+	text-decoration: none;
+	display: block;
+	line-height: 22px;
+	height: 22px;
+	padding: 1px 10px;
+}
+
+#contextMenu li {
+	list-style: none;
+	padding: 1px;
+	margin: 0px;
+}
+
+#contextMenu li.hover a {
+	background-color: #A7C4FA;
+}
+
+#contextMenu li.separator {
+	border-top: solid 1px #ccc;
+}
+
+/*  Google Map Geocoding Autocomplete
+ ***************************************************************************/
+
+#mapblock {
+	height: 400px;
+	position: relative;
+}
+
+#mapframe {
+	background-color: #e7e7e7;
+	left: 280px;
+	padding: 5px;
+	position: absolute;
+	top: 90px;
+	visibility: hidden;
+	width: 200px;
+	z-index: 99999999;
+}
+
+#mapframe #mapwindow {
+	width: 200px;
+	height: 200px;
+}
+
+.ui-autocomplete {
+	border: #000000 solid 1px;
+	width: 350px;
+	height: 200px;
+}
+
+.ui-state-hover {
+	background: url("../images/ui-bg_glass_100_fdf5ce_1x400.png") repeat-x
+	scroll 50% 50% #FDF5CE;
+	color: #C77405;
+}
+
+.ui-autocomplete-loading {
+	background: url("../images/ui-anim_basic_16x16.gif") no-repeat scroll
+	right center white;
+}
+
+.ui-menu {
+	display: block;
+	float: left;
+	list-style: none outside none;
+	margin: 0;
+	padding: 2px;
+}
+.ui-menu .ui-menu-item a {
+	display: block;
+	line-height: 1.5;
+	padding: 0.2em 0.4em;
+	text-decoration: none;
+}
+.ui-autocomplete {
+	background: #F1F1F1;
+	border: 1px solid #CCCCCC;
+	color: #222222;
+}
+/*  Info
+ ***************************************************************************/
+ 
+#example tr {
+	cursor: pointer;
+}
+
+#example tr:hover {
+	background: #CACACA;
+}
+
+#travellinks ul {
+	margin-left: 10px;
+	padding: 0;
+
+}
+#travellinks ul li {
+	padding: 3px 0 0 5px;
+	margin-left: 5px;
+	list-style-type: none;
+}
+
+#about {
+
+	margin: 0 10px 0 20px;
+	list-style-type: none;
+}
+
+#about p {
+    margin: 5px 0;
+}
+
+/*  Share Menu
+ ***************************************************************************/
+
+#social_nav_horizontal {
+	margin-left: 15px;
+}
+#social_nav_horizontal ul {
+	margin: 0;
+	padding: 0;
+	margin-top: 20px;
+}
+#social_nav_horizontal ul li {
+	float: left;
+	margin-left: 12px;
+	list-style-type: none;
+}
+#social_nav_horizontal ul li a {
+	padding: 4px 0 0 28px;
+	height: 32px;
+	color: #999;
+	text-decoration: none;
+}
+#social_nav_horizontal ul li a:hover {
+	color: #6DCAFF;
+	text-decoration: underline;
+}
+.facebook {
+	background: url("../images/facebook.png")no-repeat;
+	background-position: 0 -1px;
+}
+.stumbleupon {
+	background: url("../images/stumbleupon.png")no-repeat;
+	background-position: 0 -1px;
+}
+.twitter {
+	background: url("../images/twitter.png")no-repeat;
+	background-position: 0 -1px;
+}
+
+/*  Error Page
+ ***************************************************************************/
+.page h1 {
+	font-size: 50px;
+}
+.page {
+	text-align: center;
+	font: 20px Constantia, 'Hoefler Text',  "Adobe Caslon Pro", Baskerville, Georgia, Times, serif;
+	color: #999;
+	text-shadow: 2px 2px 2px rgba(200, 200, 200, 0.5);
+}
+.page a {
+	color: rgb(36, 109, 56);
+	text-decoration:none;
+}
+.page a:hover {
+	color: rgb(96, 73, 141) ;
+	text-shadow: 2px 2px 2px rgba(36, 109, 56, 0.5);
+}
+
+
+
+
+
+

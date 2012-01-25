@@ -1,0 +1,29 @@
+h3#title 
+	a(href='#directions', title='Trip Planner')
+		span.icon.headerSpan.tripPlannerIcon Trip Planner
+#tripplanner.acc_container.block
+	h3 Plan Your Trip
+
+	#directionsInput
+		form(id="directionsForm", action="javascript:checkForm();" )
+			#address
+				.startaddress
+					img(src="images/start_marker.png",  class="directionsIcon" )
+					input(type="text",id="startaddress", value="Start Address...", autocomplete="off", role="textbox", aria-autocomplete="list", aria-haspopup="true", class="text switcheroo")
+				.endaddress
+					img(src="images/marker.png",  class="directionsIcon" )
+					input(type="text", id="endaddress", value="End Address...", autocomplete="off", role="textbox", aria-autocomplete="list", aria-haspopup="true" , class="text switcheroo")
+			#options			
+				label(for="day") on:
+					select(name="day", id="day")
+						option(value="1", id ="1")	Monday
+						option(value="2", id ="2")	Tuesday
+						option(value="3", id ="3")	Wednesday
+						option(value="4", id ="4")	Thursday
+						option(value="5", id ="5")	Friday
+						option(value="6", id ="6")	Saturday
+						option(value="0", id ="0")	Sunday
+				input(type="text", value="12.00 PM", size="12", id="time", autocomplete="OFF")
+				input(class="submitDirections check-alt", type="submit", value="Go")
+	#statusPanel
+	#directionsPanel(style="display: none")
