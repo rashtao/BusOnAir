@@ -18,15 +18,21 @@ import org.neo4j.server.database.Database;
  * @author rashta
  */
 public class DbConnection {
-    //private static final String dbpath = "/home/rashta/neo4j/busonairserver/data/graph.db";  
-//    private static final String dbpath = "./db/data/graph.db";  
+	private static String MODE;
+	private static final String dbpath = "/home/rashta/neo4j/busonairserver/data/graph.db";  
     private static DbConnection instance = null;
-//    private GraphDatabaseService db;
     private AbstractGraphDatabase db;
     
     public static synchronized DbConnection createDbConnection(Database _db) {
-        if (instance == null){ 
+    	if (instance == null){ 
             instance = new DbConnection(_db);            
+        }
+        return instance;
+    }    
+    
+    public static synchronized DbConnection createEmbeddedDbConnection() {
+        if (instance == null){ 
+            instance = new DbConnection();            
         }
         return instance;
     }    
@@ -38,6 +44,11 @@ public class DbConnection {
        
     private DbConnection(Database _db){
         db = _db.graph;
+    }
+    
+    private DbConnection(){
+//        db = new EmbeddedReadOnlyGraphDatabase( dbpath );
+        db = new EmbeddedGraphDatabase( dbpath );
     }
 
     
