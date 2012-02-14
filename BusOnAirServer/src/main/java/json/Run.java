@@ -20,4 +20,12 @@ public class Run
     {
     	this(r.getId());
     }
+    
+    public int getRunId(){
+    	return runId;
+    }
+    
+    public void setRunId(int runId){
+    	this.runId = runId;
+    }
 }

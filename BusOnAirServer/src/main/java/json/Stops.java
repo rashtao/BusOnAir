@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Stops
 {
     @XmlElement( name = "stoplist" )
-    List<Stop> stoplist = new ArrayList<Stop>();
+    List<String> stoplist = new ArrayList<String>();
 
     public Stops()
     {
@@ -18,7 +18,7 @@ public class Stops
 
     public void add( Stop r )
     {
-        stoplist.add( r );
+        stoplist.add("/stops/" + r.getStopId() );
     }
 
 }

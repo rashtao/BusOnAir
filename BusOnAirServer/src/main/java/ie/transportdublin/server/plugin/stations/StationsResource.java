@@ -24,8 +24,6 @@ import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 @Path( "/stations" )
 public class StationsResource
 {
-
-    private json.Stations stationList;
     private final Database database;
     private BufferedWriter log;
 
@@ -35,9 +33,13 @@ public class StationsResource
         this( new SessionFactoryImpl( req.getSession( true ) ), database,
                 output );
 
-        String fullURL = req.getRequestURL().append("?").append( 
-            req.getQueryString()).toString();        
-        log.write("\nHttpServletRequest(" + fullURL +")");
+        StringBuffer fullURL = req.getRequestURL();
+        StringBuffer queryString = new StringBuffer();
+        queryString.append(req.getQueryString());
+        if(!queryString.toString().equals("null"))
+        	fullURL.append("?").append(queryString);
+        
+        log.write("\nHttpServletRequest(" + fullURL.toString() +")");
         log.flush(); 
     }
 
@@ -57,7 +59,7 @@ public class StationsResource
         log.write("\nstations/getall");
         log.flush();
               
-        stationList = new json.Stations();
+        json.Stations stationList = new json.Stations();
 
         ArrayList<Station> stations = domain.Stations.getStations().getAll();
 
@@ -79,10 +81,9 @@ public class StationsResource
         
     	log.write("\nstations/getneareststations");
         log.flush();
-
         
         if ( (lat == null) || (lon == null))
-            return Response.serverError().entity( "Lat and Lon cannot be blank" ).build();
+            return Response.status( 400 ).entity( "Lat and Lon cannot be blank" ).build();
 
         Collection<Station> stations;
         
@@ -90,15 +91,17 @@ public class StationsResource
         	stations = domain.Stations.getStations().nearestStations(lat, lon);
         else
         	stations = domain.Stations.getStations().nearestStations(lat, lon, range);
+              
+//        if(stations.size() == 0){
+//            return Response.status( 204 ).entity(
+//                "No Station in specified range (" + range + ")").build();
+//        }
         
-                
-        if(stations.size() == 0){
-            return Response.status( 400 ).entity(
-                "No Station in specified range (" + range + ")").build();
-        }
+        if(stations.size() == 0)
+        	return Response.ok().entity(null).build();
         
-        stationList = new json.Stations();
-
+        json.Stations stationList = new json.Stations();
+        
         for(Station s : stations){
         	json.Station js = new json.Station(s);  
         	stationList.add(js);        	
@@ -110,21 +113,79 @@ public class StationsResource
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("/{id}")
-    public Response getStation(@PathParam("id") int id) throws IOException{
+    @Path("{id}")
+    public Response getStation(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\nstations/" + id);
         log.flush();
     	
-//        if ( id == null)
-//            return Response.serverError().entity( "ID cannot be blank" ).build();
+        if ( id == null)
+            return Response.status( 400 ).entity( "ID cannot be blank" ).build();
         
     	domain.Station s = domain.Stations.getStations().getStationById(id);
     	
-    	if (s == null) 
-    		return Response.status( 400 ).entity(
-                    "No Station having specified id (" + id + ")").build();
+//    	if (s == null) 
+//    		return Response.status( 204 ).entity(
+//                    "No Station having specified id (" + id + ")").build();
     	
-    	return Response.ok().entity(s).build();
+    	if (s != null){ 
+    		json.Station js = new json.Station(s);
+    		return Response.ok().entity(js).build();
+    	} else {
+    		return Response.status( 404 ).entity( "No station having the specified id." ).build();
+    	}
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getfirststopfrom")
+    public Response getFirstStopFrom(
+    		@PathParam("id") Integer id,
+    		@QueryParam("time") Integer time) throws IOException{
+    	
+    	log.write("\ngetfirststopfrom/" + id);
+        log.flush();
+        
+        domain.Station s = domain.Stations.getStations().getStationById(id);
+        
+        if(s == null)
+        	return Response.status( 404 ).entity( "No station having the specified id." ).build();
+        
+        if (time == null)
+            return Response.status( 400 ).entity( "Time cannot be blank" ).build();        
+        
+        domain.Stop fs = s.getFirstStopsFromTime(time);
+        
+        if(fs == null)
+        	return Response.ok().entity("").build();
+        
+        json.Stop js = new json.Stop(fs);        
+        return Response.ok().entity(js).build();
+    }
+
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getallroutes")
+    public Response getAllRoutes(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetallroutes/" + id);
+        log.flush();
+        
+        domain.Station s = domain.Stations.getStations().getStationById(id);
+        
+        if(s == null)
+        	return Response.status( 404 ).entity( "No station having the specified id." ).build();
+        
+        Collection<Route> routes = s.getAllRoutes();
+        
+        if(routes.size() == 0)
+        	return Response.ok().entity("").build();
+        	
+        json.Routes jroutes = new json.Routes();
+        for(domain.Route r : routes)
+        	jroutes.add(r);
+        	   
+        return Response.ok().entity(jroutes).build();
     }
 }

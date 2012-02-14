@@ -22,4 +22,20 @@ public class Route
     {
     	this(r.getId(), r.getLine());
     }
+    
+    public int getRouteId(){
+    	return routeId;
+    }
+    
+    public void setRouteId(int routeId){
+    	this.routeId = routeId;
+    }
+    
+    public String getRouteLine(){
+    	return routeLine;
+    }
+    
+    public void setRouteLine(String routeLine){
+    	this.routeLine = routeLine;
+    }
 }

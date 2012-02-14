@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Stations
 {
     @XmlElement( name = "stationlist" )
-    List<Station> routelist = new ArrayList<Station>();
+    List<String> routelist = new ArrayList<String>();
 
     public Stations()
     {
@@ -18,7 +18,7 @@ public class Stations
 
     public void add( Station s )
     {
-        routelist.add( s );
+        routelist.add( "/stations/" + s.getStationId() );
     }
 
 }

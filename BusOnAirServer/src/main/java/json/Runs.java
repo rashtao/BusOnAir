@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Runs
 {
     @XmlElement( name = "runlist" )
-    List<Run> runlist = new ArrayList<Run>();
+    List<String> runlist = new ArrayList<String>();
 
     public Runs()
     {
@@ -18,7 +18,12 @@ public class Runs
 
     public void add( Run r )
     {
-        runlist.add( r );
+        runlist.add( "/runs/" +  r.getRunId() );
+    }
+
+    public void add( domain.Run r )
+    {
+        runlist.add( "/runs/" + r.getId() );
     }
 
 }

@@ -76,7 +76,7 @@ public class Route {
 				"\n\tline: " + getLine());	    
     }
 
-    public Iterable<Run> getAllRuns() {
+    public ArrayList<Run> getAllRuns() {
         ArrayList<Run> output = new ArrayList<Run>();
         IndexHits<Node> result = runIndex.query("id", "*");
         for(Node n : result){

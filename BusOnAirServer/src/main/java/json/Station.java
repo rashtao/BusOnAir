@@ -26,7 +26,7 @@ public class Station
 
     public Station( domain.Station s )
     {
-    	this(s.getId(), s.getName(), new Coordinate(s.getLatitude(), s.getLongitude()));
+   		this(s.getId(), s.getName(), new Coordinate(s.getLatitude(), s.getLongitude()));
     }
     
     public int getStationId(){

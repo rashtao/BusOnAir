@@ -5,6 +5,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
 import domain.RelTypes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -206,5 +207,10 @@ public class Station {
         StopFittizio sf = new StopFittizio(DbConnection.getDb().createNode(), getId());
         sf.setStazione(this);
     }
+
+	public Collection<Route> getAllRoutes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

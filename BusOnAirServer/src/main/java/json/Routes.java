@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Routes
 {
     @XmlElement( name = "routelist" )
-    List<Route> routelist = new ArrayList<Route>();
+    List<String> routelist = new ArrayList<String>();
 
     public Routes()
     {
@@ -18,7 +18,12 @@ public class Routes
 
     public void add( Route r )
     {
-        routelist.add( r );
+        routelist.add( r.getRouteLine() );
+    }
+
+    public void add( domain.Route r )
+    {
+        routelist.add( r.getLine() );
     }
 
 }
