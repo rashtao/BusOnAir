@@ -26,7 +26,8 @@ public class Stop extends StopAbstract{
         setTime(time);	    
         setType();
         setStopFittizio(idStation);
-        setRun(idRun, line);            
+        setRun(idRun, line);          
+        Stops.getStops().addStop(this);
     }   
     
     public void setType() {
@@ -61,8 +62,8 @@ public class Stop extends StopAbstract{
     }
 
 
-    public void setRun(Run corsa){
-        underlyingNode.createRelationshipTo(corsa.getUnderlyingNode(), RelTypes.STOP_RUN);
+    public void setRun(Run r){
+        underlyingNode.createRelationshipTo(r.getUnderlyingNode(), RelTypes.STOP_RUN);
     }
 
     public Stop getNextInStation(){
@@ -132,19 +133,21 @@ public class Stop extends StopAbstract{
     }
 
     private void setRun(int idRun, String line) {
+//    	System.out.print("\nsetRun(" + idRun + ", " + line + ")");
         Route route = Routes.getRoutes().getRouteByLine(line);
         if(route == null){
             route = new Route(DbConnection.getDb().createNode(), line);
         }
         Routes.getRoutes().addRoute(route);
         
-        Run run = route.getRun(idRun);
+        Run run = Runs.getRuns().getRunById(idRun);
+//        System.out.print("\nRUN: " + run);
         if(run == null){
             run = new Run(DbConnection.getDb().createNode(), idRun);
         }
         run.setRoute(route);
-        route.addRun(run);
-        
+        Runs.getRuns().addRun(run);
+        route.addRun(run);        
         setRun(run);
     }
 }

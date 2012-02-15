@@ -10,6 +10,7 @@ import utils.GeoUtil;
 public class Run {
     private static final String ID = "id";
     private static final String TYPE = "type";
+//    private static final String ORDER = "order";
         
     private final Node underlyingNode;
     
@@ -23,7 +24,20 @@ public class Run {
         setType();
     }   
 
-    public void setType() {
+//    public Run(Node node, int id, int order){
+//        this(node, id);
+//        setOrder(order);
+//    }   
+
+//    public Integer getOrder() {
+//    	return (Integer) underlyingNode.getProperty(ORDER);	
+//	}
+
+//    public void setOrder(int order) {
+//    	underlyingNode.setProperty(Run.ORDER, order);		
+//	}
+
+	public void setType() {
         underlyingNode.setProperty(Run.TYPE, "Run");		
     }
 

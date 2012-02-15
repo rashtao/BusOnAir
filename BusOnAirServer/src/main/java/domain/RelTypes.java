@@ -28,5 +28,6 @@ public enum RelTypes implements RelationshipType{
     FITTIZIO_STAZIONE, 
     STOP_RUN, 
     RUN_ROUTE, 
-    RUN_FIRSTSTOP
+    RUN_FIRSTSTOP,
+    FROM
 }

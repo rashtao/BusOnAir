@@ -29,9 +29,21 @@ public class Routes {
     }
     
     public void addRoute(Route r){
-        routesIndex.add(r.getUnderlyingNode(), "line", r.getLine());
+    	routesIndex.add(r.getUnderlyingNode(), "id", r.getId());
+    	routesIndex.add(r.getUnderlyingNode(), "line", r.getLine());
     }
     
+    public Route getRouteById(int id){
+        IndexHits<Node> result = routesIndex.get("id", id);
+        Node n = result.getSingle();
+        result.close();
+        if(n == null){
+            return null;
+        } else {
+            return new Route(n);                
+        }
+    }
+
     public Route getRouteByLine(String line){
         IndexHits<Node> result = routesIndex.get("line", line);
         Node n = result.getSingle();
@@ -42,14 +54,15 @@ public class Routes {
             return new Route(n);                
         }
     }
-
-    public Iterable<Route> getAll() {
+    
+    public ArrayList<Route> getAll() {
         ArrayList<Route> output = new ArrayList<Route>();
-        IndexHits<Node> result = routesIndex.query("line", "*");
+        IndexHits<Node> result = routesIndex.query("id", "*");
         for(Node n : result){
             output.add(new Route(n));           
         }     
         result.close();
         return output;
     }
+    
 }
