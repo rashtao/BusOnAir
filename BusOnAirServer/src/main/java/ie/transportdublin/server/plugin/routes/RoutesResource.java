@@ -70,42 +70,40 @@ public class RoutesResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{line}")
-    public Response getRoute(@PathParam("line") String line) throws IOException{
+    @Path("{id}")
+    public Response getRoute(@PathParam("id") Integer id) throws IOException{
     	
-    	log.write("\nroutes/" + line);
+    	log.write("\nroutes/" + id);
         log.flush();
     	
-        if ( line == null)
-            return Response.status( 400 ).entity( "line cannot be blank" ).build();
+        if ( id == null)
+            return Response.status( 400 ).entity( "id cannot be blank" ).build();
         
-    	domain.Route route = domain.Routes.getRoutes().getRouteByLine(line);
+    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route != null){
     		json.Route jr = new json.Route(route);    	
     		return Response.ok().entity(jr).build();
     	} else {
-    		return Response.status( 404 ).entity( "No route having the specified line value." ).build();
+    		return Response.status( 404 ).entity( "No route having the specified id." ).build();
     	}
     }
-    
-    
-    
+        
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{line}/getallruns")
-    public Response getAllRuns(@PathParam("line") String line) throws IOException{
+    @Path("{id}/getallruns")
+    public Response getAllRuns(@PathParam("id") Integer id) throws IOException{
     	
-    	log.write("\ngetAllRuns/" + line);
+    	log.write("\ngetAllRuns/" + id);
         log.flush();
         
-        if ( line == null)
-            return Response.status( 400 ).entity( "line cannot be blank" ).build();
+        if ( id == null)
+            return Response.status( 400 ).entity( "id cannot be blank" ).build();
         
-    	domain.Route route = domain.Routes.getRoutes().getRouteByLine(line);
+    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route == null)
-    		return Response.status( 404 ).entity( "No route having the specified line value." ).build();
+    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
 
     	ArrayList<Run> runs = route.getAllRuns();
     	
@@ -119,4 +117,78 @@ public class RoutesResource{
         return Response.ok().entity(jruns).build();
     }
 
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getallstations")
+    public Response getAllStations(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetAllStations/" + id);
+        log.flush();
+        
+        if ( id == null)
+            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        
+    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
+    	 
+    	if (route == null)
+    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
+
+    	ArrayList<Station> stations = route.getAllStations();
+    	
+        if(stations.size() == 0)
+        	return Response.ok().entity("").build();
+        	
+        json.Stations jstations = new json.Stations();
+        for(domain.Station s : stations)
+        	jstations.add(s);
+        	   
+        return Response.ok().entity(jstations).build();
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getfrom")
+    public Response getFrom(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetFrom/" + id);
+        log.flush();
+        
+        if ( id == null)
+            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        
+    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
+    	 
+    	if (route == null)
+    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
+
+    	Station station = route.getFrom();
+    	
+        json.Station jstation = new json.Station(station);
+        	   
+        return Response.ok().entity(jstation).build();
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/gettowards")
+    public Response getTowards(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetTowards/" + id);
+        log.flush();
+        
+        if ( id == null)
+            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        
+    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
+    	 
+    	if (route == null)
+    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
+
+    	Station station = route.getTowards();
+    	
+        json.Station jstation = new json.Station(station);
+        	   
+        return Response.ok().entity(jstation).build();
+    }
+    
 }

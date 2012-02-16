@@ -6,7 +6,10 @@ import org.neo4j.graphdb.Node;
 import domain.RelTypes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
@@ -208,9 +211,17 @@ public class Station {
         sf.setStazione(this);
     }
 
-	public Collection<Route> getAllRoutes() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Route> getAllRoutes() {
+		Set<Route> set = new HashSet<Route>();
+
+		Stop s = getFirstStop();
+		while(s != null){
+			set.add(s.getRun().getRoute());
+			s = s.getNextInStation();					
+		}
+
+		ArrayList<Route> result = new ArrayList<Route>(set);
+		return result;
 	}
 
 }

@@ -65,15 +65,15 @@ public class RouteSearchResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/" )
-    public Response routeSearch( @QueryParam( "routeId" ) String routeId ) throws IOException 
+    public Response routeSearch( @QueryParam( "routeId" ) Integer routeId ) throws IOException 
     {        
         log.write("\nROUTESEARCH(" + routeId +")");
         log.flush();
 
-        if ( routeId == null || routeId.trim().length() == 0 )
+        if ( routeId == null )
             return Response.serverError().entity( "routeId cannot be blank" ).build();
 
-        domain.Route route = domain.Routes.getRoutes().getRouteByLine(routeId);
+        domain.Route route = domain.Routes.getRoutes().getRouteById(routeId);
         if(route == null){
             return Response.status( 400 ).entity(
                 "No Route Found: " + routeId ).build();

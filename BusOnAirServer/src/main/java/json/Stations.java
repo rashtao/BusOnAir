@@ -21,4 +21,9 @@ public class Stations
         routelist.add( "/stations/" + s.getStationId() );
     }
 
+    public void add( domain.Station s )
+    {
+        routelist.add( "/stations/" + s.getId() );
+    }
+
 }

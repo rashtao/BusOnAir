@@ -52,4 +52,9 @@ public class Runs {
         result.close();
         return output;
     }
+    
+    public void updateIndex(Run r){
+    	runsIndex.remove(r.getUnderlyingNode());
+    	addRun(r);
+    }
 }

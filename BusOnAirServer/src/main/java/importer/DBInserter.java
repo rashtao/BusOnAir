@@ -225,6 +225,7 @@ public class DBInserter
         Transaction tx = db.beginTx();
 		try{
 		
+		checkEmptyRoutes();
 		int routeCircular = 0;
 		for(Route route : Routes.getRoutes().getAll()){
 //			System.out.print("\n\n\n\n" + route);
@@ -257,14 +258,30 @@ public class DBInserter
 				Routes.getRoutes().addRoute(twinRoute);
 				twinRoute.setFrom(s2);
 
-				for(Run run : route.getAllRuns()){
+				ArrayList<Run> runs = route.getAllRuns();
+				route.clearIndex();
+				for(Run run : runs){
 					Station s = run.getFirstStop().getStazione();
-					if(s.equals(s2)){
+					if(!s.equals(s1)){
 						run.setRoute(twinRoute);
+						twinRoute.addRun(run);
+					} else {
+						run.setRoute(route);
+						route.addRun(run);						
 					}
 				}
 			}
 		}
+		
+		checkEmptyRoutes();
+		for(Route route : Routes.getRoutes().getAll()){
+			Run fr = route.getAllRuns().iterator().next();
+			Stop s = fr.getFirstStop();
+			while(s.getNextInRun() != null)
+				s = s.getNextInRun();
+			route.setTowards(s.getStazione());
+		}
+		
 //		System.out.print("\nRoute circolari: " + routeCircular);
 		
         tx.success();
@@ -274,6 +291,33 @@ public class DBInserter
 		tx.finish();
 		}
 
+	}
+	
+	public void checkEmptyRoutes(){
+		System.out.print("\n-----\ncheckEmptyRoutes()\n-----\n");
+		for(Route route : Routes.getRoutes().getAll()){
+			ArrayList<Run> runs = route.getAllRuns();
+			if(runs.size() == 0)
+				System.out.print("\nEmptyRoute: " + route);
+		}
+		System.out.print("\n*****\nEND checkEmptyRoutes()\n*****\n");
+	}
+
+	public void generateRunsId() {
+		Transaction tx = db.beginTx();
+		try{
+			int i = 0;
+			for(Run r : Runs.getRuns().getAll()){
+				r.setId(i++);
+				Runs.getRuns().updateIndex(r);
+			}
+			tx.success();
+		}
+		finally
+		{
+			tx.finish();
+		}
+		
 	}
     
     

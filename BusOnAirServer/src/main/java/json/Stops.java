@@ -21,4 +21,9 @@ public class Stops
         stoplist.add("/stops/" + r.getStopId() );
     }
 
+    public void add( domain.Stop s )
+    {
+        stoplist.add("/stops/" + s.getId() );
+    }
+
 }

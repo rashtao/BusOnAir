@@ -7,12 +7,14 @@ public class Route
 {
     private int routeId;
     private String routeLine;
-
+    private String from;
+    private String towards;
+    
     public Route()
     {
     }
 
-    public Route( int routeId, String routeLine )
+    public Route( int routeId, String routeLine)
     {
         this.routeId = routeId;
         this.routeLine = routeLine;
@@ -20,7 +22,7 @@ public class Route
 
     public Route( domain.Route r )
     {
-    	this(r.getId(), r.getLine());
+    	this(r.getId(),r.getLine());
     }
     
     public int getRouteId(){
@@ -37,5 +39,21 @@ public class Route
     
     public void setRouteLine(String routeLine){
     	this.routeLine = routeLine;
+    }
+    
+    public String getFrom(){
+    	return from;
+    }
+    
+    public void setFrom(String from){
+    	this.from = from;
+    }
+    
+    public String getTowards(){
+    	return towards;
+    }
+    
+    public void setTowards(String towards){
+    	this.towards = towards;
     }
 }

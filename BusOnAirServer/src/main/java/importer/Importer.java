@@ -21,6 +21,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.impl.util.*;
 
+import test.ImportTest;
+
 public class Importer {
 
     //private static BusonairSql readData;
@@ -39,9 +41,12 @@ public class Importer {
 		DbConnection.createEmbeddedDbConnection();
  		
         dbInserter = new DBInserter();
-//        dbInserter.addData();
-//        dbInserter.addSpatialIndex();
+        dbInserter.addData();
+        dbInserter.addSpatialIndex();
+        ImportTest.importTest();
+        dbInserter.generateRunsId();
         dbInserter.duplicateRoutes();
+        ImportTest.importTest();
         DbConnection.turnoff();
 
 // TEST LETTURA FILEs XML

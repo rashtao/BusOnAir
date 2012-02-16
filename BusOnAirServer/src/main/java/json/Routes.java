@@ -18,12 +18,12 @@ public class Routes
 
     public void add( Route r )
     {
-        routelist.add( r.getRouteLine() );
+        routelist.add( "/routes/" + r.getRouteId() );
     }
 
     public void add( domain.Route r )
     {
-        routelist.add( r.getLine() );
+        routelist.add( "/routes/" + r.getId() );
     }
 
 }

@@ -41,6 +41,12 @@ public class Route {
         underlyingNode.setProperty(Route.ID, id);
     }
     
+    public void clearIndex(){
+    	for(Run r : getAllRuns()){
+    		runIndex.remove(r.getUnderlyingNode());
+    	}    	
+    }
+    
 	public void setType() {
             underlyingNode.setProperty(Route.TYPE, "Route");		
 	}
@@ -54,6 +60,18 @@ public class Route {
 
     public Station getFrom(){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FROM, Direction.OUTGOING);
+        return new Station(rel.getEndNode());		
+    }    
+	
+    public void setTowards(Station s){
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.TOWARDS, Direction.OUTGOING);
+        if(rel == null){
+            underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.TOWARDS);		
+        }
+    }
+
+    public Station getTowards(){
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.TOWARDS, Direction.OUTGOING);
         return new Station(rel.getEndNode());		
     }    
 	
@@ -113,4 +131,19 @@ public class Route {
         result.close();
         return output;
     }
+
+	public ArrayList<Station> getAllStations() {
+		ArrayList<Station> result = new ArrayList<Station>();
+		
+		Run fr = getAllRuns().iterator().next();
+		
+		Stop s = fr.getFirstStop();
+		
+		while(s.getNextInRun() != null){
+			result.add(s.getStazione());
+			s = s.getNextInRun();
+		}
+		
+		return result;
+	}
 }

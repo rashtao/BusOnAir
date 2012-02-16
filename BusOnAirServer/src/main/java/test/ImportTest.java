@@ -21,6 +21,10 @@ public class ImportTest {
 	 */
 	public static void main(String[] args) {
 		DbConnection.createEmbeddedDbConnection();
+		importTest();
+	}
+
+	public static void importTest(){
 		db = DbConnection.getDb();
 
 		int routesCount = 0;
@@ -30,13 +34,13 @@ public class ImportTest {
 		
         for(Route route : Routes.getRoutes().getAll()){
         	++routesCount;
-        	System.out.print("\n\n" + route);
+//        	System.out.print("\n\n" + route);
             for(Run r : route.getAllRuns()){
             	++runsCount;
-            	System.out.print("\n\n" + r);
+//            	System.out.print("\n\n" + r);
                 for(Stop s : r.getAllStops()){
                 	++stopsCount;
-                	System.out.print("\n\n" + s);
+//                	System.out.print("\n\n" + s);
                 }
                 
             }
@@ -56,7 +60,6 @@ public class ImportTest {
         System.out.println(runsCount);
         System.out.println(stopsCount);
         
-        
-	}
-
+	}		
+	
 }

@@ -29,6 +29,7 @@ public class Routes {
     }
     
     public void addRoute(Route r){
+    	routesIndex.remove(r.getUnderlyingNode());
     	routesIndex.add(r.getUnderlyingNode(), "id", r.getId());
     	routesIndex.add(r.getUnderlyingNode(), "line", r.getLine());
     }
