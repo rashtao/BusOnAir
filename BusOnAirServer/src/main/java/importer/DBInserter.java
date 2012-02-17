@@ -3,10 +3,12 @@ package importer;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.graphdb.DynamicRelationshipType;
@@ -17,12 +19,13 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
+
 import domain.*;
 import utils.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import scala.actors.threadpool.Arrays;
+
 
 public class DBInserter
 {
@@ -226,43 +229,42 @@ public class DBInserter
 		try{
 		
 		checkEmptyRoutes();
-		int routeCircular = 0;
 		for(Route route : Routes.getRoutes().getAll()){
-//			System.out.print("\n\n\n\n" + route);
-			Station s1 = null;
-			Station s2 = null;
+			HashSet<Station> partenze = new HashSet<Station>(); 
+			HashSet<Station> arrivi = new HashSet<Station>(); 
+			
 			for(Run run : route.getAllRuns()){
-				Station s = run.getFirstStop().getStazione();
-//				System.out.print("\n\n" + run);
-//				System.out.print("\n" + run.getFirstStop());				
-//				System.out.print("\n" + s);
-				if(s1 == null)
-					s1 = s;
-				
-				if(!s.equals(s1)){
-					if(s2 == null)
-						s2 = s;
-//					if(!s.equals(s2))
-//						System.out.print("\n\n STRANO! 3 sorgenti per la stessa route");
-				}				
-			}
-			
-			if(s2 == null)
-				routeCircular++;
+				Stop stop = run.getFirstStop();
+				Station s = stop.getStazione();
+				partenze.add(s);
+				while(stop.getNextInRun() != null)
+					stop = stop.getNextInRun();
+				arrivi.add(stop.getStazione());				
+			}								
 
-			if(s1 != null)
-				route.setFrom(s1);
+			Object[] arrpartenze = partenze.toArray();
+			Object[] arrarrivi = arrivi.toArray();
+
+			route.setFrom((Station) arrpartenze[0]);
+			route.setTowards((Station) arrarrivi[0]);
 			
-			if(s2 != null){
+			if(partenze.size() > 2 || arrivi.size() > 2)
+				System.out.print("\nRoute Anomala!");
+			
+			if(partenze.size() > 1 && arrivi.size() > 1){	// Route A/R
+				System.out.print("\nA/R Route founded... " + route.getLine() + ": " + route.getId() + ", ");
 				Route twinRoute = new Route(db.createNode(), route.getLine());
 				Routes.getRoutes().addRoute(twinRoute);
-				twinRoute.setFrom(s2);
+				System.out.print(twinRoute.getId());
+				
+				twinRoute.setFrom((Station) arrpartenze[1]);
+				twinRoute.setTowards((Station) arrarrivi[1]);
 
 				ArrayList<Run> runs = route.getAllRuns();
 				route.clearIndex();
 				for(Run run : runs){
 					Station s = run.getFirstStop().getStazione();
-					if(!s.equals(s1)){
+					if(!s.equals(arrpartenze[0])){
 						run.setRoute(twinRoute);
 						twinRoute.addRun(run);
 					} else {
@@ -274,16 +276,7 @@ public class DBInserter
 		}
 		
 		checkEmptyRoutes();
-		for(Route route : Routes.getRoutes().getAll()){
-			Run fr = route.getAllRuns().iterator().next();
-			Stop s = fr.getFirstStop();
-			while(s.getNextInRun() != null)
-				s = s.getNextInRun();
-			route.setTowards(s.getStazione());
-		}
-		
-//		System.out.print("\nRoute circolari: " + routeCircular);
-		
+
         tx.success();
 		}
 		finally
@@ -317,6 +310,24 @@ public class DBInserter
 		{
 			tx.finish();
 		}
+		
+	}
+
+	public void checkStopStations() {
+		Transaction tx = db.beginTx();
+		try{
+			for(Stop s : Stops.getStops().getAll()){
+				Station staz = s.getStazione();
+				if(staz == null)
+					System.out.print("\nNULL STAZION FOR NODE: " + s.getUnderlyingNode().getId());
+			}
+			tx.success();
+		}
+		finally
+		{
+			tx.finish();
+		}
+		
 		
 	}
     

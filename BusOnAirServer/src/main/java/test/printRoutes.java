@@ -57,9 +57,13 @@ public class printRoutes {
         
         
         int i = 0;
+        Route prev = null;
         for(Route r : routes){
+//        	if(prev != null && r.getLine().equals(prev.getLine()))
+//        		System.out.print("\nA/R ROUTE: ['" + r.getId()  + "','" + r.getId()  + "','" + r.getLine() + "','" + r.getTowards().getName() + "'],");
             System.out.print("\n['" + r.getId()  + "','" + r.getId()  + "','" + r.getLine() + "','" + r.getTowards().getName() + "'],");
             i++;
+            prev = r;
         }
         
         

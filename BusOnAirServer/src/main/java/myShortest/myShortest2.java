@@ -6,6 +6,7 @@ package myShortest;
 import domain.*;
 import java.util.Stack;
 import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Direction;
 
 /**
  *

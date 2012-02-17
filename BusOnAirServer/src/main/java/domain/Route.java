@@ -67,7 +67,7 @@ public class Route {
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.TOWARDS, Direction.OUTGOING);
         if(rel == null){
             underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.TOWARDS);		
-        }
+        } 
     }
 
     public Station getTowards(){

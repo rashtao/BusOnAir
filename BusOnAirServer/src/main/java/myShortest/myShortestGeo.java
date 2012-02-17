@@ -1,3 +1,19 @@
+/* Versione di shortest path che calcola il percorso da un pto di partenza a uno di arrivo (non stazioni). 
+ * Quindi include le walk per raggiungere la stazione di partenza dal pto di partenza e per raggiundere il
+ * pto di destinazione dalla stazione di arrivo.
+ * 
+ * Specifiche da implementare: 
+ * List<Direction> getDirections(
+ * 		double lat1, 
+ * 		double lon1, 
+ * 		double lat2, 
+ * 		double lon2, 
+ * 		int departureTime, 
+ * 		int minChangeTime, 
+ * 		String criterion, 
+ * 		int timeLimit)
+
+*/
 
 package myShortest;
 
@@ -14,13 +30,13 @@ import org.neo4j.graphdb.*;
  *
  * @author rashta
  */
-public class myShortest {
+public class myShortestGeo {
     private StopMediator cache;
     private Stop source;
     private int stopTime;
     private Station dest;
     
-    public myShortest(Stop _source, Station _dest, int _timeInterval){
+    public myShortestGeo(Stop _source, Station _dest, int _timeInterval){
         cache = new StopMediator();   
         source = cache.get(_source);
         source.numeroCambi = 0;
