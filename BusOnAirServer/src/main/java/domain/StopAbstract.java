@@ -8,6 +8,10 @@ public abstract class StopAbstract {
         
     protected final Node underlyingNode;
 
+    public StopAbstract(){
+    	underlyingNode = null;
+    }
+    
     public StopAbstract(Node node) {
     	underlyingNode = node;
     }  

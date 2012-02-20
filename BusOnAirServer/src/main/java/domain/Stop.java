@@ -14,9 +14,16 @@ public class Stop extends StopAbstract{
     public Stop nextInStation = null;
     public Stop prevInRun = null;
     public Stop prevInStation = null;
+    public Stop nextWalk = null;
+    public Stop prevWalk = null;
+    
     public Stop prevSP = null;
     public int numeroCambi = 0;
         
+    public Stop(){
+    	super();
+    }
+    
     public Stop(Node node){
     	super(node);
     }  

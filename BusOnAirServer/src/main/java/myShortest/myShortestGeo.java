@@ -13,6 +13,13 @@
  * 		String criterion, 
  * 		int timeLimit)
 
+
+
+TODO:
+        source.numeroCambi = 0;
+        TransientStop comparator
+        gestione dei nodi Transientstop nella cache
+        riscrivere loadsubgraph considerando nextwalk e prevwkal ( per i transientstop) 
 */
 
 package myShortest;
@@ -21,10 +28,14 @@ import domain.*;
 
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.PriorityQueue;
 import java.util.Stack;
 import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.*;
+
+import utils.GeoUtil;
 
 /**
  *
@@ -32,32 +43,49 @@ import org.neo4j.graphdb.*;
  */
 public class myShortestGeo {
     private StopMediator cache;
-    private Stop source;
+    private int startTime;
     private int stopTime;
-    private Station dest;
-    
-    public myShortestGeo(Stop _source, Station _dest, int _timeInterval){
+    private double lat1;
+    private double lon1;
+    private double lat2;
+    private double lon2;
+    private int walkLimit;
+    private  PriorityQueue<TransientStop> startQueue;
+    private  PriorityQueue<Direction> arrivalQueue;
+   
+    public myShortestGeo(int startTime, int _timeInterval, double lat1, double lon1, double lat2, double lon2, int walkLimit){
         cache = new StopMediator();   
-        source = cache.get(_source);
-        source.numeroCambi = 0;
-        stopTime = source.getTime() + _timeInterval;
-        dest = _dest;
+        this.startTime = startTime;
+        stopTime = startTime + _timeInterval;
+        this.lat1 = lat1;
+        this.lon1 = lon1;
+        this.lat2 = lat2;
+        this.lon2 = lon2;
+        this.walkLimit = walkLimit;
+        startQueue = new PriorityQueue<TransientStop>();
+        arrivalQueue = new PriorityQueue<Direction>(10, new DirectionComparator());        
     }
     
     public StopMediator shortestPath(){
-        loadSubgraph();
+    	
+    	createStartStops();
+    	for(TransientStop ts : startQueue){
+    		loadSubgraph(ts);
+    	}
             
-        if(source.getStazione().equals(dest)){ // Gestione partenza == arrivo
-            source.prevSP = source;
-            source.numeroCambi = 0;            
-        } else {
-            topologicalVisit();
-        }
+        topologicalVisit();
+        
+        linkArrivalPoint();
+        
         return cache;        
     }
     
-    public Stop getShortestPath(){
-        Stop arrivo = dest.getFirstStopsFromTime(source.getTime());
+
+
+
+
+	public Stop getShortestPath(Station dest){
+        Stop arrivo = dest.getFirstStopsFromTime(startTime);
         if(arrivo != null)
             arrivo = cache.get(arrivo);
         
@@ -71,18 +99,24 @@ public class myShortestGeo {
     }
     
     public String toString() {
-        Stop arrivo = getShortestPath();
-        String outPath = "";    
-        if(arrivo != null){
-            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":TIME" + arrivo.getTime() + ")";
-
-            Stop arr = arrivo;
-            while(!arr.equals(source)){
-                arr = arr.prevSP;
-                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
-            }
-        }
-        return outPath;
+    	String strPath = "";    
+    	for(Direction dir : arrivalQueue){
+	        String outPath = "";
+    		Stop arrivo = dir.getStop();
+	        if(arrivo != null){
+	        	outPath = "(WALK: t:" + dir.getWalkTime() + "|arrtime:" + dir.getArrivalTime() + "|distwalk:" + dir.getDistance() + "|numchanges:" + dir.getNumChanges() + ")";
+	            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":TIME" + arrivo.getTime() + ")-->" + outPath;
+	
+	            Stop arr = arrivo;
+	            while(arr.prevSP != null){
+	                arr = arr.prevSP;
+	                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
+	            }
+	        }
+	        strPath = strPath + "\n\n" + outPath; 
+    	}
+    	
+        return strPath;
 
     }
     
@@ -121,40 +155,73 @@ public class myShortestGeo {
     
     
     
-    public ArrayList<Stop> getWeightedPath() {
-        ArrayList<Stop> stopList = new ArrayList<Stop>();
-        
-        Stop s = getShortestPath();
-
-        while(s != null){
-            stopList.add(s);
-            s = s.prevSP;
-        }
-
-        return stopList;
-    }    
+//    public ArrayList<Stop> getWeightedPath() {
+//        ArrayList<Stop> stopList = new ArrayList<Stop>();
+//        
+//        Stop s = getShortestPath();
+//
+//        while(s != null){
+//            stopList.add(s);
+//            s = s.prevSP;
+//        }
+//
+//        return stopList;
+//    }    
     
     
-    public void loadSubgraph(){
+	private void createStartStops() {
+		Collection<Station> startStations = Stations.getStations().nearestStations(lat1, lon1, walkLimit);
+		
+		System.out.print("\nLnked start stations: " + startStations.size());
+		for(Station s : startStations){
+			double distance = GeoUtil.getDistance2(lat1, lon1, s.getLatitude(), s.getLongitude());
+			int walktime = (int) (distance / 5.0 * 60);
+			Stop startStop = s.getFirstStopsFromTime(startTime + walktime);
+			startStop = cache.get(startStop);
+			System.out.print("\nstartStop: " + startStop);
+			
+			TransientStop ts = new TransientStop();
+			ts.setTime(startStop.getTime() - walktime);
+			ts.nextWalk = startStop;
+			startStop.nextWalk = ts;
+			
+			startQueue.add(ts);			
+		}	
+	}
+    
+    private void linkArrivalPoint() {
+    	// al momento linka solo il primo stop di ogni stazione più vicina di walkLimit meters
+		Collection<Station> arrivalStations = Stations.getStations().nearestStations(lat2, lon2, walkLimit);
+		
+		System.out.print("\nLnked stations: " + arrivalStations.size());
+		for(Station s : arrivalStations){
+			Stop arrivalStop = getShortestPath(s);
+			System.out.print("\nsp: " + arrivalStop);
+			arrivalQueue.add(new Direction(arrivalStop, lat2, lon2));			
+		}		
+	}
+    
+	public void loadSubgraph(Stop source){
+		source = cache.get(source);
         
         Traverser graphTrav = source.getUnderlyingNode().traverse(
                 Traverser.Order.BREADTH_FIRST,
                 new StopExplorer(),
                 ReturnableEvaluator.ALL, 
                 RelTypes.NEXTINRUN,
-                Direction.OUTGOING,
+                org.neo4j.graphdb.Direction.OUTGOING,
                 RelTypes.NEXTINSTATION,
-                Direction.OUTGOING);
+                org.neo4j.graphdb.Direction.OUTGOING);
         
         for (Node n : graphTrav){
             Stop s = cache.get(n);
             Stop nir = s.getNextInRun();
             Stop nis = s.getNextInStation();
             
-            if(s.getStazione().equals(dest)){
-                nir = null;
-                nis = null;                
-            }
+//            if(s.getStazione().equals(dest)){
+//                nir = null;
+//                nis = null;                
+//            }
             
             if(nir != null){
                 nir = cache.get(nir);      
@@ -173,14 +240,15 @@ public class myShortestGeo {
     public void topologicalVisit(){
 
         Stack<Stop> toVisit = new Stack<Stop>();
-        toVisit.push(source);
+        
+        for(Stop s : startQueue){
+    		toVisit.push(s);
+        }        
         
         while(!toVisit.isEmpty()){
             Stop s = toVisit.pop();
             Stop nir = s.nextInRun;
             Stop nis = s.nextInStation;
-            
-            
                         
             if(nir != null){
                 // UPDATE Shortest path e cambi
@@ -230,13 +298,14 @@ public class myShortestGeo {
         @Override
         public boolean isStopNode(TraversalPosition tp) {            
 //            System.out.println( "\nVisited nodes: " + count++);
-            Stop currentStop = cache.get(tp.currentNode());         
-            if(currentStop.getStazione().equals(dest)){
-                return true;
-            }else if((currentStop.getTime() > stopTime))
+            Stop currentStop = cache.get(tp.currentNode());   
+            if(currentStop.nextInRun != null || currentStop.nextInStation != null){
+            	return true;
+            } else if((currentStop.getTime() > stopTime)){
                 return true;    
-            else
-                return false;            
+            }else{
+                return false;
+            }
         }
     }   
 }
