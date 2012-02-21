@@ -45,7 +45,7 @@ public class ShortestPath8 {
     		DbConnection.createEmbeddedDbConnection();
     		db = DbConnection.getDb();
     		
-            int time = 330;     //9h00
+            int time = 670;     //9h00
             Station s1 = Stations.getStations().getStationById(70);
             Station s2 = Stations.getStations().getStationById(1);
                 
@@ -72,8 +72,8 @@ public class ShortestPath8 {
 //                myShortest mysp = new myShortest(firstStop, s2, 1440);
 //                myShortestGeo mysp = new myShortestGeo(firstStop, s2, 1440);
   
-        	double lat1 = 42.35177;
-        	double lon1 = 13.30727;
+        	double lat1 = 42.37986;
+        	double lon1 = 13.298555;
         	
         	double lat2 = 42.34287;
         	double lon2 = 13.46247;

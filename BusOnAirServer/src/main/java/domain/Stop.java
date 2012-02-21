@@ -115,6 +115,12 @@ public class Stop extends StopAbstract{
 
     @Override
     public boolean equals(final Object otherStop){
+    	if(otherStop == null)
+    		return false;
+    	
+    	if (otherStop instanceof TransientStop)
+    		return false;
+    	
         if (otherStop instanceof Stop){
             return underlyingNode.equals(((Stop) otherStop).getUnderlyingNode());
         }

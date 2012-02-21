@@ -19,7 +19,16 @@ TODO:
         source.numeroCambi = 0;
         TransientStop comparator
         gestione dei nodi Transientstop nella cache
-        riscrivere loadsubgraph considerando nextwalk e prevwkal ( per i transientstop) 
+        riscrivere loadsubgraph considerando nextwalk e prevwkal ( per i transientstop)
+        
+         PARTENZA:
+         - creare uno stop transient per ogni possibile walk verso le vicine stazioni
+         - questi stop avranno:
+         		- come tempo il tempo di inizio della walk
+         		- come nextinstation il primo stop nella stazione di arrivo della walk ke sia possibile prendere
+				- applicare l'algo standard, facendo attenzione al numero di cambi contato nei primi passi
+				
+				
 */
 
 package myShortest;
@@ -30,8 +39,15 @@ import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
+
+import json.Coordinate;
+import json.DirectionRoute;
+import json.DirectionWalk;
+
 import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.*;
 
@@ -62,15 +78,20 @@ public class myShortestGeo {
         this.lat2 = lat2;
         this.lon2 = lon2;
         this.walkLimit = walkLimit;
-        startQueue = new PriorityQueue<TransientStop>();
+        startQueue = new PriorityQueue<TransientStop>(10, new TransientStopComparator());
         arrivalQueue = new PriorityQueue<Direction>(10, new DirectionComparator());        
     }
     
     public StopMediator shortestPath(){
     	
     	createStartStops();
+//    	System.out.print("\n\n**** startQueue ****");
+//    	for(TransientStop ts : startQueue){
+//    		System.out.print("\n" + ts);
+//    	}
+    	
     	for(TransientStop ts : startQueue){
-    		loadSubgraph(ts);
+    		loadSubgraph(ts.nextWalk);
     	}
             
         topologicalVisit();
@@ -110,7 +131,7 @@ public class myShortestGeo {
 	            Stop arr = arrivo;
 	            while(arr.prevSP != null){
 	                arr = arr.prevSP;
-	                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
+	                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
 	            }
 	        }
 	        strPath = strPath + "\n\n" + outPath; 
@@ -172,19 +193,23 @@ public class myShortestGeo {
 	private void createStartStops() {
 		Collection<Station> startStations = Stations.getStations().nearestStations(lat1, lon1, walkLimit);
 		
-		System.out.print("\nLnked start stations: " + startStations.size());
+//		System.out.print("\nLinked start stations: " + startStations.size());
 		for(Station s : startStations){
+//			System.out.println("\n");
+//			System.out.println(s);
+//			System.out.println("\n");
 			double distance = GeoUtil.getDistance2(lat1, lon1, s.getLatitude(), s.getLongitude());
 			int walktime = (int) (distance / 5.0 * 60);
 			Stop startStop = s.getFirstStopsFromTime(startTime + walktime);
 			startStop = cache.get(startStop);
-			System.out.print("\nstartStop: " + startStop);
+//			System.out.print("\nstartStop: " + startStop);
 			
 			TransientStop ts = new TransientStop();
 			ts.setTime(startStop.getTime() - walktime);
 			ts.nextWalk = startStop;
-			startStop.nextWalk = ts;
-			
+			ts.setStazione(s);
+			startStop.prevWalk = ts;
+
 			startQueue.add(ts);			
 		}	
 	}
@@ -193,10 +218,10 @@ public class myShortestGeo {
     	// al momento linka solo il primo stop di ogni stazione più vicina di walkLimit meters
 		Collection<Station> arrivalStations = Stations.getStations().nearestStations(lat2, lon2, walkLimit);
 		
-		System.out.print("\nLnked stations: " + arrivalStations.size());
+//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
 		for(Station s : arrivalStations){
 			Stop arrivalStop = getShortestPath(s);
-			System.out.print("\nsp: " + arrivalStop);
+//			System.out.print("\nsp: " + arrivalStop);
 			arrivalQueue.add(new Direction(arrivalStop, lat2, lon2));			
 		}		
 	}
@@ -214,29 +239,33 @@ public class myShortestGeo {
                 org.neo4j.graphdb.Direction.OUTGOING);
         
         for (Node n : graphTrav){
-            Stop s = cache.get(n);
-            Stop nir = s.getNextInRun();
-            Stop nis = s.getNextInStation();
-            
-//            if(s.getStazione().equals(dest)){
-//                nir = null;
-//                nis = null;                
-//            }
-            
-            if(nir != null){
-                nir = cache.get(nir);      
-                s.nextInRun = nir;
-                nir.prevInRun = s;
-            }
-            
-            if(nis != null){
-                nis = cache.get(nis);
-                s.nextInStation = nis;
-                nis.prevInStation = s;                    
-            }
+        	connectNode(cache.get(n));
         }        
     }
     
+	private void connectNode(Stop s){
+        Stop nir = s.getNextInRun();
+        Stop nis = s.getNextInStation();
+        
+//        if(s.getStazione().equals(dest)){
+//            nir = null;
+//            nis = null;                
+//        }
+        
+        if(nir != null){
+            nir = cache.get(nir);      
+            s.nextInRun = nir;
+            nir.prevInRun = s;
+        }
+        
+        if(nis != null){
+            nis = cache.get(nis);
+            s.nextInStation = nis;
+            nis.prevInStation = s;                    
+        }		
+	}
+	
+	
     public void topologicalVisit(){
 
         Stack<Stop> toVisit = new Stack<Stop>();
@@ -249,6 +278,7 @@ public class myShortestGeo {
             Stop s = toVisit.pop();
             Stop nir = s.nextInRun;
             Stop nis = s.nextInStation;
+            Stop niw = s.nextWalk;
                         
             if(nir != null){
                 // UPDATE Shortest path e cambi
@@ -262,7 +292,7 @@ public class myShortestGeo {
 
                 // Gestione visita topologica
                 nir.prevInRun = null;
-                if(nir.prevInStation == null){
+                if(nir.prevInStation == null && nir.prevWalk == null){
                     toVisit.push(nir);
                 }
             }
@@ -285,10 +315,30 @@ public class myShortestGeo {
 
                 // Gestione visita topologica
                 nis.prevInStation = null;
-                if(nis.prevInRun == null){
+                if(nis.prevInRun == null && nis.prevWalk == null){
                     toVisit.push(nis);
                 }            
             }
+            
+            
+            if(niw != null){
+                // UPDATE Shortest path e cambi
+                if(niw.prevSP == null){
+                    niw.prevSP = s;
+                    niw.numeroCambi = s.numeroCambi;
+                } else if(s.numeroCambi < niw.numeroCambi){
+                    niw.prevSP = s;
+                    niw.numeroCambi = s.numeroCambi;
+                }
+
+                // Gestione visita topologica
+                niw.prevWalk = null;
+                if(niw.prevInStation == null && niw.prevInRun == null){
+                    toVisit.push(niw);
+                }
+            }
+            
+            
         }
     }            
     
@@ -308,4 +358,57 @@ public class myShortestGeo {
             }
         }
     }   
+
+
+     public json.Directions getDirections(){
+    	 json.Directions output = new json.Directions();
+    	 for(Direction dir : arrivalQueue)
+    		 output.add(getDirection(dir));
+    	 
+    	 return output;
+     }
+     
+     public json.Direction getDirection(Direction dir) {
+    	 
+    	json.Direction output = new json.Direction();
+//		int departureTime;
+//		int arrivalTime;	//OK
+//		int numChanges;		//OK
+//		int minChangeTime;
+//		List<DirectionRoute> dirRoute = new LinkedList<DirectionRoute>();
+//	    List<DirectionWalk> dirWalk = new LinkedList<DirectionWalk>();
+    	 
+ 		Stop arrivo = dir.getStop();
+ 		Station s_arrivo = arrivo.getStazione();
+
+	    output.getWalks().add(new DirectionWalk(
+	    		false, 
+	    		dir.getWalkTime(), 
+	    		(int) dir.getDistance() * 1000, 
+	    		new json.Coordinate(s_arrivo.getLatitude(), s_arrivo.getLongitude()), 
+	    		new json.Coordinate(dir.getLat(), dir.getLon())));
+	    
+    	output.setArrivalTime(dir.getArrivalTime());
+    	output.setNumChanges(dir.getNumChanges());
+    	
+
+    	Stop tmp, prevtmp;
+    	tmp = arrivo;
+    	prevtmp = tmp.prevSP;
+    	while(!prevtmp.getType().equals("TransientStop") && !prevtmp.getNextInRun().equals(tmp)){
+    		
+    	}
+
+//        while(arr.prevSP != null){
+//            arr = arr.prevSP;
+//            outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
+//        }
+//        strPath = strPath + "\n\n" + outPath; 
+// 	
+// 	
+//         return strPath;
+
+    	return output;
+     }     
+
 }

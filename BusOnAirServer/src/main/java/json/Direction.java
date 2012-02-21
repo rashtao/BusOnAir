@@ -55,7 +55,7 @@ public class Direction
     	return departureTime;
     }
     
-    void setDepartureTime(int departureTime){
+    public void setDepartureTime(int departureTime){
     	this.departureTime = departureTime;
     }
 
@@ -63,7 +63,7 @@ public class Direction
     	return arrivalTime;
     }
     
-    void setArrivalTime(int arrivalTime){
+    public void setArrivalTime(int arrivalTime){
     	this.arrivalTime = arrivalTime;
     }
 
@@ -71,7 +71,7 @@ public class Direction
     	return numChanges;
     }
     
-    void getNumChanges(int numChanges){
+    public void setNumChanges(int numChanges){
     	this.numChanges = numChanges;
     }
 
@@ -79,8 +79,10 @@ public class Direction
     	return minChangeTime;
     }
     
-    void setMinChangeTime(int minChangeTime){
+    public void setMinChangeTime(int minChangeTime){
     	this.minChangeTime = minChangeTime;
     }
+    
+    
 
 }
