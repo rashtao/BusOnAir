@@ -12,23 +12,6 @@
  * 		int minChangeTime, 
  * 		String criterion, 
  * 		int timeLimit)
-
-
-
-TODO:
-        source.numeroCambi = 0;
-        TransientStop comparator
-        gestione dei nodi Transientstop nella cache
-        riscrivere loadsubgraph considerando nextwalk e prevwkal ( per i transientstop)
-        
-         PARTENZA:
-         - creare uno stop transient per ogni possibile walk verso le vicine stazioni
-         - questi stop avranno:
-         		- come tempo il tempo di inizio della walk
-         		- come nextinstation il primo stop nella stazione di arrivo della walk ke sia possibile prendere
-				- applicare l'algo standard, facendo attenzione al numero di cambi contato nei primi passi
-				
-				
 */
 
 package myShortest;
@@ -126,13 +109,17 @@ public class myShortestGeo {
     		Stop arrivo = dir.getStop();
 	        if(arrivo != null){
 	        	outPath = "(WALK: t:" + dir.getWalkTime() + "|arrtime:" + dir.getArrivalTime() + "|distwalk:" + dir.getDistance() + "|numchanges:" + dir.getNumChanges() + ")";
-	            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":TIME" + arrivo.getTime() + ")-->" + outPath;
+	            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":RUNID" + arrivo.getRun().getId() + ":TIME" + arrivo.getTime() + ")-->" + outPath;
 	
 	            Stop arr = arrivo;
+	            arr = arr.prevSP;
 	            while(arr.prevSP != null){
+	                
+	                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":RUNID" + (arr.getRun() != null ? arr.getRun().getId() : "NN") + ":TIME" + arr.getTime() + ")-->" + outPath;                
 	                arr = arr.prevSP;
-	                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
 	            }
+                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":RUNID" + "NN" + ":TIME" + arr.getTime() + ")-->" + outPath;                
+
 	        }
 	        strPath = strPath + "\n\n" + outPath; 
     	}
@@ -215,7 +202,7 @@ public class myShortestGeo {
 	}
     
     private void linkArrivalPoint() {
-    	// al momento linka solo il primo stop di ogni stazione più vicina di walkLimit meters
+    	// al momento linka solo il primo stop di ogni stazione più vicina di walkLimit meters (nb non ritorna tutti gli ottimi di pareto)
 		Collection<Station> arrivalStations = Stations.getStations().nearestStations(lat2, lon2, walkLimit);
 		
 //		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
@@ -337,8 +324,6 @@ public class myShortestGeo {
                     toVisit.push(niw);
                 }
             }
-            
-            
         }
     }            
     
@@ -369,14 +354,8 @@ public class myShortestGeo {
      }
      
      public json.Direction getDirection(Direction dir) {
-    	 
+//    	System.out.print("\ngetDirection( " + dir); 
     	json.Direction output = new json.Direction();
-//		int departureTime;
-//		int arrivalTime;	//OK
-//		int numChanges;		//OK
-//		int minChangeTime;
-//		List<DirectionRoute> dirRoute = new LinkedList<DirectionRoute>();
-//	    List<DirectionWalk> dirWalk = new LinkedList<DirectionWalk>();
     	 
  		Stop arrivo = dir.getStop();
  		Station s_arrivo = arrivo.getStazione();
@@ -384,29 +363,76 @@ public class myShortestGeo {
 	    output.getWalks().add(new DirectionWalk(
 	    		false, 
 	    		dir.getWalkTime(), 
-	    		(int) dir.getDistance() * 1000, 
+	    		(int) (dir.getDistance() * 1000.0), 
 	    		new json.Coordinate(s_arrivo.getLatitude(), s_arrivo.getLongitude()), 
-	    		new json.Coordinate(dir.getLat(), dir.getLon())));
+	    		new json.Coordinate(dir.getLat(), dir.getLon()),
+	    		s_arrivo.getId()));
 	    
     	output.setArrivalTime(dir.getArrivalTime());
     	output.setNumChanges(dir.getNumChanges());
-    	
 
     	Stop tmp, prevtmp;
     	tmp = arrivo;
-    	prevtmp = tmp.prevSP;
-    	while(!prevtmp.getType().equals("TransientStop") && !prevtmp.getNextInRun().equals(tmp)){
-    		
+    	while(tmp.prevSP != null){
+    		tmp = tmp.prevSP;
     	}
+    	
+    	Station depStat = tmp.getStazione();
+    	
+    	
+    	
+    	tmp = arrivo;
+    	prevtmp = tmp.prevSP;
+    	
 
-//        while(arr.prevSP != null){
-//            arr = arr.prevSP;
-//            outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
-//        }
-//        strPath = strPath + "\n\n" + outPath; 
-// 	
-// 	
-//         return strPath;
+    	
+    	while(prevtmp != null){
+	    	while(prevtmp != null && tmp.equals(prevtmp.getNextInRun())){
+//	    		System.out.print("\ntmp: " + tmp);
+//	    		System.out.print("\nprevtmp: " + prevtmp);
+	    		
+	    		tmp = prevtmp;
+	    		prevtmp = prevtmp.prevSP;
+	    	}
+	    	
+	    	if(prevtmp != null){
+	    		output.getRoutes().add(new DirectionRoute(tmp, arrivo));
+	    		if(!depStat.equals(tmp.getStazione())){		// è un cambio
+			    	output.getWalks().add(new DirectionWalk(
+			    			true, 
+			    			tmp.getTime() - prevtmp.getTime(), 
+			    			0, 
+			    			new json.Coordinate(tmp.getStazione().getLatitude(), tmp.getStazione().getLongitude()),
+			    			new json.Coordinate(tmp.getStazione().getLatitude(), tmp.getStazione().getLongitude()),
+			    			tmp.getStazione().getId()));
+	    		} else {		// è la prima walk
+	    			Coordinate coord1 = new json.Coordinate(lat1, lon1);
+	    			Coordinate coord2 = new json.Coordinate(prevtmp.getStazione().getLatitude(), prevtmp.getStazione().getLongitude());
+	    			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
+	    			int walktime = (int) (dist / 5.0 * 60);
+	    			
+	    			output.getWalks().add(new DirectionWalk(
+		    	    		false, 
+		    	    		walktime, 
+		    	    		(int) (dist * 1000.0), 
+		    	    		coord1, 
+		    	    		coord2,
+		    	    		prevtmp.getStazione().getId()));
+	    			output.setDepartureTime(prevtmp.getTime() - walktime);
+	    			
+		    	    prevtmp = null;
+	    		}
+	    		
+	    		while(tmp.prevSP != null && tmp.equals(tmp.prevSP.nextInStation)){
+		    		tmp = tmp.prevSP;
+	    		}
+	    		
+	    		if(prevtmp != null){
+					prevtmp = tmp.prevSP;
+					arrivo = tmp;
+	    		}
+	    	}
+    	}
 
     	return output;
      }     

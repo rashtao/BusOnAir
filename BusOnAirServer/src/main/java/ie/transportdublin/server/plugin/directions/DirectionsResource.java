@@ -25,6 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import myShortest.myShortest;
+import myShortest.myShortestGeo;
 
 import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Transaction;
@@ -61,6 +62,35 @@ public class DirectionsResource
         DbConnection.createDbConnection(database);
     }
 
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/getdirections" )
+    public Response getDirections( 
+    		@QueryParam( "lat1" ) Double lat1,
+            @QueryParam( "lon1" ) Double lon1,
+            @QueryParam( "lat2" ) Double lat2,
+            @QueryParam( "lon2" ) Double lon2, 
+            @QueryParam( "departuretime" ) Integer departuretime,
+            @QueryParam( "minchangetime" ) Integer minchangetime,
+            @QueryParam( "criterion" ) String criterion,
+            @QueryParam( "timelimit" ) Integer timelimit) throws IOException{
+
+    	log.write("\ngetDirection?lat1=" + lat1 + "&lon1=" + lon1 + "&lat2=" + lat2 + "&lon2=" + lon2 + "&departuretime=" + departuretime + "&minchangetime=" + minchangetime + "&criterion=" + criterion + "&timelimit=" + timelimit);
+        log.flush();
+        
+        if ( lat1 == null)
+            return Response.status( 400 ).entity( "lat1 cannot be blank" ).build();
+           	
+        //... controlli input ...
+        
+    	myShortestGeo mysp = new myShortestGeo(departuretime, timelimit, lat1, lon1, lat2, lon2, 1000);
+        mysp.shortestPath(); 
+        json.Directions directs = mysp.getDirections();        
+    	
+    	return Response.ok().entity(directs).build();
+    	
+    }
+    
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/" )

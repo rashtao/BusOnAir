@@ -11,6 +11,7 @@ public class DirectionWalk
     private int distance;
     private Coordinate departure;
     private Coordinate arrival;
+    public int stazId;
     
     public DirectionWalk()
     {
@@ -25,6 +26,11 @@ public class DirectionWalk
     	this.arrival = arrival;
     }
 
+    public DirectionWalk( boolean isChange, int duration, int distance, Coordinate departure, Coordinate arrival, int stazId){
+    	this(isChange, duration, distance, departure, arrival);
+    	this.stazId = stazId;
+    }
+    
 	public boolean isChange() {
 		return isChange;
 	}
@@ -64,4 +70,19 @@ public class DirectionWalk
 	public void setArrival(Coordinate arrival) {
 		this.arrival = arrival;
 	}
+	
+    @Override
+	public String toString(){
+		return ("\nDirectionWalk: " +
+				"\n\tisChange: " + isChange + 
+				"\n\tduration: " + duration + 
+				"\n\tdistance: " + distance +
+				"\n\tlatdep: " + departure.getLat() + 
+				"\n\tlondep: " + departure.getLon() + 
+				"\n\tlatarr: " + arrival.getLat() + 
+				"\n\tlonarr: " + arrival.getLon() + 
+				"\n\tstazId: " + stazId); 
+  
+    }	
+   
 }

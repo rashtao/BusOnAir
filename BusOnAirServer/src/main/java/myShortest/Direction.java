@@ -56,4 +56,14 @@ public class Direction {
 		return stop.numeroCambi;
 	}
 	
+  @Override
+	public String toString(){
+		return ("Direction: " +
+			"\n\tstop: " + stop + 
+			"\n\tlatitude: " + lat +
+			"\n\tlongitude: " + lon);
+  		
+  }
+	
+	
 }

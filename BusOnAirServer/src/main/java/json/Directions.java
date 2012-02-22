@@ -21,4 +21,7 @@ public class Directions
         directionsList.add( direction );
     }
 
+    public List<Direction> getDirectionsList(){
+    	return directionsList;
+    }
 }

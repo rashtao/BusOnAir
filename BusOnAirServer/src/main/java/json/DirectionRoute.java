@@ -41,6 +41,12 @@ public class DirectionRoute
     public void setArrival( String arrival){
         this.arrival = arrival;
     }
-
-
+    
+    @Override
+	public String toString(){
+		return ("\nDirectionRoute: " +
+				"\n\tdep: " + departure + 
+				"\n\tarr: " + arrival); 
+  
+    }	    
 }

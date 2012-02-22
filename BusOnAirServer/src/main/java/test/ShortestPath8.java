@@ -18,6 +18,8 @@ import domain.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
+
+import json.Directions;
 import myShortest.StopMediator;
 import myShortest.myShortest;
 import myShortest.myShortestGeo;
@@ -72,14 +74,20 @@ public class ShortestPath8 {
 //                myShortest mysp = new myShortest(firstStop, s2, 1440);
 //                myShortestGeo mysp = new myShortestGeo(firstStop, s2, 1440);
   
-        	double lat1 = 42.37986;
+        	double lat1 = 42.3799;
         	double lon1 = 13.298555;
         	
-        	double lat2 = 42.34287;
-        	double lon2 = 13.46247;
+        	double lat2 = 42.34300;
+        	double lon2 = 13.46300;
 
         	myShortestGeo mysp = new myShortestGeo(time, 1400, lat1, lon1, lat2, lon2, 1000);
-            mysp.shortestPath();
+            mysp.shortestPath(); 
+            json.Directions directs = mysp.getDirections();
+            for(json.Direction d : directs.getDirectionsList()){
+            	System.out.print(d);
+            }
+            
+            
 
                 
 //                Stop arrivo = mysp.getShortestPath();
