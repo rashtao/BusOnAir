@@ -7,27 +7,31 @@ public class DirectionRoute
 {
     private String departure;
     private String arrival;
-    
+
     public DirectionRoute( )
     {        
     }
 
-    public DirectionRoute(String departure, String arrival){
+    private DirectionRoute(int departure, int arrival){
     	super();
-		this.departure = departure;
-		this.arrival = arrival;
+		setDeparture(departure);
+		setArrival(arrival);
     }   
     
-    public DirectionRoute(Stop dep, Stop arr){
-    	this("/stops/" + dep.getStopId(), "/stops/" + arr.getStopId());
+    private DirectionRoute(Stop dep, Stop arr){
+    	this(dep.getStopId(), arr.getStopId());
     }
     
     public DirectionRoute(domain.Stop dep, domain.Stop arr){
-    	this("/stops/" + dep.getId(), "/stops/" + arr.getId());
+    	this(dep.getId(), arr.getId());
     }
 
     public String getDeparture(){
-        return departure;
+        return "/stops/" + departure;
+    }
+
+    public void setDeparture( Integer departure ){
+        this.departure = departure.toString();
     }
 
     public void setDeparture( String departure ){
@@ -35,12 +39,26 @@ public class DirectionRoute
     }
 
     public String getArrival(){
-        return arrival;
+        return "/stops/" + arrival;
     }
 
+    public void setArrival( Integer arrival){
+        this.arrival = arrival.toString();
+    }
+    
     public void setArrival( String arrival){
         this.arrival = arrival;
     }
+    
+    public int getDepId(){
+    	return Integer.parseInt(departure);
+    }
+    
+    public int getArrId(){
+    	return Integer.parseInt(arrival);
+    }
+    
+    
     
     @Override
 	public String toString(){

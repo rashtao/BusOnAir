@@ -4,6 +4,7 @@ import domain.DbConnection;
 import domain.Station;
 import domain.Stations;
 import domain.Stop;
+import domain.Stops;
 import ie.transportdublin.server.plugin.json.Directions;
 import ie.transportdublin.server.plugin.json.DirectionsList;
 import ie.transportdublin.server.plugin.json.DirectionsRoute;
@@ -13,6 +14,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -24,6 +26,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import json.DirectionRoute;
+import json.DirectionWalk;
+import myShortest.StopMediator;
 import myShortest.myShortest;
 import myShortest.myShortestGeo;
 
@@ -73,17 +79,23 @@ public class DirectionsResource
             @QueryParam( "departuretime" ) Integer departuretime,
             @QueryParam( "minchangetime" ) Integer minchangetime,
             @QueryParam( "criterion" ) String criterion,
-            @QueryParam( "timelimit" ) Integer timelimit) throws IOException{
+            @QueryParam( "timelimit" ) Integer timelimit,
+            @QueryParam( "maxwalkdistance" ) Integer maxwalkdistance) throws IOException{
 
     	log.write("\ngetDirection?lat1=" + lat1 + "&lon1=" + lon1 + "&lat2=" + lat2 + "&lon2=" + lon2 + "&departuretime=" + departuretime + "&minchangetime=" + minchangetime + "&criterion=" + criterion + "&timelimit=" + timelimit);
         log.flush();
         
-        if ( lat1 == null)
-            return Response.status( 400 ).entity( "lat1 cannot be blank" ).build();
+        if ( lat1 == null || lon1 == null || lat2 == null || lon2 == null || departuretime == null)
+            return Response.status( 400 ).entity( "lat1, lon1, lat2, lon2, departuretime cannot be blank" ).build();
            	
-        //... controlli input ...
+
+        if(maxwalkdistance == null)
+        	maxwalkdistance = new Integer(1000);
         
-    	myShortestGeo mysp = new myShortestGeo(departuretime, timelimit, lat1, lon1, lat2, lon2, 1000);
+        if(timelimit == null)
+        	timelimit = new Integer(600);
+        
+    	myShortestGeo mysp = new myShortestGeo(departuretime, timelimit, lat1, lon1, lat2, lon2, maxwalkdistance);
         mysp.shortestPath(); 
         json.Directions directs = mysp.getDirections();        
     	
@@ -94,152 +106,221 @@ public class DirectionsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/" )
-    public Response directions( @QueryParam( "lat1" ) double lat1,
+    public Response directions( 
+    		@QueryParam( "lat1" ) double lat1,
             @QueryParam( "lon1" ) double lon1,
             @QueryParam( "lat2" ) double lat2,
-            @QueryParam( "lon2" ) double lon2, @QueryParam( "time" ) double time )
+            @QueryParam( "lon2" ) double lon2, 
+            @QueryParam( "time" ) double time ) throws IOException
     {
         if ( lat1 == 0 || lat1 == 0 || lon1 == 0 || lon2 == 0 || time==0 )
             return Response.serverError().entity( "params cannot be blank" ).build();
         
-        tx = database.graph.beginTx();
-//        DirectionsList  directionsList =null;
-        DirectionsList  directionsList2  = new DirectionsList();
+    	log.write("\ngetDirection?lat1=" + lat1 + "&lon1=" + lon1 + "&lat2=" + lat2 + "&lon2=" + lon2 + "&time=" + time);
+        log.flush();
         
-        try
-        {            
-            int tempo = (int) time;
-            Station s1 = Stations.getStations().nearestStation(lat1, lon1);
-            Station s2 = Stations.getStations().nearestStation(lat2, lon2);
-            if(s1 == null || s2 == null){
-                return Response.ok().entity( null ).build();
-            }            
-            
-            double dist1 = GeoUtil.getDistance2(
-                    lat1, 
-                    lon1,
-                    s1.getLatitude(), 
-                    s1.getLongitude());
-            
-            double dist2 = GeoUtil.getDistance2(
-                    s2.getLatitude(), 
-                    s2.getLongitude(),
-                    lat2, 
-                    lon2);
-            
-            int walkingtime1 = (int) (dist1 / 4.5 * 60);
-            int walkingtime2 = (int) (dist2 / 4.5 * 60);
-            
-            Stop firstStop = s1.getFirstStopsFromTime(tempo + walkingtime1);
-            
-            if(firstStop == null){
-                //return Response.serverError().entity( "there are no buses" ).build();
-                return Response.ok().entity( null ).build();
-            }
-            myShortest mysp = new myShortest(firstStop, s2, 600);
-            mysp.shortestPath();
-            
-            Stop arrivo = mysp.getShortestPath();
-            if(arrivo == null){
-                //return Response.serverError().entity( "there are no buses" ).build();
-                return Response.ok().entity( null ).build();
-            }
-            
-            Stop s = arrivo;
-            
-            List<DirectionsRoute> routes = new ArrayList<DirectionsRoute>();
-            List<DirectionsWalk> walks = new ArrayList<DirectionsWalk>();      
-            
-            Stack<DirectionsRoute> routesStack = new Stack<DirectionsRoute>();
-            Stack<DirectionsWalk> walkStack = new Stack<DirectionsWalk>();
+    	myShortestGeo mysp = new myShortestGeo((int) time, 1000, lat1, lon1, lat2, lon2, 500);
+        StopMediator cache = mysp.shortestPath(); 
+        json.Directions directs = mysp.getDirections();      
+        
+        DirectionsList  directionsList2  = new DirectionsList();
 
+        if(directs.getDirectionsList().size() == 0){
+            return Response.ok().entity( null ).build();
+        }
 
+        json.Direction sp = directs.getDirectionsList().iterator().next();
+        List<json.DirectionRoute> routesDirection = sp.getRoutes();
+        List<json.DirectionWalk> walksDirection = sp.getWalks();
+        Collections.reverse(routesDirection);
+        Collections.reverse(walksDirection);
+        
+        List<DirectionsRoute> routes = new ArrayList<DirectionsRoute>();
+        List<DirectionsWalk> walks = new ArrayList<DirectionsWalk>();      
+
+        for(json.DirectionRoute rd : routesDirection){
+        	domain.Stop s1 = cache.get(Stops.getStops().getStopById(rd.getDepId()));
+        	domain.Stop s2 = cache.get(Stops.getStops().getStopById(rd.getArrId()));
+        	log.write("\n" + s1);
+        	log.write("\n" + s2);
+            log.flush();
+        	routes.add(new DirectionsRoute(s1, s2));
+        }
+        
+        for(json.DirectionWalk rw : walksDirection){
             walks.add(new DirectionsWalk(
-                    lat1,
-                    lon1,
-                    firstStop.getStazione().getLatitude(),
-                    firstStop.getStazione().getLongitude(),
-                    walkingtime1));      
-            
-            
+                    rw.getDeparture().getLat(),
+                    rw.getDeparture().getLon(),
+                    rw.getArrival().getLat(),
+                    rw.getArrival().getLon(),
+                    rw.getDuration()));            	
+        }
+        
 
-            
-            Stop arr = arrivo;
-
-
-            int i = 0;
-            while(s != null && !s.getStazione().equals(firstStop.getStazione())){
-                
-                while(s.prevSP != null && !s.getStazione().equals(s.prevSP.getStazione())){
-                    s = s.prevSP;
-                }
-            
-                routesStack.push(new DirectionsRoute(s, arr));
-                            
-                if(i > 0){
-                    walkStack.push(new DirectionsWalk(
-                        arr.getStazione().getLatitude(),
-                        arr.getStazione().getLongitude(),
-                        arr.getStazione().getLatitude(),
-                        arr.getStazione().getLongitude(),
-                        0));
-                }
-                
-                while(s.prevSP != null && s.getStazione().equals(s.prevSP.getStazione())){
-                    s = s.prevSP;
-                }
-
-                arr = s;
-                i++;
-            
-            }
-            
-            
-            while(!routesStack.isEmpty()){
-                routes.add(routesStack.pop());
-            }
-            
-            while(!walkStack.isEmpty()){
-                walks.add(walkStack.pop());
-            }
-            
-            walks.add(new DirectionsWalk(
-                    arrivo.getStazione().getLatitude(),
-                    arrivo.getStazione().getLongitude(),
-                    lat2,
-                    lon2,
-                    walkingtime2));            
-
-            
             directionsList2.add(new Directions(routes, walks));
             
-            
-            
-            
-            
-//            WeightedPath path = threeLayeredTraverserShortestPath.findShortestPath( lat1, lon1, lat2, lon2, time );
-//            
-//            if ( path != null )
-//            {
-//                DirectionsGenerator directionsGenerator = new DirectionsGenerator( path );
-//                if ( path.length() == 3 )
-//                    directionsList = directionsGenerator.convertOneBusPath( path, time );
-//                else
-//                    directionsList = directionsGenerator.convertTwoBusPath( path, time );
-//            }
-            tx.success();
-        }
-        finally
-        {
-            tx.finish();
-        }
-        
-        
-//        String respo = "{\"directionslist\":[{\"routes\":[{\"arrStation\":\"viasaragat(aquilone)\",\"arrTime\":\"997\",\"deptStation\":\"terminalbus\",\"deptTime\":\"990\",\"latLon\":[{\"lat\":42.34453,\"lon\":13.4011},{\"lat\":42.35608,\"lon\":13.3415},{\"lat\":42.3504,\"lon\":13.34718}],\"numOfStops\":2,\"routeId\":\"12\"},{\"arrStation\":\"universitÃ coppito\",\"arrTime\":\"1008\",\"deptStation\":\"viasaragat(aquilone)\",\"deptTime\":\"1000\",\"latLon\":[{\"lat\":42.3504,\"lon\":13.34718},{\"lat\":42.33031,\"lon\":13.48218},{\"lat\":42.36211,\"lon\":13.34721},{\"lat\":42.37025,\"lon\":13.34146},{\"lat\":42.3678,\"lon\":13.35246}],\"numOfStops\":4,\"routeId\":\"M5\"}],\"walks\":[{\"distance\":5,\"latLon\":[{\"lat\":42.32673192118198,\"lon\":13.399821635131957},{\"lat\":42.34453,\"lon\":13.4011}]},{\"distance\":5,\"latLon\":[{\"lat\":42.3504,\"lon\":13.34718},{\"lat\":42.3504,\"lon\":13.34718}]},{\"distance\":5,\"latLon\":[{\"lat\":42.3678,\"lon\":13.35246},{\"lat\":42.37259394258441,\"lon\":13.360768671875121}]}]}]}";
-//        Response resp = Response.ok(respo).type("text/xml").build();
 
         Response resp = Response.ok().entity( directionsList2 ).build();
         
         return resp;
     }
+
+
+//    @GET
+//    @Produces( MediaType.APPLICATION_JSON )
+//    @Path( "/" )
+//    public Response directions( 
+//    		@QueryParam( "lat1" ) double lat1,
+//            @QueryParam( "lon1" ) double lon1,
+//            @QueryParam( "lat2" ) double lat2,
+//            @QueryParam( "lon2" ) double lon2, 
+//            @QueryParam( "time" ) double time )
+//    {
+//        if ( lat1 == 0 || lat1 == 0 || lon1 == 0 || lon2 == 0 || time==0 )
+//            return Response.serverError().entity( "params cannot be blank" ).build();
+//        
+//        tx = database.graph.beginTx();
+//        //la transaction migliora le performance, anche se non sarebbe necessaria
+//        
+//        
+////        DirectionsList  directionsList =null;
+//        DirectionsList  directionsList2  = new DirectionsList();
+//        
+//        try
+//        {            
+//            int tempo = (int) time;
+//            Station s1 = Stations.getStations().nearestStation(lat1, lon1);
+//            Station s2 = Stations.getStations().nearestStation(lat2, lon2);
+//            if(s1 == null || s2 == null){
+//                return Response.ok().entity( null ).build();
+//            }            
+//            
+//            double dist1 = GeoUtil.getDistance2(
+//                    lat1, 
+//                    lon1,
+//                    s1.getLatitude(), 
+//                    s1.getLongitude());
+//            
+//            double dist2 = GeoUtil.getDistance2(
+//                    s2.getLatitude(), 
+//                    s2.getLongitude(),
+//                    lat2, 
+//                    lon2);
+//            
+//            int walkingtime1 = (int) (dist1 / 4.5 * 60);
+//            int walkingtime2 = (int) (dist2 / 4.5 * 60);
+//            
+//            Stop firstStop = s1.getFirstStopsFromTime(tempo + walkingtime1);
+//            
+//            if(firstStop == null){
+//                //return Response.serverError().entity( "there are no buses" ).build();
+//                return Response.ok().entity( null ).build();
+//            }
+//            myShortest mysp = new myShortest(firstStop, s2, 600);
+//            mysp.shortestPath();
+//            
+//            Stop arrivo = mysp.getShortestPath();
+//            if(arrivo == null){
+//                //return Response.serverError().entity( "there are no buses" ).build();
+//                return Response.ok().entity( null ).build();
+//            }
+//            
+//            Stop s = arrivo;
+//            
+//            List<DirectionsRoute> routes = new ArrayList<DirectionsRoute>();
+//            List<DirectionsWalk> walks = new ArrayList<DirectionsWalk>();      
+//            
+//            Stack<DirectionsRoute> routesStack = new Stack<DirectionsRoute>();
+//            Stack<DirectionsWalk> walkStack = new Stack<DirectionsWalk>();
+//
+//
+//            walks.add(new DirectionsWalk(
+//                    lat1,
+//                    lon1,
+//                    firstStop.getStazione().getLatitude(),
+//                    firstStop.getStazione().getLongitude(),
+//                    walkingtime1));      
+//            
+//            
+//
+//            
+//            Stop arr = arrivo;
+//
+//
+//            int i = 0;
+//            while(s != null && !s.getStazione().equals(firstStop.getStazione())){
+//                
+//                while(s.prevSP != null && !s.getStazione().equals(s.prevSP.getStazione())){
+//                    s = s.prevSP;
+//                }
+//            
+//                routesStack.push(new DirectionsRoute(s, arr));
+//                            
+//                if(i > 0){
+//                    walkStack.push(new DirectionsWalk(
+//                        arr.getStazione().getLatitude(),
+//                        arr.getStazione().getLongitude(),
+//                        arr.getStazione().getLatitude(),
+//                        arr.getStazione().getLongitude(),
+//                        0));
+//                }
+//                
+//                while(s.prevSP != null && s.getStazione().equals(s.prevSP.getStazione())){
+//                    s = s.prevSP;
+//                }
+//
+//                arr = s;
+//                i++;
+//            
+//            }
+//            
+//            
+//            while(!routesStack.isEmpty()){
+//                routes.add(routesStack.pop());
+//            }
+//            
+//            while(!walkStack.isEmpty()){
+//                walks.add(walkStack.pop());
+//            }
+//            
+//            walks.add(new DirectionsWalk(
+//                    arrivo.getStazione().getLatitude(),
+//                    arrivo.getStazione().getLongitude(),
+//                    lat2,
+//                    lon2,
+//                    walkingtime2));            
+//
+//            
+//            directionsList2.add(new Directions(routes, walks));
+//            
+//            
+//            
+//            
+//            
+////            WeightedPath path = threeLayeredTraverserShortestPath.findShortestPath( lat1, lon1, lat2, lon2, time );
+////            
+////            if ( path != null )
+////            {
+////                DirectionsGenerator directionsGenerator = new DirectionsGenerator( path );
+////                if ( path.length() == 3 )
+////                    directionsList = directionsGenerator.convertOneBusPath( path, time );
+////                else
+////                    directionsList = directionsGenerator.convertTwoBusPath( path, time );
+////            }
+//            tx.success();
+//        }
+//        finally
+//        {
+//            tx.finish();
+//        }
+//        
+//        
+////        String respo = "{\"directionslist\":[{\"routes\":[{\"arrStation\":\"viasaragat(aquilone)\",\"arrTime\":\"997\",\"deptStation\":\"terminalbus\",\"deptTime\":\"990\",\"latLon\":[{\"lat\":42.34453,\"lon\":13.4011},{\"lat\":42.35608,\"lon\":13.3415},{\"lat\":42.3504,\"lon\":13.34718}],\"numOfStops\":2,\"routeId\":\"12\"},{\"arrStation\":\"universitÃ coppito\",\"arrTime\":\"1008\",\"deptStation\":\"viasaragat(aquilone)\",\"deptTime\":\"1000\",\"latLon\":[{\"lat\":42.3504,\"lon\":13.34718},{\"lat\":42.33031,\"lon\":13.48218},{\"lat\":42.36211,\"lon\":13.34721},{\"lat\":42.37025,\"lon\":13.34146},{\"lat\":42.3678,\"lon\":13.35246}],\"numOfStops\":4,\"routeId\":\"M5\"}],\"walks\":[{\"distance\":5,\"latLon\":[{\"lat\":42.32673192118198,\"lon\":13.399821635131957},{\"lat\":42.34453,\"lon\":13.4011}]},{\"distance\":5,\"latLon\":[{\"lat\":42.3504,\"lon\":13.34718},{\"lat\":42.3504,\"lon\":13.34718}]},{\"distance\":5,\"latLon\":[{\"lat\":42.3678,\"lon\":13.35246},{\"lat\":42.37259394258441,\"lon\":13.360768671875121}]}]}]}";
+////        Response resp = Response.ok(respo).type("text/xml").build();
+//
+//        Response resp = Response.ok().entity( directionsList2 ).build();
+//        
+//        return resp;
+//    }
+    
 }

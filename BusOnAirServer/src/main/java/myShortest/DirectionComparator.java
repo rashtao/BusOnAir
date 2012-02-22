@@ -7,6 +7,9 @@ public class DirectionComparator implements Comparator<Direction>{
 	    @Override
 	    public int compare(Direction o1, Direction o2)
 	    {
+	    	if(o1 == null || o2 == null)
+	    		return 0;
+	    	
 	        if (o1.getArrivalTime() < o2.getArrivalTime())
 	        {
 	            return -1;

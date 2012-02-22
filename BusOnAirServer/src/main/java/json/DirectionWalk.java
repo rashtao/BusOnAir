@@ -11,7 +11,7 @@ public class DirectionWalk
     private int distance;
     private Coordinate departure;
     private Coordinate arrival;
-    public int stazId;
+//    public int stazId;
     
     public DirectionWalk()
     {
@@ -28,7 +28,7 @@ public class DirectionWalk
 
     public DirectionWalk( boolean isChange, int duration, int distance, Coordinate departure, Coordinate arrival, int stazId){
     	this(isChange, duration, distance, departure, arrival);
-    	this.stazId = stazId;
+//    	this.stazId = stazId;
     }
     
 	public boolean isChange() {
@@ -80,8 +80,8 @@ public class DirectionWalk
 				"\n\tlatdep: " + departure.getLat() + 
 				"\n\tlondep: " + departure.getLon() + 
 				"\n\tlatarr: " + arrival.getLat() + 
-				"\n\tlonarr: " + arrival.getLon() + 
-				"\n\tstazId: " + stazId); 
+				"\n\tlonarr: " + arrival.getLon());
+//		+				"\n\tstazId: " + stazId); 
   
     }	
    
