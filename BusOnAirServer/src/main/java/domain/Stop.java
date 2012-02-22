@@ -19,6 +19,9 @@ public class Stop extends StopAbstract{
     
     public Stop prevSP = null;
     public int numeroCambi = 0;
+    public int departureTime = 0;
+    public int minChangeTime = 1400;
+    public int walkDistance = 0;
         
     public Stop(){
     	super();

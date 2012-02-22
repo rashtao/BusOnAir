@@ -15,9 +15,10 @@
  * 
  * 
  * TODO:
- * . multicriteria topological visit
+ * . multicriteria optimization
+ * . minChangeTime criteria 
  * . cacciare in output tutti i path di ogni stazione di arrivo (e non solo il migliore, vedi linkArrivalPoint())
- * . ordinare l'output di getdirections secondo in modo lessicografico sencondo il criterio di ottimizzazione scelto
+ * . ordinare l'output di getdirections secondo in modo lessicografico secondo il criterio di ottimizzazione scelto
 */
 
 package myShortest;
@@ -94,8 +95,8 @@ public class myShortestGeo {
 
 
 
-	public Stop getShortestPath(Station dest){
-        Stop arrivo = dest.getFirstStopsFromTime(startTime);
+	public Stop getShortestPath(Station dest, int fromTime){
+        Stop arrivo = dest.getFirstStopsFromTime(fromTime);
         if(arrivo != null)
             arrivo = cache.get(arrivo);
         
@@ -161,16 +162,36 @@ public class myShortestGeo {
 	}
     
     private void linkArrivalPoint() {
-    	// al momento linka solo il primo stop di ogni stazione più vicina di walkLimit meters (nb non ritorna tutti gli ottimi di pareto)
 		Collection<Station> arrivalStations = Stations.getStations().nearestStations(lat2, lon2, walkLimit);
+
+	//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
+			for(Station s : arrivalStations){
+				int time = startTime;
+				while(time < stopTime){
+					Stop arrivalStop = getShortestPath(s, time);
+		//			System.out.print("\nsp: " + arrivalStop);
+					if(arrivalStop != null){
+						arrivalQueue.add(new Direction(arrivalStop, lat2, lon2));
+					}
+					
+					while(arrivalStop != null && arrivalStop.nextInStation != null && arrivalStop.equals(arrivalStop.nextInStation.prevSP)){
+						arrivalStop = arrivalStop.nextInStation;
+					}
+										
+					if(arrivalStop == null){
+						time = stopTime;
+					} else {
+						arrivalStop = arrivalStop.nextInStation;
+						
+						if(arrivalStop == null){
+							time = stopTime;
+						} else {
+							time = arrivalStop.getTime() + 1;	//+1 necessario per bug di modellazione dei cambi a tempo zero
+						}					
+					}	
+				}
+			}		
 		
-//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
-		for(Station s : arrivalStations){
-			Stop arrivalStop = getShortestPath(s);
-//			System.out.print("\nsp: " + arrivalStop);
-			if(arrivalStop != null)
-				arrivalQueue.add(new Direction(arrivalStop, lat2, lon2));				
-		}		
 	}
     
 	public void loadSubgraph(Stop source){
@@ -217,7 +238,14 @@ public class myShortestGeo {
 
         Stack<Stop> toVisit = new Stack<Stop>();
         
-        for(Stop s : startQueue){
+        for(Stop s : startQueue){        	
+			Coordinate coord1 = new json.Coordinate(lat1, lon1);
+			Coordinate coord2 = new json.Coordinate(s.getStazione().getLatitude(), s.getStazione().getLongitude());
+			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
+			
+			s.departureTime = s.getTime();
+			s.walkDistance = (int) (dist * 1000.0);
+			
     		toVisit.push(s);
         }        
         
@@ -284,6 +312,11 @@ public class myShortestGeo {
                     toVisit.push(niw);
                 }
             }
+            
+            if(s.prevSP != null){
+            	s.departureTime = s.prevSP.departureTime;
+            	s.walkDistance = s.prevSP.walkDistance;
+            }
         }
     }            
     
@@ -330,6 +363,7 @@ public class myShortestGeo {
 	    
     	output.setArrivalTime(dir.getArrivalTime());
     	output.setNumChanges(dir.getNumChanges());
+    	output.setWalkingDistance(dir.getWalkDistance());
 
     	Stop tmp, prevtmp;
     	tmp = arrivo;

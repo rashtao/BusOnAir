@@ -56,6 +56,19 @@ public class Direction {
 		return stop.numeroCambi;
 	}
 	
+	public int getMinChangeTime(){
+		return stop.minChangeTime;
+	}
+	
+	public int getWalkDistance(){
+		return (int)(getDistance() * 1000.0) + stop.walkDistance;
+	}
+	
+	public int departureTime(){
+		return stop.departureTime;
+	}
+	
+	
   @Override
 	public String toString(){
 		return ("Direction: " +

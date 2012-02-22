@@ -13,7 +13,7 @@ public class Direction
 	private int arrivalTime;
 	private int numChanges;
 	private int minChangeTime;
-	private int walkingTime;
+	private int walkingDistance;
 	private List<DirectionRoute> dirRoute;
     private List<DirectionWalk> dirWalk;
 
@@ -87,13 +87,13 @@ public class Direction
     public void setMinChangeTime(int minChangeTime){
     	this.minChangeTime = minChangeTime;
     }
-    
-    public int getWalkingTime() {
-		return walkingTime;
+
+	public int getWalkingDistance() {
+		return walkingDistance;
 	}
 
-	public void setWalkingTime(int walkingTime) {
-		this.walkingTime = walkingTime;
+	public void setWalkingDistance(int walkingDistance) {
+		this.walkingDistance = walkingDistance;
 	}
 
 	@Override
