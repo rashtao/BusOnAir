@@ -113,6 +113,30 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/update")
+    public Response updateRun(
+    		@PathParam("id") Integer id,
+    		@QueryParam( "idstop" ) Integer idStop,
+    		@QueryParam( "time" ) Integer time) throws IOException{
+    	
+    	log.write("\nupdate/" + id);
+        log.flush();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        
+        domain.Stop s = domain.Stops.getStops().getStopById(idStop);
+        if(s == null)
+        	return Response.status( 400 ).entity( "No stop having the specified id." ).build();
+                
+        run.updateRun(s, time);
+        	   
+        return Response.ok().entity("DONE").build();
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getfirststop")
     public Response getFirstStop(@PathParam("id") Integer id) throws IOException{
     	

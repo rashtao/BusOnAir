@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
+
 import domain.RelTypes;
 import utils.GeoUtil;
+
+
 
 public class Run {
     private static final String ID = "id";
     private static final String TYPE = "type";
-//    private static final String ORDER = "order";
-        
+//    private static final String RITARDO = "ritardo";
+    private static final int DELAYTH = 3;
+    
     private final Node underlyingNode;
     
     public Run(Node node){
@@ -93,7 +98,14 @@ public class Run {
         return length;
     }
     
-    
+//    public void setRitardo(int ritardo){
+//    	underlyingNode.setProperty(Run.RITARDO, ritardo);
+//    }
+//    
+//    public int getRitardo(){
+//    	return (Integer) underlyingNode.getProperty(RITARDO);
+//    }
+//    
     @Override
     public boolean equals(final Object otherRun){
         if (otherRun instanceof Run){
@@ -123,5 +135,53 @@ public class Run {
         
         return output;  
         
+    }
+    
+    public void updateRun(Stop startingStop, int time){
+    	//propaga il ritardo da startingStop fino a fine run
+    	
+    	int ritardo = time - startingStop.getTime();
+    	
+    	if(ritardo > DELAYTH){
+    		Transaction tx = DbConnection.getDb().beginTx();
+    		try{	
+		    	while(startingStop != null){
+		    		startingStop.setTime(startingStop.getTime() + ritardo);
+		    		updateStop(startingStop);
+		    		startingStop = startingStop.getNextInRun();
+		    	}
+				tx.success();
+    		}finally{
+    			tx.finish();
+    		}    
+    	}
+    }
+    
+    private void updateStop(Stop s){
+    	if(s == null)
+    		return;
+    	
+    	Stop pis = s.getPrevInStation();
+    	Stop nis = s.getNextInStation();
+    	
+    	if(pis != null && pis.getTime() > s.getTime()){
+    		scambiaStop(pis, s);
+    	} else if(nis != null && nis.getTime() < s.getTime()){
+    		scambiaStop(s, nis);
+    	}
+    }
+    
+    private void scambiaStop(Stop a, Stop b){
+    	if(!b.equals(a.getNextInStation()))
+    		return;
+    	
+			Stop pa = a.getPrevInStation();
+			Stop nb = b.getNextInStation();
+
+			a.setNextInStation(nb);
+			b.setNextInStation(a);
+			if(pa != null){
+				pa.setNextInStation(b);	
+			}
     }
 }

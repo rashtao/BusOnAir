@@ -47,6 +47,7 @@ public class Importer {
         dbInserter.generateRunsId();
         dbInserter.duplicateRoutes();
         dbInserter.checkStopStations();
+        dbInserter.setStaticTimes();
         ImportTest.importTest();
         DbConnection.turnoff();
 

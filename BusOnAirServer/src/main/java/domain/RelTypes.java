@@ -23,7 +23,7 @@ import org.neo4j.graphdb.RelationshipType;
 public enum RelTypes implements RelationshipType{
     NEXTINRUN, 
     NEXTINSTATION, 
-    STATION_FIRSTSTOP, 
+//    STATION_FIRSTSTOP, 
     FITTIZIO, 
     FITTIZIO_STAZIONE, 
     STOP_RUN, 

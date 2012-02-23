@@ -109,14 +109,14 @@ public class Station {
             underlyingNode.setProperty(Station.IS_TERMINAL, isTerminal);
     }
 
-    public void setFirstStop(Stop first){
-    underlyingNode.createRelationshipTo(first.getUnderlyingNode(), RelTypes.STATION_FIRSTSTOP);		
-    }
+//    public void setFirstStop(Stop first){
+//    underlyingNode.createRelationshipTo(first.getUnderlyingNode(), RelTypes.STATION_FIRSTSTOP);		
+//    }
 
-    public Stop getFirstStop(){
-    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STATION_FIRSTSTOP, Direction.OUTGOING);
-    return new Stop(rel.getEndNode());		
-    }
+//    public Stop getFirstStop(){
+//    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STATION_FIRSTSTOP, Direction.OUTGOING);
+//    return new Stop(rel.getEndNode());		
+//    }
 
     public void addStop(Stop s){
         stopIndex.add(s.getUnderlyingNode(), "time", new ValueContext(s.getTime()).indexNumeric());
@@ -214,10 +214,8 @@ public class Station {
 	public ArrayList<Route> getAllRoutes() {
 		Set<Route> set = new HashSet<Route>();
 
-		Stop s = getFirstStop();
-		while(s != null){
-			set.add(s.getRun().getRoute());
-			s = s.getNextInStation();					
+		for(Stop s : getAllStops()){
+			set.add(s.getRun().getRoute());			
 		}
 
 		ArrayList<Route> result = new ArrayList<Route>(set);

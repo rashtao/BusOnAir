@@ -197,7 +197,7 @@ public class DBInserter
             Stop prevStop = null;
             for(Stop s : stops){
                 if(prevStop == null){
-                    staz.setFirstStop(s);                    
+//                    staz.setFirstStop(s);                    
                 } else {
                     prevStop.setNextInStation(s);
                 }
@@ -329,6 +329,19 @@ public class DBInserter
 		}
 		
 		
+	}
+
+	public void setStaticTimes() {
+		Transaction tx = db.beginTx();
+		try{		
+			for(Stop s : Stops.getStops().getAll()){
+				s.setStaticTime(s.getTime());
+			}		
+			
+			tx.success();
+		}finally{
+			tx.finish();
+		}
 	}
     
     

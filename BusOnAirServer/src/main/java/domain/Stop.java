@@ -3,10 +3,13 @@ package domain;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 public class Stop extends StopAbstract{
     private static final String TYPE = "type";
     private static final String TIME = "time";
+    private static final String STATICTIME = "staticTime";
+    
     
     //ATTRIBUTI TRANSIENT
     public boolean visited = false;
@@ -52,6 +55,14 @@ public class Stop extends StopAbstract{
             underlyingNode.setProperty(Stop.TIME, time);		
     }
 
+    public Integer getStaticTime(){
+        return (Integer) underlyingNode.getProperty(STATICTIME);
+}
+
+	public void setStaticTime(int staticTime){
+	        underlyingNode.setProperty(Stop.STATICTIME, staticTime);		
+	}
+
     public Station getStazione(){
             return getStopFittizio().getStazione();
     }
@@ -93,7 +104,16 @@ public class Stop extends StopAbstract{
     }
 
     public void setNextInStation(Stop stop){
-        underlyingNode.createRelationshipTo(stop.getUnderlyingNode(), RelTypes.NEXTINSTATION);
+    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.NEXTINSTATION, Direction.OUTGOING);
+    	if(rel != null)
+    		rel.delete();    	
+    	
+    	if(stop != null)
+    		underlyingNode.createRelationshipTo(stop.getUnderlyingNode(), RelTypes.NEXTINSTATION);
+    }
+
+    public void setPrevInStation(Stop stop){
+    	stop.setNextInStation(this);
     }
 
     public Stop getNextInRun(){
@@ -166,4 +186,5 @@ public class Stop extends StopAbstract{
         route.addRun(run);        
         setRun(run);
     }
+
 }
