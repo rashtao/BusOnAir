@@ -248,5 +248,16 @@ public class Run {
         }        
         result.close();
         return output;
-    }	
+    }
+
+	public CheckPoint getCheckPointById(int id) {
+	        IndexHits<Node> result = cpIndex.get("order", id);
+	        Node n = result.getSingle();
+	        result.close();
+	        if(n == null){
+	            return null;
+	        } else {
+	            return new CheckPoint(n);                
+	        }
+	}	
 }

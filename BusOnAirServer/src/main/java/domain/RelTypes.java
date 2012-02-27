@@ -33,5 +33,6 @@ public enum RelTypes implements RelationshipType{
     FROM,
     ROUTETOWARDS,
     NEXTCHECKPOINT,
-    CHECKPOINTTOWARDS
+    CHECKPOINTTOWARDS,
+    CHECKPOINTFROM
 }

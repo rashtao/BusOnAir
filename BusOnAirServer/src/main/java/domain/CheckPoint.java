@@ -88,6 +88,23 @@ public class CheckPoint {
     }
 	
 
+    public Stop getFrom(){
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.CHECKPOINTFROM, Direction.OUTGOING);
+        if(rel == null)
+            return null;
+        else
+            return new Stop(rel.getEndNode());						
+    }
+
+    public void setFrom(Stop towards){
+    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.CHECKPOINTFROM, Direction.OUTGOING);
+    	if(rel != null)
+    		rel.delete();    	
+    	
+    	if(towards != null)
+    		underlyingNode.createRelationshipTo(towards.getUnderlyingNode(), RelTypes.CHECKPOINTFROM);
+    }
+	
     public Stop getTowards(){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.CHECKPOINTTOWARDS, Direction.OUTGOING);
         if(rel == null)

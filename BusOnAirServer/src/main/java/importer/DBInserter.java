@@ -363,47 +363,50 @@ public class DBInserter
 	}
 
 	public void linkCheckPoints() {
-		Transaction tx = db.beginTx();
-		try{		
+
 		
 			for(Run r : Runs.getRuns().getAll()){
-				Stop s = r.getFirstStop();
-				Stop prev = null;
-				CheckPoint prevCp = null;
-				int id = 0;
-				
-				while (s != null){
-					if(prev != null){	//iterazioni successive
-						double lat = (s.getStazione().getLatitude() + prev.getStazione().getLatitude()) / 2.0;
-						double lon = (s.getStazione().getLongitude() + prev.getStazione().getLongitude()) / 2.0;
-						int dt = (s.getTime() - prev.getTime()) / 2; 
-						CheckPoint cp = new CheckPoint(db.createNode(), id, lat, lon, dt);
-						cp.setTowards(s);	
-						prevCp.setNextCheckPoint(cp);
+				Transaction tx = db.beginTx();
+				try{		
+						
+					Stop s = r.getFirstStop();
+					Stop prev = null;
+					CheckPoint prevCp = null;
+					int id = 0;
+					
+					while (s != null){
+						if(prev != null){	//iterazioni successive
+							double lat = (s.getStazione().getLatitude() + prev.getStazione().getLatitude()) / 2.0;
+							double lon = (s.getStazione().getLongitude() + prev.getStazione().getLongitude()) / 2.0;
+							int dt = (s.getTime() - prev.getTime()) / 2; 
+							CheckPoint cp = new CheckPoint(db.createNode(), id, lat, lon, dt);
+							cp.setTowards(s);	
+							cp.setFrom(prev);
+							prevCp.setNextCheckPoint(cp);
+							prevCp = cp;
+							r.addCheckPoint(cp);
+							id++;
+						} 
+						
+						double lat = s.getStazione().getLatitude();
+						double lon = s.getStazione().getLongitude();
+						CheckPoint cp = new CheckPoint(db.createNode(), id, lat, lon, 0);
+						cp.setTowards(s);		
+						cp.setFrom(s);
+						if(prevCp != null)
+							prevCp.setNextCheckPoint(cp);
 						prevCp = cp;
 						r.addCheckPoint(cp);
+						
+						prev = s;
+						s = s.getNextInRun();
 						id++;
-					} 
-					
-					double lat = s.getStazione().getLatitude();
-					double lon = s.getStazione().getLongitude();
-					CheckPoint cp = new CheckPoint(db.createNode(), id, lat, lon, 0);
-					cp.setTowards(s);		
-					if(prevCp != null)
-						prevCp.setNextCheckPoint(cp);
-					prevCp = cp;
-					r.addCheckPoint(cp);
-					
-					prev = s;
-					s = s.getNextInRun();
-					id++;
-				}
-			}
-			
-			tx.success();
-		}finally{
-			tx.finish();
-		}			
+					}
+					tx.success();
+				}finally{
+					tx.finish();
+				}	
+			}	
 	}
     
     

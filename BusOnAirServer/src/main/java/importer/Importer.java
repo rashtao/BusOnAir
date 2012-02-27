@@ -49,7 +49,6 @@ public class Importer {
         dbInserter.checkStopStations();
         dbInserter.setStaticTimes();
         dbInserter.setLastVisitedStops();
-        dbInserter.linkCheckPoints();
         ImportTest.importTest();
         DbConnection.turnoff();
 

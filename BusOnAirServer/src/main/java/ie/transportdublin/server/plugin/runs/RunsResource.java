@@ -157,7 +157,7 @@ public class RunsResource{
         	   
         return Response.ok().entity(jstop).build();
     }
-    
+
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallstops")
@@ -177,6 +177,50 @@ public class RunsResource{
         	        	   
         return Response.ok().entity(jstops).build();
     }
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/checkpoints/getall")
+    public Response getAllCheckPoints(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetallcheckpoints/" + id);
+        log.flush();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+    	
+    	json.CheckPoints cps = new json.CheckPoints();
+        for(CheckPoint cp : run.getAllCheckPoints())
+        	cps.add(cp, run.getId());
+        	        	   
+        return Response.ok().entity(cps).build();
+    }
     
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/checkpoints/{idcp}")
+    public Response getCheckPointById(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
+    	
+    	log.write("\ngetCheckPointById/" + id);
+        log.flush();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+    	
+        CheckPoint cp = run.getCheckPointById(idcp);
+        
+        if(cp == null)
+        	return Response.status( 404 ).entity( "No CheckPoint having the specified id." ).build();
+        
+        json.CheckPoint jscp = new json.CheckPoint(cp);
+        jscp.setFrom("/stops/" + cp.getFrom().getId());
+        jscp.setTowards("/stops/" + cp.getTowards().getId());
+        jscp.setNext("/runs/" + run.getId() + "/checkpoints/" + cp.getNextCheckPoint().getId());
+        return Response.ok().entity(jscp).build();
+    }
 
 }
