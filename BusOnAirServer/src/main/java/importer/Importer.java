@@ -39,7 +39,7 @@ public class Importer {
     
     public static void main(String[] args) {        
 		DbConnection.createEmbeddedDbConnection();
- 		
+		 		
         dbInserter = new DBInserter();
         dbInserter.addData();
         dbInserter.addSpatialIndex();
@@ -48,6 +48,8 @@ public class Importer {
         dbInserter.duplicateRoutes();
         dbInserter.checkStopStations();
         dbInserter.setStaticTimes();
+        dbInserter.setLastVisitedStops();
+        dbInserter.linkCheckPoints();
         ImportTest.importTest();
         DbConnection.turnoff();
 

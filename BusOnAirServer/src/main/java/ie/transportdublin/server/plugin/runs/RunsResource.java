@@ -122,6 +122,9 @@ public class RunsResource{
     	log.write("\nupdate/" + id);
         log.flush();
         
+        if ( id == null || idStop == null || time == null )
+            return Response.status( 400 ).entity( "id, idstop, time cannot be blank" ).build();
+        
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         if(run == null)
         	return Response.status( 404 ).entity( "No run having the specified id." ).build();

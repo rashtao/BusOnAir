@@ -64,14 +64,14 @@ public class Route {
     }    
 	
     public void setTowards(Station s){
-        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.TOWARDS, Direction.OUTGOING);
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTETOWARDS, Direction.OUTGOING);
         if(rel == null){
-            underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.TOWARDS);		
+            underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTETOWARDS);		
         } 
     }
 
     public Station getTowards(){
-        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.TOWARDS, Direction.OUTGOING);
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTETOWARDS, Direction.OUTGOING);
         return new Station(rel.getEndNode());		
     }    
 	

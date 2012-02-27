@@ -2,7 +2,7 @@ package domain;
 
 import org.neo4j.graphdb.Node;
 
-public abstract class StopAbstract {
+public abstract class StopAbstract{
     private static final String ID = "id";
     private static final String TYPE = "type";
         

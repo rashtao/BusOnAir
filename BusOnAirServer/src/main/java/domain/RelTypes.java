@@ -29,6 +29,9 @@ public enum RelTypes implements RelationshipType{
     STOP_RUN, 
     RUN_ROUTE, 
     RUN_FIRSTSTOP,
+    RUN_LASTSTOP,
     FROM,
-    TOWARDS
+    ROUTETOWARDS,
+    NEXTCHECKPOINT,
+    CHECKPOINTTOWARDS
 }

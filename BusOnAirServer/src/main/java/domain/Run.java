@@ -5,6 +5,8 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 
 import domain.RelTypes;
 import utils.GeoUtil;
@@ -14,19 +16,21 @@ import utils.GeoUtil;
 public class Run {
     private static final String ID = "id";
     private static final String TYPE = "type";
-//    private static final String RITARDO = "ritardo";
-    private static final int DELAYTH = 3;
+    private Index<Node> cpIndex;
+    private static final int DELAYTH = 1;
     
     private final Node underlyingNode;
     
     public Run(Node node){
     	underlyingNode = node;
+    	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
     }  
 
     public Run(Node node, int id){
-        this(node);
+    	underlyingNode = node;
         setId(id);
         setType();
+    	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
     }   
 
 //    public Run(Node node, int id, int order){
@@ -58,6 +62,18 @@ public class Run {
         underlyingNode.setProperty(Run.ID, id);
     }
 
+    public void setLastStop(Stop last){
+    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTSTOP, Direction.OUTGOING);
+    	if(rel != null)
+    		rel.delete();
+        underlyingNode.createRelationshipTo(last.getUnderlyingNode(), RelTypes.RUN_LASTSTOP);		
+    }
+
+    public Stop getLastStop(){
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTSTOP, Direction.OUTGOING);
+        return new Stop(rel.getEndNode());		
+    }
+
     public void setRoute(Route route){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_ROUTE, Direction.OUTGOING);
         if(rel == null){
@@ -71,7 +87,12 @@ public class Run {
     }
 
     public void setFirstStop(Stop first){
-        underlyingNode.createRelationshipTo(first.getUnderlyingNode(), RelTypes.RUN_FIRSTSTOP);		
+    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_FIRSTSTOP, Direction.OUTGOING);
+    	if(rel != null)
+    		rel.delete();
+    	
+    	if(first != null)
+    		underlyingNode.createRelationshipTo(first.getUnderlyingNode(), RelTypes.RUN_FIRSTSTOP);		
     }
 
     public Stop getFirstStop(){
@@ -121,8 +142,18 @@ public class Run {
 
     @Override
 	public String toString(){
-		return ("Run: " +
-				"\n\tid: " + getId());	    
+    	String output = "";
+		output += ("Run: " +
+				"\n\tid: " + getId() + 
+				"\n\tlastStop:" + getLastStop() + "\n");	 
+		
+		Stop s = getFirstStop();
+		while(s != null){
+			output += "-->" + s.toString();
+			s = s.getNextInRun();
+		}
+		
+		return output;
     }
 
     public ArrayList<Stop> getAllStops() {
@@ -141,20 +172,22 @@ public class Run {
     	//propaga il ritardo da startingStop fino a fine run
     	
     	int ritardo = time - startingStop.getTime();
+    	System.out.print("\nRit: " + ritardo);
     	
-    	if(ritardo > DELAYTH){
-    		Transaction tx = DbConnection.getDb().beginTx();
-    		try{	
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{	
+	    	setLastStop(startingStop);
+	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
 		    	while(startingStop != null){
 		    		startingStop.setTime(startingStop.getTime() + ritardo);
 		    		updateStop(startingStop);
 		    		startingStop = startingStop.getNextInRun();
 		    	}
-				tx.success();
-    		}finally{
-    			tx.finish();
-    		}    
-    	}
+	    	}
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
     }
     
     private void updateStop(Stop s){
@@ -165,23 +198,55 @@ public class Run {
     	Stop nis = s.getNextInStation();
     	
     	if(pis != null && pis.getTime() > s.getTime()){
-    		scambiaStop(pis, s);
+	    	while(pis != null && pis.getTime() > s.getTime()){
+	    		nis = pis;
+	    		pis = pis.getPrevInStation();
+	    	}
+	    	spostaStop(pis, s, nis);
     	} else if(nis != null && nis.getTime() < s.getTime()){
-    		scambiaStop(s, nis);
+	    	while(nis != null && nis.getTime() < s.getTime()){
+	    		pis = nis;
+	    		nis = nis.getNextInStation();
+	    	}
+	    	spostaStop(pis, s, nis);    	
     	}
     }
     
-    private void scambiaStop(Stop a, Stop b){
-    	if(!b.equals(a.getNextInStation()))
+    private void spostaStop(Stop prev, Stop s, Stop next){
+    	// sposta s tra prev e next
+    	
+    	System.out.print("\n\n******\nspostaStop(" + prev + s + next + ")\n******\n");
+    	
+    	if(prev == null && s.getNextInStation() != null && s.getNextInStation().equals(next))
     		return;
     	
-			Stop pa = a.getPrevInStation();
-			Stop nb = b.getNextInStation();
-
-			a.setNextInStation(nb);
-			b.setNextInStation(a);
-			if(pa != null){
-				pa.setNextInStation(b);	
-			}
+    	if(prev != null && prev.getNextInStation() != null && prev.getNextInStation().equals(s) && 
+    			s.getNextInStation() != null && s.getNextInStation().equals(next))
+    		return;	
+    	
+    		
+    	Stop pis = s.getPrevInStation();
+    	Stop nis = s.getNextInStation();
+		
+		if(prev != null)
+			prev.setNextInStation(s);
+		s.setNextInStation(next);
+		if(pis != null){
+			pis.setNextInStation(nis);
+		}
     }
+
+	public void addCheckPoint(CheckPoint cp) {
+        cpIndex.add(cp.getUnderlyingNode(), "order", cp.getId());
+    }
+	
+    public ArrayList<CheckPoint> getAllCheckPoints() {
+        ArrayList<CheckPoint> output = new ArrayList<CheckPoint>();
+        IndexHits<Node> result = cpIndex.query("order", "*");
+        for(Node n : result){
+            output.add(new CheckPoint(n));           
+        }        
+        result.close();
+        return output;
+    }	
 }

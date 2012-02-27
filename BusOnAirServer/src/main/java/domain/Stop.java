@@ -157,10 +157,11 @@ public class Stop extends StopAbstract{
 
     @Override
 	public String toString(){
-		return ("Stop: " +
-				"\n\tidNode: " + getUnderlyingNode().getId() + 
-				"\n\tid: " + getId() + 
-				"\n\ttime: " + getTime());	
+//		return ("Stop: " +
+//				"\n\tidNode: " + getUnderlyingNode().getId() + 
+//				"\n\tid: " + getId() + 
+//				"\n\ttime: " + getTime());	
+    	return ("(STOPID" + getId() + ":NODEID" + getUnderlyingNode().getId() + ":TIME" + getTime()+ ":STATICTIME" + getStaticTime() + ")");
 	}
 
     private void setStopFittizio(int idStation) {
