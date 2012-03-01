@@ -62,16 +62,20 @@ public class Run {
         underlyingNode.setProperty(Run.ID, id);
     }
 
-    public void setLastStop(Stop last){
-    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTSTOP, Direction.OUTGOING);
+    public void setLastCheckPoint(CheckPoint last){
+    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
     	if(rel != null)
     		rel.delete();
-        underlyingNode.createRelationshipTo(last.getUnderlyingNode(), RelTypes.RUN_LASTSTOP);		
+        underlyingNode.createRelationshipTo(last.getUnderlyingNode(), RelTypes.RUN_LASTCHECKPOINT);		
     }
-
+    
+    public CheckPoint getLastCheckPoint(){
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
+        return new CheckPoint(rel.getEndNode());		
+    }
+    
     public Stop getLastStop(){
-        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTSTOP, Direction.OUTGOING);
-        return new Stop(rel.getEndNode());		
+    	return getLastCheckPoint().getFrom();
     }
 
     public void setRoute(Route route){
@@ -145,7 +149,8 @@ public class Run {
     	String output = "";
 		output += ("Run: " +
 				"\n\tid: " + getId() + 
-				"\n\tlastStop:" + getLastStop() + "\n");	 
+				"\n\tlastStop:" + getLastStop() + "\n" + 
+				"\n\tlastCheckPoint:" + getLastCheckPoint() + "\n");	 
 		
 		Stop s = getFirstStop();
 		while(s != null){
@@ -168,20 +173,47 @@ public class Run {
         
     }
     
-    public void updateRun(Stop startingStop, int time){
-    	//propaga il ritardo da startingStop fino a fine run
+    public void restoreRun(){
+    	//setta lastvisitedcheckpoit all'ultimo checkpoint della run e reimposta i tempi di tutti gli stop con i tempi originali (static time)
     	
-    	int ritardo = time - startingStop.getTime();
+    	CheckPoint cp = getCheckPointById(0);
+    	
+    	while(cp.getNextCheckPoint() != null)
+    		cp = cp.getNextCheckPoint();		
+    	
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+	    	setLastCheckPoint(cp);
+	    	
+	    	Stop s = getFirstStop();
+	    	
+	    	while(s != null){
+	    		s.setTime(s.getStaticTime());
+	    		updateStop(s);
+	    		s = s.getNextInRun();
+	    	}
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   
+    }
+    
+    
+    public void updateRun(CheckPoint lastCP, int time){
+    	//propaga il ritardo da lastCP.getTowards():Stop fino a fine run
+    	
+    	int ritardo = time - lastCP.getTime();
     	System.out.print("\nRit: " + ritardo);
     	
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{	
-	    	setLastStop(startingStop);
+	    	setLastCheckPoint(lastCP);
 	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
-		    	while(startingStop != null){
-		    		startingStop.setTime(startingStop.getTime() + ritardo);
-		    		updateStop(startingStop);
-		    		startingStop = startingStop.getNextInRun();
+	    		Stop nextStop = lastCP.getTowards();
+		    	while(nextStop != null){
+		    		nextStop.setTime(nextStop.getTime() + ritardo);
+		    		updateStop(nextStop);
+		    		nextStop = nextStop.getNextInRun();
 		    	}
 	    	}
 			tx.success();

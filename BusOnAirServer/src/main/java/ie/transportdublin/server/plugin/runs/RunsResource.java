@@ -116,24 +116,25 @@ public class RunsResource{
     @Path("{id}/update")
     public Response updateRun(
     		@PathParam("id") Integer id,
-    		@QueryParam( "idstop" ) Integer idStop,
+    		@QueryParam( "checkpointid" ) Integer checkpointid,
     		@QueryParam( "time" ) Integer time) throws IOException{
     	
     	log.write("\nupdate/" + id);
         log.flush();
         
-        if ( id == null || idStop == null || time == null )
-            return Response.status( 400 ).entity( "id, idstop, time cannot be blank" ).build();
+        if ( id == null || checkpointid == null || time == null )
+            return Response.status( 400 ).entity( "id, checkpointid, time cannot be blank" ).build();
         
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         if(run == null)
         	return Response.status( 404 ).entity( "No run having the specified id." ).build();
         
-        domain.Stop s = domain.Stops.getStops().getStopById(idStop);
-        if(s == null)
-        	return Response.status( 400 ).entity( "No stop having the specified id." ).build();
+        domain.CheckPoint cp = run.getCheckPointById(checkpointid);
+        
+        if(cp == null)
+        	return Response.status( 400 ).entity( "No checkpoint having the specified id." ).build();
                 
-        run.updateRun(s, time);
+        run.updateRun(cp, time);
         	   
         return Response.ok().entity("DONE").build();
     }

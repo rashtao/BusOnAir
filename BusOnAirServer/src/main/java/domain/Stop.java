@@ -187,5 +187,14 @@ public class Stop extends StopAbstract{
         route.addRun(run);        
         setRun(run);
     }
+    
+//    public CheckPoint getCheckPoint(){
+//        Relationship rel = underlyingNode.getSingleRelationship(RelTypes., Direction.OUTGOING);
+//        if(rel == null)
+//            return null;
+//        else
+//            return new Stop(rel.getEndNode());								
+//    	
+//    }
 
 }

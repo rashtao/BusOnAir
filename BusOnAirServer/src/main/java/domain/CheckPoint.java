@@ -125,5 +125,19 @@ public class CheckPoint {
     public int getTime(){
     	return getTowards().getTime() - getDt();
     }
+
+	@Override
+	public String toString() {
+		return "CheckPoint [underlyingNode=" + underlyingNode + ", getId()="
+				+ getId() + ", getType()=" + getType()
+				+ ", getUnderlyingNode()=" + getUnderlyingNode()
+				+ ", getLatitude()=" + getLatitude() + ", getLongitude()="
+				+ getLongitude() + ", getDt()=" + getDt()
+				+ ", getNextCheckPoint()=" + (getNextCheckPoint() != null ? getNextCheckPoint().getId() : "null")
+				+ ", getFrom()=" + getFrom() + ", getTowards()=" + getTowards()
+				+ ", getTime()=" + getTime() + "]";
+	}
+    
+    
     
 }

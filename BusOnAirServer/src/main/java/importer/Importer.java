@@ -48,7 +48,12 @@ public class Importer {
         dbInserter.duplicateRoutes();
         dbInserter.checkStopStations();
         dbInserter.setStaticTimes();
-        dbInserter.setLastVisitedStops();
+
+        
+		dbInserter.linkCheckPoints();
+		dbInserter.setLastVisitedCheckPoints();     
+
+        
         ImportTest.importTest();
         DbConnection.turnoff();
 

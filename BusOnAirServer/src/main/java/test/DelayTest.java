@@ -15,12 +15,17 @@ public class DelayTest {
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
 
-		
-		
 		Run r = Runs.getRuns().getRunById(11);
-		Stop s = Stops.getStops().getStopById(4475);
+		r.restoreRun();
+		
+		CheckPoint cp = r.getCheckPointById(0);
+		Stop s = cp.getTowards();
 		Station staz = s.getStazione();
 		Stop fsStaz = staz.getFirstStopsFromTime(0);
+
+		System.out.print("CheckPoint:\n" + cp + "\n\n\n");
+		System.out.print("Stop:\n" + s + "\n\n\n");
+		
 		
 		System.out.print("\nPrima:\n");
 		System.out.print("\nRun:\n");
@@ -31,9 +36,8 @@ public class DelayTest {
 			System.out.print("-->" + fsStaz);
 			fsStaz = fsStaz.getNextInStation();
 		}
-		
 
-		r.updateRun(s, 430);
+		r.updateRun(cp, 445);
 
 		System.out.print("\nDopo:\n");
 		System.out.print("\nRun:\n");
@@ -48,9 +52,6 @@ public class DelayTest {
 		
 		
 		DbConnection.turnoff();
-		
-		
-		
 	}
 
 }

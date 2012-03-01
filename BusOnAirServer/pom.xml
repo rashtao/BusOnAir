@@ -10,13 +10,13 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
-			<version>1.6.M01</version>
+			<version>1.6.M02</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.neo4j.app</groupId>
 			<artifactId>neo4j-server</artifactId>
-			<version>1.6.M01</version>
+			<version>1.6.M02</version>
 		</dependency>
 
 		<dependency>
@@ -92,8 +92,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-<!-- 				<executions>
-					<execution>
+  				<executions>
+ 					<execution>
 						<id>default-cli</id>
 						<goals>
 							<goal>copy-dependencies</goal>
@@ -106,7 +106,7 @@
 							<excludeArtifactIds>neo4j-server</excludeArtifactIds>
 						</configuration>
 					</execution>
-				</executions> -->
+				      </executions> 
 			</plugin>
 		</plugins>
 	</build>

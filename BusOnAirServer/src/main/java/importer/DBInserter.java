@@ -2,6 +2,7 @@ package importer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,6 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.neo4j.gis.spatial.EditableLayer;
+import org.neo4j.gis.spatial.EditableLayerImpl;
+import org.neo4j.gis.spatial.GeometryEncoder;
+import org.neo4j.gis.spatial.Layer;
+import org.neo4j.gis.spatial.SimplePointLayer;
+import org.neo4j.gis.spatial.SpatialDatabaseService;
+import org.neo4j.gis.spatial.encoders.SimplePointEncoder;
 import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -18,6 +26,12 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 
 import domain.*;
@@ -344,18 +358,17 @@ public class DBInserter
 		}
 	}
 
-	public void setLastVisitedStops() {
+	public void setLastVisitedCheckPoints() {
 		Transaction tx = db.beginTx();
 		try{		
 			for(Run r : Runs.getRuns().getAll()){
-				Stop s = r.getFirstStop();
-				while(s.getNextInRun() != null)
-					s = s.getNextInRun();
+				CheckPoint cp = r.getCheckPointById(0);
+				while(cp.getNextCheckPoint() != null)
+					cp = cp.getNextCheckPoint();
 				
-				r.setLastStop(s);				
+				r.setLastCheckPoint(cp);				
 			}
-			
-			
+
 			tx.success();
 		}finally{
 			tx.finish();
