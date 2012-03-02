@@ -203,7 +203,7 @@ public class Run {
     	//propaga il ritardo da lastCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - lastCP.getTime();
-    	System.out.print("\nRit: " + ritardo);
+//    	System.out.print("\nRit: " + ritardo);
     	
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{	
@@ -247,7 +247,7 @@ public class Run {
     private void spostaStop(Stop prev, Stop s, Stop next){
     	// sposta s tra prev e next
     	
-    	System.out.print("\n\n******\nspostaStop(" + prev + s + next + ")\n******\n");
+//    	System.out.print("\n\n******\nspostaStop(" + prev + s + next + ")\n******\n");
     	
     	if(prev == null && s.getNextInStation() != null && s.getNextInStation().equals(next))
     		return;
