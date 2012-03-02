@@ -208,14 +208,14 @@ public class Run {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{	
 	    	setLastCheckPoint(lastCP);
-	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
+//	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
 	    		Stop nextStop = lastCP.getTowards();
 		    	while(nextStop != null){
 		    		nextStop.setTime(nextStop.getTime() + ritardo);
 		    		updateStop(nextStop);
 		    		nextStop = nextStop.getNextInRun();
 		    	}
-	    	}
+//	    	}
 			tx.success();
 		}finally{
 			tx.finish();			

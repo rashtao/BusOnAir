@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "checkpoint" )
 public class CheckPoint {
     private int checkPointId;
-    private int dt;
+    private int time;
     private Coordinate latLon;
     private String from;
     private String towards;
@@ -14,15 +14,22 @@ public class CheckPoint {
     public CheckPoint() {
 	}
 
-    public CheckPoint( int checkPointId, int dt, Coordinate latLon ){
+    public CheckPoint( int checkPointId, int time, Coordinate latLon ){
     	super();
         this.checkPointId = checkPointId;
-        this.dt = dt;
+        this.time = time;
         this.latLon = latLon;
     }
 
     public CheckPoint( domain.CheckPoint cp ){
-   		this(cp.getId(), cp.getDt(), new Coordinate(cp.getLatitude(), cp.getLongitude()));
+   		this(cp.getId(), cp.getTime(), new Coordinate(cp.getLatitude(), cp.getLongitude()));
+        setFrom("/stops/" + cp.getFrom().getId());
+        setTowards("/stops/" + cp.getTowards().getId());
+        if(cp.getNextCheckPoint() != null){
+        	setNext("/runs/" + cp.getFrom().getRun().getId() + "/checkpoints/" + cp.getNextCheckPoint().getId());
+        } else {
+        	setNext("");
+        }
     }
 
 	public int getCheckPointId() {
@@ -33,12 +40,12 @@ public class CheckPoint {
 		this.checkPointId = checkPointId;
 	}
 
-	public int getDt() {
-		return dt;
+	public int getTime() {
+		return time;
 	}
 
-	public void setDt(int dt) {
-		this.dt = dt;
+	public void setTime(int time) {
+		this.time = time;
 	}
 
 	public Coordinate getLatLon() {

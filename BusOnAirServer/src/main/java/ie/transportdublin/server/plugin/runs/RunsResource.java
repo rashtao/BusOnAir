@@ -218,10 +218,69 @@ public class RunsResource{
         	return Response.status( 404 ).entity( "No CheckPoint having the specified id." ).build();
         
         json.CheckPoint jscp = new json.CheckPoint(cp);
-        jscp.setFrom("/stops/" + cp.getFrom().getId());
-        jscp.setTowards("/stops/" + cp.getTowards().getId());
-        jscp.setNext("/runs/" + run.getId() + "/checkpoints/" + cp.getNextCheckPoint().getId());
+
         return Response.ok().entity(jscp).build();
     }
 
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/restore")
+    public Response updateRun(
+    		@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\nrestore/" + id);
+        log.flush();
+                
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        
+        run.restoreRun();
+                	   
+        return Response.ok().entity("DONE").build();
+    }
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getlaststop")
+    public Response getLastStop(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetlaststop/" + id);
+        log.flush();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        
+    	Stop stop = run.getLastStop();
+                	
+        json.Stop jstop = new json.Stop(stop);
+        	   
+        return Response.ok().entity(jstop).build();
+    }
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getlastcheckpoint")
+    public Response getLastCheckpoint(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetlastcheckpoint/" + id);
+        log.flush();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+     
+        CheckPoint cp = run.getLastCheckPoint();
+        
+        if(cp == null)
+        	return Response.status( 500 ).entity( "GRAVE: No CheckPoint found." ).build();
+        
+        json.CheckPoint jscp = new json.CheckPoint(cp);
+        
+        return Response.ok().entity(jscp).build();
+    }    
+    
 }
