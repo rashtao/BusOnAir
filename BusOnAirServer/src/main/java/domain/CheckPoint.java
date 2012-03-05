@@ -62,7 +62,7 @@ public class CheckPoint {
             underlyingNode.setProperty(CheckPoint.LONGITUDE, lng);
     }
 
-    private void setDt(int dt) {
+    public void setDt(int dt) {
     	 underlyingNode.setProperty(CheckPoint.DT, dt);
 	}
     
@@ -137,7 +137,5 @@ public class CheckPoint {
 				+ ", getFrom()=" + getFrom() + ", getTowards()=" + getTowards()
 				+ ", getTime()=" + getTime() + "]";
 	}
-    
-    
     
 }

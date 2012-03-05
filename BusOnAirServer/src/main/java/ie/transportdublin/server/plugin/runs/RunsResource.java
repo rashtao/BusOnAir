@@ -283,4 +283,30 @@ public class RunsResource{
         return Response.ok().entity(jscp).build();
     }    
     
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/updateposition")
+    public Response updateRun(
+    		@PathParam("id") Integer id,
+    		@QueryParam( "time" ) Integer time,
+    		@QueryParam( "lat" ) Double lat,
+    		@QueryParam( "lon" ) Double lon) throws IOException{
+    	
+    	log.write("\nupdateposition/" + id);
+        log.flush();
+        
+        if ( id == null || lat == null || lon == null )
+            return Response.status( 400 ).entity( "id, lat, lon cannot be blank" ).build();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+                
+        run.setLatitude(lat);
+        run.setLongitude(lon);
+        run.update(time);
+        	   
+        return Response.ok().entity("DONE").build();
+    }
+    
 }

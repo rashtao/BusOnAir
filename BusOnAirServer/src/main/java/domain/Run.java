@@ -16,8 +16,11 @@ import utils.GeoUtil;
 public class Run {
     private static final String ID = "id";
     private static final String TYPE = "type";
+    private static final String LATITUDE = "lat";
+    private static final String LONGITUDE = "lon";
+    
     private Index<Node> cpIndex;
-    private static final int DELAYTH = 1;
+    //private static final int DELAYTH = 1;
     
     private final Node underlyingNode;
     
@@ -61,6 +64,22 @@ public class Run {
     public void setId(int id){
         underlyingNode.setProperty(Run.ID, id);
     }
+    
+    public Double getLatitude(){
+        return (Double) underlyingNode.getProperty(LATITUDE);
+	}
+	
+	public Double getLongitude(){
+	        return (Double) underlyingNode.getProperty(LONGITUDE);
+	}    
+	
+    public void setLatitude(double lat){
+        underlyingNode.setProperty(Run.LATITUDE, lat);
+	}
+	
+	public void setLongitude(double lng){
+	        underlyingNode.setProperty(Run.LONGITUDE, lng);
+	}	
 
     public void setLastCheckPoint(CheckPoint last){
     	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
@@ -291,5 +310,55 @@ public class Run {
 	        } else {
 	            return new CheckPoint(n);                
 	        }
+	}
+
+	public void update(int time) {
+		// calcola il rapporto (percentualeAvanzamento) tra la proiezione della segmento posAttuale-cp1 sul segmento cp1-cp2
+		
+		CheckPoint cp1, cp2;
+		double a,b,c,d,percentualeAvanzamento, dt;
+		cp1 = getLastCheckPoint();
+		cp2 = cp1.getNextCheckPoint();
+		a = GeoUtil.getDistance2(cp1.getLatitude(), cp1.getLongitude(), getLatitude(), getLongitude());
+		b = GeoUtil.getDistance2(cp2.getLatitude(), cp2.getLongitude(), getLatitude(), getLongitude());
+		c = GeoUtil.getDistance2(cp1.getLatitude(), cp1.getLongitude(), cp2.getLatitude(), cp2.getLongitude());
+		
+		d = (a*a-b*b+c*c)/(2.0*c);
+		
+		percentualeAvanzamento = d / c;
+		
+		System.out.print("\npercentualeAvanzamento: " + percentualeAvanzamento);
+		
+		dt = (1.0 - percentualeAvanzamento)*(cp2.getTime() - cp1.getTime());	// tempo restante all'arrivo al prossimo cp
+
+		System.out.print("\ndt: " + dt);
+				
+		updateRunExpected(cp2, (int) Math.round(time + dt));
+
 	}	
+
+
+    public void updateRunExpected(CheckPoint nextCP, int time){
+    	//propaga il ritardo da nextCP.getTowards():Stop fino a fine run
+    	
+    	int ritardo = time - nextCP.getTime();
+//    	System.out.print("\nRit: " + ritardo);
+    	
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{	
+//	    	setLastCheckPoint(lastCP);
+//	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
+	    		Stop nextStop = nextCP.getTowards();
+		    	while(nextStop != null){
+		    		nextStop.setTime(nextStop.getTime() + ritardo);
+		    		updateStop(nextStop);
+		    		nextStop = nextStop.getNextInRun();
+		    	}
+//	    	}
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+    }	
+
 }
