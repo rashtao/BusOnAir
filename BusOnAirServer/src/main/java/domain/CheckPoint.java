@@ -17,7 +17,7 @@ public class CheckPoint {
     	underlyingNode = node;
     }  
 
-	public CheckPoint(Node node, int id, double lat, double lon, int dt) {
+	public CheckPoint(Node node, long id, double lat, double lon, int dt) {
 		underlyingNode = node;
         setId(id);
         setLatitude(lat);
@@ -26,11 +26,11 @@ public class CheckPoint {
         setType();
     }   
 
-	public Integer getId(){
-        return (Integer) underlyingNode.getProperty(ID);
+	public Long getId(){
+        return (Long) underlyingNode.getProperty(ID);
     }
     
-    public void setId(int id){
+    public void setId(long id){
             underlyingNode.setProperty(CheckPoint.ID, id);
     }
 

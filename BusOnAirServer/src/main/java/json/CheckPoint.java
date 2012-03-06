@@ -3,7 +3,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "checkpoint" )
 public class CheckPoint {
-    private int checkPointId;
+    private long checkPointId;
     private int time;
     private Coordinate latLon;
     private String from;
@@ -14,7 +14,7 @@ public class CheckPoint {
     public CheckPoint() {
 	}
 
-    public CheckPoint( int checkPointId, int time, Coordinate latLon ){
+    public CheckPoint( long checkPointId, int time, Coordinate latLon ){
     	super();
         this.checkPointId = checkPointId;
         this.time = time;
@@ -32,11 +32,11 @@ public class CheckPoint {
         }
     }
 
-	public int getCheckPointId() {
+	public long getCheckPointId() {
 		return checkPointId;
 	}
 
-	public void setCheckPointId(int checkPointId) {
+	public void setCheckPointId(long checkPointId) {
 		this.checkPointId = checkPointId;
 	}
 

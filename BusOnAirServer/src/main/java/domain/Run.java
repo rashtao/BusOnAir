@@ -18,6 +18,9 @@ public class Run {
     private static final String TYPE = "type";
     private static final String LATITUDE = "lat";
     private static final String LONGITUDE = "lon";
+    private static final String LASTUPDATETIME = "lastupdatetime";
+    
+    private static int STATIONRANGELIMIT = 300;
     
     private Index<Node> cpIndex;
     //private static final int DELAYTH = 1;
@@ -63,6 +66,14 @@ public class Run {
 
     public void setId(int id){
         underlyingNode.setProperty(Run.ID, id);
+    }
+    
+    public Integer getLastUpdateTime(){
+        return (Integer) underlyingNode.getProperty(LASTUPDATETIME);
+    }
+
+    public void setLastUpdateTime(int time){
+        underlyingNode.setProperty(Run.LASTUPDATETIME, time);
     }
     
     public Double getLatitude(){
@@ -227,6 +238,10 @@ public class Run {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{	
 	    	setLastCheckPoint(lastCP);
+	    	setLastUpdateTime(time);
+	    	setLatitude(lastCP.getLatitude());
+	    	setLongitude(lastCP.getLongitude());
+	    	
 //	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
 	    		Stop nextStop = lastCP.getTowards();
 		    	while(nextStop != null){
@@ -287,13 +302,34 @@ public class Run {
 		}
     }
 
-	public void addCheckPoint(CheckPoint cp) {
-        cpIndex.add(cp.getUnderlyingNode(), "order", cp.getId());
+	public void addCheckPointImporter(CheckPoint cp) {
+        cpIndex.add(cp.getUnderlyingNode(), "id", cp.getId());
+    }
+	
+	public void addCheckPoint() {
+		//NB: da invocare dopo update(lat,lon,time), altrimenti il dt potrebbe venire negativo!
+		
+		CheckPoint lastCP = getLastCheckPoint();
+		CheckPoint nextCP = lastCP.getNextCheckPoint();
+		
+		int dt = nextCP.getTowards().getTime() - getLastUpdateTime();		
+
+		if(dt < 0)
+			return;
+		
+		Node n = DbConnection.getDb().createNode();
+		CheckPoint newCP = new CheckPoint(n, n.getId(), getLatitude(), getLongitude(), dt);
+		
+		newCP.setTowards(nextCP.getTowards());	
+		newCP.setFrom(lastCP.getFrom());
+		
+		lastCP.setNextCheckPoint(newCP);
+		newCP.setNextCheckPoint(nextCP);
     }
 	
     public ArrayList<CheckPoint> getAllCheckPoints() {
         ArrayList<CheckPoint> output = new ArrayList<CheckPoint>();
-        IndexHits<Node> result = cpIndex.query("order", "*");
+        IndexHits<Node> result = cpIndex.query("id", "*");
         for(Node n : result){
             output.add(new CheckPoint(n));           
         }        
@@ -302,7 +338,7 @@ public class Run {
     }
 
 	public CheckPoint getCheckPointById(int id) {
-	        IndexHits<Node> result = cpIndex.get("order", id);
+	        IndexHits<Node> result = cpIndex.get("id", id);
 	        Node n = result.getSingle();
 	        result.close();
 	        if(n == null){
@@ -312,8 +348,20 @@ public class Run {
 	        }
 	}
 
-	public void update(int time) {
+	public void update(Double lat, Double lon, int time) {
+		// aggiorna la posizione lat,lon della run
 		// calcola il rapporto (percentualeAvanzamento) tra la proiezione della segmento posAttuale-cp1 sul segmento cp1-cp2
+		
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			setLatitude(lat);
+			setLongitude(lon);
+			setLastUpdateTime(time);
+			
+			tx.success();
+		}finally{
+			tx.finish();			
+		} 
 		
 		CheckPoint cp1, cp2;
 		double a,b,c,d,percentualeAvanzamento, dt;
@@ -338,7 +386,7 @@ public class Run {
 	}	
 
 
-    public void updateRunExpected(CheckPoint nextCP, int time){
+    private void updateRunExpected(CheckPoint nextCP, int time){
     	//propaga il ritardo da nextCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - nextCP.getTime();

@@ -53,9 +53,10 @@ public class Route {
 
     public void setFrom(Station s){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FROM, Direction.OUTGOING);
-        if(rel == null){
-            underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.FROM);		
-        }
+    	if(rel != null)
+    		rel.delete();
+    	
+    	underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.FROM);		
     }
 
     public Station getFrom(){
@@ -65,9 +66,10 @@ public class Route {
 	
     public void setTowards(Station s){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTETOWARDS, Direction.OUTGOING);
-        if(rel == null){
-            underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTETOWARDS);		
-        } 
+    	if(rel != null)
+    		rel.delete();
+    	
+		underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTETOWARDS);		
     }
 
     public Station getTowards(){
@@ -139,7 +141,7 @@ public class Route {
 		
 		Stop s = fr.getFirstStop();
 		
-		while(s.getNextInRun() != null){
+		while(s != null){
 			result.add(s.getStazione());
 			s = s.getNextInRun();
 		}

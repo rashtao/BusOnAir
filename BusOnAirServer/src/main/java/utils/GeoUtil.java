@@ -23,6 +23,8 @@ public class GeoUtil {
     }
         
   public static double getDistance2(double lat1, double lon1, double lat2, double lon2) {
+	  // ritorna la distanza ortodromica in km
+	  
       if((lat1 == lat2) && (lon1 == lon2))
           return 0;
       

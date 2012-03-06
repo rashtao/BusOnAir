@@ -225,7 +225,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/restore")
-    public Response updateRun(
+    public Response restoreRun(
     		@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\nrestore/" + id);
@@ -286,7 +286,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/updateposition")
-    public Response updateRun(
+    public Response updatePosition(
     		@PathParam("id") Integer id,
     		@QueryParam( "time" ) Integer time,
     		@QueryParam( "lat" ) Double lat,
@@ -302,9 +302,25 @@ public class RunsResource{
         if(run == null)
         	return Response.status( 404 ).entity( "No run having the specified id." ).build();
                 
-        run.setLatitude(lat);
-        run.setLongitude(lon);
-        run.update(time);
+        run.update(lat,lon,time);
+        	   
+        return Response.ok().entity("DONE").build();
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/addcheckpoint")
+    public Response addCheckPoint(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\naddcheckpoint/");
+        log.flush();
+                
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+                
+        run.addCheckPoint();
+        
         	   
         return Response.ok().entity("DONE").build();
     }

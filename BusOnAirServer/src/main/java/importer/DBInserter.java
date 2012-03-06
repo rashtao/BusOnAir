@@ -397,7 +397,7 @@ public class DBInserter
 							cp.setFrom(prev);
 							prevCp.setNextCheckPoint(cp);
 							prevCp = cp;
-							r.addCheckPoint(cp);
+							r.addCheckPointImporter(cp);
 							id++;
 						} 
 						
@@ -409,7 +409,7 @@ public class DBInserter
 						if(prevCp != null)
 							prevCp.setNextCheckPoint(cp);
 						prevCp = cp;
-						r.addCheckPoint(cp);
+						r.addCheckPointImporter(cp);
 						
 						prev = s;
 						s = s.getNextInRun();

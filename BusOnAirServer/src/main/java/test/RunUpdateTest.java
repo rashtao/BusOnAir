@@ -38,16 +38,10 @@ public class RunUpdateTest {
 		System.out.print(r.toString());
 		System.out.print("\nStation:\n");
 
-
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{	
-		r.setLatitude((cp.getLatitude()*.8 + cp2.getLatitude()*.2));
-		r.setLongitude((cp.getLongitude()*.8 + cp2.getLongitude()*.2));
-		tx.success();
-	}finally{
-		tx.finish();			
-	}    	
-		r.update(424);
+		Double lati = (cp.getLatitude()*.8 + cp2.getLatitude()*.2);
+		Double longi = (cp.getLongitude()*.8 + cp2.getLongitude()*.2);
+	
+		r.update(lati,longi,424);
 
 		System.out.print("\nDopo:\n");
 		System.out.print("\nRun:\n");
