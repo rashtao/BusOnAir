@@ -491,10 +491,13 @@ public class Run {
     	double dist1 = GeoUtil.getDistance2(c3.lat, c3.lon, getLatitude(), getLongitude());
     	double dist2 = GeoUtil.getDistance2(p.lat,p.lon,getLatitude(), getLongitude());
     	
-    	if(dist1 < dist2)
+    	if(dist1 < dist2){
+    		System.out.print("\n----- CP tra: " + nearestCP.getId() + ", " + nextCP.getId());
     		setLastCheckPoint(nearestCP);
-    	else
+    	}else{
+    		System.out.print("\n----- CP tra: " + prevCP.getId() + ", " + nearestCP.getId());
     		setLastCheckPoint(prevCP);
+    	}
 	}
 
 	private void updateRunExpected(CheckPoint nextCP, int time){

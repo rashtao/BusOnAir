@@ -141,7 +141,7 @@ public class CheckPoint {
         if(rel == null)
             return null;
         else
-            return new CheckPoint(rel.getEndNode());			
+            return new CheckPoint(rel.getStartNode());			
 	}
 	
 	public Coordinate getCoordinate(){
