@@ -52,6 +52,8 @@ public class Importer {
         
 		dbInserter.linkCheckPoints();
 		dbInserter.setLastVisitedCheckPoints();     
+		dbInserter.restoreAllRuns();
+		dbInserter.createCheckPointsSpatialIndices();
 
         
         ImportTest.importTest();

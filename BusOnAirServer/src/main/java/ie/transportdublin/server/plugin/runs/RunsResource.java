@@ -310,7 +310,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/addcheckpoint")
-    public Response addCheckPoint(@PathParam("id") Integer id) throws IOException{
+    public Response addCheckPoint(@PathParam("id") Integer id) throws Exception{
     	
     	log.write("\naddcheckpoint/");
         log.flush();

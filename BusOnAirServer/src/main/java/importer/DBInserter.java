@@ -362,7 +362,7 @@ public class DBInserter
 		Transaction tx = db.beginTx();
 		try{		
 			for(Run r : Runs.getRuns().getAll()){
-				CheckPoint cp = r.getCheckPointById(0);
+				CheckPoint cp = r.getFirstCheckPoint();
 				while(cp.getNextCheckPoint() != null)
 					cp = cp.getNextCheckPoint();
 				
@@ -376,7 +376,6 @@ public class DBInserter
 	}
 
 	public void linkCheckPoints() {
-
 		
 			for(Run r : Runs.getRuns().getAll()){
 				Transaction tx = db.beginTx();
@@ -385,25 +384,26 @@ public class DBInserter
 					Stop s = r.getFirstStop();
 					Stop prev = null;
 					CheckPoint prevCp = null;
-					int id = 0;
+					
 					
 					while (s != null){
 						if(prev != null){	//iterazioni successive
 							double lat = (s.getStazione().getLatitude() + prev.getStazione().getLatitude()) / 2.0;
 							double lon = (s.getStazione().getLongitude() + prev.getStazione().getLongitude()) / 2.0;
 							int dt = (s.getTime() - prev.getTime()) / 2; 
-							CheckPoint cp = new CheckPoint(db.createNode(), id, lat, lon, dt);
+							Node n = db.createNode();
+							CheckPoint cp = new CheckPoint(n, lat, lon, dt);
 							cp.setTowards(s);	
 							cp.setFrom(prev);
 							prevCp.setNextCheckPoint(cp);
 							prevCp = cp;
 							r.addCheckPointImporter(cp);
-							id++;
 						} 
 						
 						double lat = s.getStazione().getLatitude();
 						double lon = s.getStazione().getLongitude();
-						CheckPoint cp = new CheckPoint(db.createNode(), id, lat, lon, 0);
+						Node n = db.createNode();
+						CheckPoint cp = new CheckPoint(n, lat, lon, 0);
 						cp.setTowards(s);		
 						cp.setFrom(s);
 						if(prevCp != null)
@@ -411,15 +411,41 @@ public class DBInserter
 						prevCp = cp;
 						r.addCheckPointImporter(cp);
 						
+						if(prev == null)	//prima iterazione / first stop
+							r.setFirstCheckPoint(cp);
+						
 						prev = s;
 						s = s.getNextInRun();
-						id++;
 					}
 					tx.success();
 				}finally{
 					tx.finish();
 				}	
 			}	
+	}
+
+	public void createCheckPointsSpatialIndices() {
+		Transaction tx = db.beginTx();
+		try{
+			for(Run r : Runs.getRuns().getAll()){
+				r.createCheckPointsSpatialIndex();
+			}
+			tx.success();
+		}finally{
+			tx.finish();
+		}			
+	}
+
+	public void restoreAllRuns() {
+
+		Transaction tx = db.beginTx();
+		try{
+			for(Run r : Runs.getRuns().getAll())
+				r.restoreRun();
+			tx.success();
+		}finally{
+			tx.finish();
+		}			
 	}
     
     

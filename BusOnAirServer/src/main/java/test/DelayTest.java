@@ -18,7 +18,7 @@ public class DelayTest {
 		Run r = Runs.getRuns().getRunById(11);
 		r.restoreRun();
 		
-		CheckPoint cp = r.getCheckPointById(0);
+		CheckPoint cp = r.getFirstCheckPoint().getNextCheckPoint();
 		Stop s = cp.getTowards();
 		Station staz = s.getStazione();
 		Stop fsStaz = staz.getFirstStopsFromTime(0);

@@ -4,6 +4,8 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import utils.Coordinate;
+
 public class CheckPoint {
     private static final String ID = "id";
     private static final String TYPE = "type";
@@ -17,9 +19,9 @@ public class CheckPoint {
     	underlyingNode = node;
     }  
 
-	public CheckPoint(Node node, long id, double lat, double lon, int dt) {
+	public CheckPoint(Node node, double lat, double lon, int dt) {
 		underlyingNode = node;
-        setId(id);
+//        setId(id);
         setLatitude(lat);
         setLongitude(lon);
         setDt(dt);
@@ -27,11 +29,7 @@ public class CheckPoint {
     }   
 
 	public Long getId(){
-        return (Long) underlyingNode.getProperty(ID);
-    }
-    
-    public void setId(long id){
-            underlyingNode.setProperty(CheckPoint.ID, id);
+        return underlyingNode.getId();
     }
 
     public String getType() {
@@ -67,7 +65,14 @@ public class CheckPoint {
 	}
     
 	public Integer getDt(){
-        return (Integer) underlyingNode.getProperty(DT);
+//		System.out.print("\n-----------\nCheckPoint.getDt()\n" + underlyingNode);
+//		for(Object obj : underlyingNode.getPropertyKeys())
+//			System.out.print("\n" + obj);
+//			
+//		System.out.print("\n-----------\n");
+//		System.out.flush();
+		return (Integer) underlyingNode.getProperty(CheckPoint.DT);
+//		return 0;
     }
 
     public CheckPoint getNextCheckPoint(){
@@ -128,14 +133,19 @@ public class CheckPoint {
 
 	@Override
 	public String toString() {
-		return "CheckPoint [underlyingNode=" + underlyingNode + ", getId()="
-				+ getId() + ", getType()=" + getType()
-				+ ", getUnderlyingNode()=" + getUnderlyingNode()
-				+ ", getLatitude()=" + getLatitude() + ", getLongitude()="
-				+ getLongitude() + ", getDt()=" + getDt()
-				+ ", getNextCheckPoint()=" + (getNextCheckPoint() != null ? getNextCheckPoint().getId() : "null")
-				+ ", getFrom()=" + getFrom() + ", getTowards()=" + getTowards()
-				+ ", getTime()=" + getTime() + "]";
+		return ("(CPID" + getId() + ":DT" + getDt()+  ":TIME" + getTime()+ ":FROM" + getFrom().getId() + ":TOWARDS" + getTowards().getId() + ")");
+	}
+
+	public CheckPoint getPrevCheckPoint() {
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.NEXTCHECKPOINT, Direction.INCOMING);
+        if(rel == null)
+            return null;
+        else
+            return new CheckPoint(rel.getEndNode());			
+	}
+	
+	public Coordinate getCoordinate(){
+		return new Coordinate(getLatitude(), getLongitude());
 	}
     
 }
