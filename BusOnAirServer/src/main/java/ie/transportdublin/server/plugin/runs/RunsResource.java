@@ -113,13 +113,13 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/update")
-    public Response updateRun(
+    @Path("{id}/checkpointpass")
+    public Response checkPointPass(
     		@PathParam("id") Integer id,
     		@QueryParam( "checkpointid" ) Integer checkpointid,
     		@QueryParam( "time" ) Integer time) throws IOException{
     	
-    	log.write("\nupdate/" + id);
+    	log.write("\ncheckPointPass/" + id);
         log.flush();
         
         if ( id == null || checkpointid == null || time == null )
@@ -134,7 +134,7 @@ public class RunsResource{
         if(cp == null)
         	return Response.status( 400 ).entity( "No checkpoint having the specified id." ).build();
                 
-        run.updateRun(cp, time);
+        run.checkPointPass(cp, time);
         	   
         return Response.ok().entity("DONE").build();
     }
@@ -235,7 +235,7 @@ public class RunsResource{
         if(run == null)
         	return Response.status( 404 ).entity( "No run having the specified id." ).build();
         
-        run.restoreRun();
+        run.restore();
                 	   
         return Response.ok().entity("DONE").build();
     }
@@ -302,7 +302,7 @@ public class RunsResource{
         if(run == null)
         	return Response.status( 404 ).entity( "No run having the specified id." ).build();
                 
-        run.update(lat,lon,time);
+        run.updatePosition(lat,lon,time);
         	   
         return Response.ok().entity("DONE").build();
     }
@@ -310,7 +310,11 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/addcheckpoint")
-    public Response addCheckPoint(@PathParam("id") Integer id) throws Exception{
+    public Response addCheckPoint(
+    		@PathParam("id") Integer id,
+    		@QueryParam( "time" ) Integer time,
+    		@QueryParam( "lat" ) Double lat,
+    		@QueryParam( "lon" ) Double lon) throws IOException{
     	
     	log.write("\naddcheckpoint/");
         log.flush();
@@ -319,8 +323,22 @@ public class RunsResource{
         if(run == null)
         	return Response.status( 404 ).entity( "No run having the specified id." ).build();
                 
-        run.addCheckPoint();
+        run.addCheckPoint(lat,lon,time);
         
+        	   
+        return Response.ok().entity("DONE").build();
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("init")
+    public Response init() throws IOException{
+    	
+    	log.write("\ninit/");
+        log.flush();
+                
+        for(Run r : domain.Runs.getRuns().getAll())
+        	r.restore();
         	   
         return Response.ok().entity("DONE").build();
     }

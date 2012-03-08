@@ -16,7 +16,7 @@ public class DelayTest {
 		db = DbConnection.getDb();
 
 		Run r = Runs.getRuns().getRunById(11);
-		r.restoreRun();
+		r.restore();
 		
 		CheckPoint cp = r.getFirstCheckPoint().getNextCheckPoint();
 		Stop s = cp.getTowards();
@@ -37,7 +37,7 @@ public class DelayTest {
 			fsStaz = fsStaz.getNextInStation();
 		}
 
-		r.updateRun(cp, 445);
+		r.checkPointPass(cp, 445);
 
 		System.out.print("\nDopo:\n");
 		System.out.print("\nRun:\n");

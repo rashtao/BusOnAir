@@ -19,6 +19,8 @@ import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
+
+
 @Path( "/routes" )
 public class RoutesResource{
     private final Database database;
@@ -68,9 +70,30 @@ public class RoutesResource{
         return Response.ok().entity(routeList).build();
     }
     
+//    @GET
+//    @Produces( MediaType.APPLICATION_JSON )    
+//    @Path("{id}")
+//    public Response getRoute(@PathParam("id") Integer id) throws IOException{
+//    	
+//    	log.write("\nroutes/" + id);
+//        log.flush();
+//    	
+//        if ( id == null)
+//            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+//        
+//    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
+//    	 
+//    	if (route != null){
+//    		json.Route jr = new json.Route(route);    	
+//    		return Response.ok().entity(jr).build();
+//    	} else {
+//    		return Response.status( 404 ).entity( "No route having the specified id." ).build();
+//    	}
+//    }
+    
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}")
+    @Path("{id}") 
     public Response getRoute(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\nroutes/" + id);

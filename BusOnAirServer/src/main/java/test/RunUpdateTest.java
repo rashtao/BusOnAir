@@ -19,7 +19,7 @@ public class RunUpdateTest {
 		
 		Run r = Runs.getRuns().getRunById(11);
 
-		r.restoreRun();
+		r.restore();
 
 		
 		CheckPoint cp = r.getFirstCheckPoint();
@@ -53,8 +53,8 @@ public class RunUpdateTest {
 		Double longi = (cp4.getLongitude()*.8 + cp6.getLongitude()*.2);
 	
 //		r.updateRun(cp, 420);
-		r.update(lati,longi,500);
-		r.addCheckPoint();
+//		r.updatePosition(lati,longi,500);
+		r.addCheckPoint(lati,longi,500);
 
 		System.out.print("\nDopo:\n");
 		System.out.print(r.toString());

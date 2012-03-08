@@ -252,7 +252,7 @@ public class Run {
         
     }
     
-    public void restoreRun(){
+    public void restore(){
     	//setta lastvisitedcheckpoit all'ultimo checkpoint della run e reimposta i tempi di tutti gli stop con i tempi originali (static time)
     	
     	CheckPoint cp = getFirstCheckPoint();
@@ -265,6 +265,7 @@ public class Run {
 	    	setLastCheckPoint(cp);
 	    	setLatitude(cp.getLatitude());
 	    	setLongitude(cp.getLongitude());
+	    	setLastUpdateTime(0);
 	    	
 	    	Stop s = getFirstStop();
 	    	
@@ -280,31 +281,35 @@ public class Run {
     }
     
     
-    public void updateRun(CheckPoint lastCP, int time){
+    public void checkPointPass(CheckPoint lastCP, int time){
     	//propaga il ritardo da lastCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - lastCP.getTime();
 //    	System.out.print("\nRit: " + ritardo);
     	
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{	
-	    	setLastCheckPoint(lastCP);
-	    	setLastUpdateTime(time);
-	    	setLatitude(lastCP.getLatitude());
-	    	setLongitude(lastCP.getLongitude());
-	    	
-//	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
-	    		Stop nextStop = lastCP.getTowards();
-		    	while(nextStop != null){
-		    		nextStop.setTime(nextStop.getTime() + ritardo);
-		    		updateStop(nextStop);
-		    		nextStop = nextStop.getNextInRun();
-		    	}
-//	    	}
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
+    	if(lastCP.getNextCheckPoint() == null){		// fine RUN
+    		restore();    		
+    	} else {    	
+			Transaction tx = DbConnection.getDb().beginTx();
+			try{	
+		    	setLastCheckPoint(lastCP);
+		    	setLastUpdateTime(time);
+		    	setLatitude(lastCP.getLatitude());
+		    	setLongitude(lastCP.getLongitude());
+		    	
+	//	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
+		    		Stop nextStop = lastCP.getTowards();
+			    	while(nextStop != null){
+			    		nextStop.setTime(nextStop.getTime() + ritardo);
+			    		updateStop(nextStop);
+			    		nextStop = nextStop.getNextInRun();
+			    	}
+	//	    	}
+				tx.success();
+			}finally{
+				tx.finish();			
+			}    	
+    	}
     }
     
     private void updateStop(Stop s){
@@ -357,8 +362,8 @@ public class Run {
         cpIndex.add(cp.getUnderlyingNode(), "id", cp.getId());
     }
 	
-	public void addCheckPoint() throws Exception {
-		//NB: da invocare dopo update(lat,lon,time), altrimenti il dt potrebbe venire negativo!
+	public void addCheckPoint(Double lat, Double lon, int time){
+		updatePosition(lat, lon, time);
 		
 		CheckPoint lastCP = getLastCheckPoint();
 		CheckPoint nextCP = lastCP.getNextCheckPoint();
@@ -392,10 +397,7 @@ public class Run {
 			
 			
 			tx.success();
-		} catch(Exception e) {
-			System.out.print("\n\n******** ECCEZIONE **********\n");
-			System.out.print(e);
-			throw e;
+
 		}finally{
 			tx.finish();			
 		} 
@@ -422,7 +424,7 @@ public class Run {
 	        }
 	}
 
-	public void update(Double lat, Double lon, int time) {
+	public void updatePosition(Double lat, Double lon, int time) {
 		// aggiorna la posizione lat,lon della run
 		// setta l'ultimo checkpoint visitato (calcolandolo dalla posizione attuale)
 		// calcola il rapporto (percentualeAvanzamento) tra la proiezione della segmento posAttuale-cp1 sul segmento cp1-cp2
@@ -460,7 +462,7 @@ public class Run {
 
 		System.out.print("\ndt: " + dt);
 				
-		updateRunExpected(cp2, (int) Math.round(time + dt));
+		checkPointPassExpected(cp2, (int) Math.round(time + dt));
 
 	}	
 
@@ -500,7 +502,7 @@ public class Run {
     	}
 	}
 
-	private void updateRunExpected(CheckPoint nextCP, int time){
+	private void checkPointPassExpected(CheckPoint nextCP, int time){
     	//propaga il ritardo da nextCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - nextCP.getTime();

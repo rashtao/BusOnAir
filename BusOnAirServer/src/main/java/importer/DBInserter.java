@@ -441,7 +441,7 @@ public class DBInserter
 		Transaction tx = db.beginTx();
 		try{
 			for(Run r : Runs.getRuns().getAll())
-				r.restoreRun();
+				r.restore();
 			tx.success();
 		}finally{
 			tx.finish();

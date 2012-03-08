@@ -27,7 +27,7 @@ public class TestPesanteUpdate {
 			
 			//System.out.print("\n-------------------\n" + r);
 			
-			r.updateRun(r.getFirstCheckPoint(), fs.getTime() + 30);
+			r.checkPointPass(r.getFirstCheckPoint(), fs.getTime() + 30);
 			//System.out.print("\n" + r);
 
 			//r.restoreRun();
