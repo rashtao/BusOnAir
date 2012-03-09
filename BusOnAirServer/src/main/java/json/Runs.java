@@ -18,12 +18,12 @@ public class Runs
 
     public void add( Run r )
     {
-        runlist.add( "/runs/" +  r.getRunId() );
+        runlist.add(r.getUrl());
     }
 
     public void add( domain.Run r )
     {
-        runlist.add( "/runs/" + r.getId() );
+        runlist.add(r.getUrl());
     }
 
 }

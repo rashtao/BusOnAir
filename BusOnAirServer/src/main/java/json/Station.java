@@ -8,41 +8,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "station" )
 public class Station
 {
-    private int stationId;
-    private String stationName;
+    private int id;
+    private String name;
     private Coordinate latLon;
+    private String url;
 
     public Station()
     {
     }
 
-    public Station( int stationId, String stationName, Coordinate latLon )
+    private Station( int id, String name, Coordinate latLon )
     {
     	super();
-        this.stationId = stationId;
-        this.stationName = stationName;
+        this.id = id;
+        this.name = name;
         this.latLon = latLon;
     }
 
     public Station( domain.Station s )
     {
    		this(s.getId(), s.getName(), new Coordinate(s.getLatitude(), s.getLongitude()));
+   		setUrl(s.getUrl());
     }
     
-    public int getStationId(){
-    	return stationId;
+    public int getId(){
+    	return id;
     }
     
-    public void setStationId(int stationId){
-    	this.stationId = stationId;
+    public void setId(int id){
+    	this.id = id;
     }
     
-    public String getStationName(){
-    	return stationName;
+    public String getName(){
+    	return name;
     }
     
-    public void setStationName(String stationName){
-    	this.stationName = stationName;
+    public void setName(String name){
+    	this.name = name;
     }
     
     public Coordinate getLatLon(){
@@ -51,5 +53,15 @@ public class Station
 
     public void setLatLon( Coordinate latLon ){
         this.latLon = latLon;
-    }   
+    }
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}   
+    
+    
 }

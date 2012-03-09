@@ -600,5 +600,7 @@ public class Run {
 	    }        
 	    
 
-
+	    public String getUrl(){
+	    	return "/runs/" + getId();
+	    }
 }

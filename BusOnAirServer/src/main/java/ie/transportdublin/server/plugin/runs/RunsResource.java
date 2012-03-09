@@ -72,8 +72,8 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}")
-    public Response getrun(@PathParam("id") Integer id) throws IOException{
+    @Path("/{id}")
+    public Response getRun(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\nruns/" + id);
         log.flush();
@@ -90,30 +90,10 @@ public class RunsResource{
     		return Response.status( 404 ).entity( "No run having the specified id value." ).build();
     	}
     }
-
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getroute")
-    public Response getRoute(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetroute/" + id);
-        log.flush();
-        
-        domain.Run run = domain.Runs.getRuns().getRunById(id);
-        
-        if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
-        
-    	Route route = run.getRoute();
-                	
-        json.Route jroute = new json.Route(route);
-        	   
-        return Response.ok().entity(jroute).build();
-    }
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/checkpointpass")
+    @Path("/{id}/rt/checkpointpass")
     public Response checkPointPass(
     		@PathParam("id") Integer id,
     		@QueryParam( "checkpointid" ) Integer checkpointid,
@@ -141,27 +121,7 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getfirststop")
-    public Response getFirstStop(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetfirststop/" + id);
-        log.flush();
-        
-        domain.Run run = domain.Runs.getRuns().getRunById(id);
-        
-        if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
-        
-    	Stop stop = run.getFirstStop();
-                	
-        json.Stop jstop = new json.Stop(stop);
-        	   
-        return Response.ok().entity(jstop).build();
-    }
-
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getallstops")
+    @Path("/{id}/getallstops")
     public Response getAllStops(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\ngetallstops/" + id);
@@ -181,7 +141,7 @@ public class RunsResource{
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/checkpoints/getall")
+    @Path("/{id}/checkpoints/getall")
     public Response getAllCheckPoints(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\ngetallcheckpoints/" + id);
@@ -201,7 +161,7 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/checkpoints/{idcp}")
+    @Path("/{id}/checkpoints/{idcp}")
     public Response getCheckPointById(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
     	
     	log.write("\ngetCheckPointById/" + id);
@@ -224,8 +184,8 @@ public class RunsResource{
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/restore")
-    public Response restoreRun(
+    @Path("/{id}/rt/restore")
+    public Response restore(
     		@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\nrestore/" + id);
@@ -242,7 +202,7 @@ public class RunsResource{
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getlaststop")
+    @Path("/{id}/rt/getlaststop")
     public Response getLastStop(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\ngetlaststop/" + id);
@@ -262,8 +222,8 @@ public class RunsResource{
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getlastcheckpoint")
-    public Response getLastCheckpoint(@PathParam("id") Integer id) throws IOException{
+    @Path("/{id}/rt/getlastcheckpoint")
+    public Response getLastCheckPoint(@PathParam("id") Integer id) throws IOException{
     	
     	log.write("\ngetlastcheckpoint/" + id);
         log.flush();
@@ -285,7 +245,7 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/updateposition")
+    @Path("/{id}/rt/updateposition")
     public Response updatePosition(
     		@PathParam("id") Integer id,
     		@QueryParam( "time" ) Integer time,
@@ -309,7 +269,7 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/addcheckpoint")
+    @Path("/{id}/rt/addcheckpoint")
     public Response addCheckPoint(
     		@PathParam("id") Integer id,
     		@QueryParam( "time" ) Integer time,
@@ -331,8 +291,8 @@ public class RunsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("init")
-    public Response init() throws IOException{
+    @Path("/restoreall")
+    public Response restoreAll() throws IOException{
     	
     	log.write("\ninit/");
         log.flush();
@@ -342,5 +302,26 @@ public class RunsResource{
         	   
         return Response.ok().entity("DONE").build();
     }
+
     
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/{id}/rt/getposition")
+    public Response getPosition(@PathParam("id") Integer id) throws IOException{
+    	
+    	log.write("\ngetposition/" + id);
+        log.flush();
+
+        if ( id == null)
+            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        
+    	domain.Run run = domain.Runs.getRuns().getRunById(id);
+    	 
+    	if (run != null){
+    		json.Position p = new json.Position(new json.Coordinate(run.getLatitude(), run.getLongitude()), run.getLastUpdateTime());    	
+    		return Response.ok().entity(p).build();
+    	} else {
+    		return Response.status( 404 ).entity( "No run having the specified id value." ).build();
+    	}
+    }        
 }

@@ -18,12 +18,12 @@ public class Stations
 
     public void add( Station s )
     {
-        routelist.add( "/stations/" + s.getStationId() );
+        routelist.add(s.getUrl());
     }
 
     public void add( domain.Station s )
     {
-        routelist.add( "/stations/" + s.getId() );
+        routelist.add(s.getUrl());
     }
 
 }

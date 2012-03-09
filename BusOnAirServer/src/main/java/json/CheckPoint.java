@@ -3,49 +3,62 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "checkpoint" )
 public class CheckPoint {
-    private long checkPointId;
-    private int time;
+    private long id;
+    private int dt;
     private Coordinate latLon;
     private String from;
     private String towards;
     private String next;
+    private String prev;
+    private String url;
     
- 
-    public CheckPoint() {
+
+	public CheckPoint() {
 	}
 
-    public CheckPoint( long checkPointId, int time, Coordinate latLon ){
+    private CheckPoint( long id, int dt, Coordinate latLon ){
     	super();
-        this.checkPointId = checkPointId;
-        this.time = time;
+        this.id = id;
+        this.dt = dt;
         this.latLon = latLon;
     }
 
     public CheckPoint( domain.CheckPoint cp ){
-   		this(cp.getId(), cp.getTime(), new Coordinate(cp.getLatitude(), cp.getLongitude()));
-        setFrom("/stops/" + cp.getFrom().getId());
-        setTowards("/stops/" + cp.getTowards().getId());
+   		this(cp.getId(), cp.getDt(), new Coordinate(cp.getLatitude(), cp.getLongitude()));
+        
+   		setFrom(cp.getFrom().getUrl());
+        
+   		setTowards(cp.getTowards().getUrl());
+        
         if(cp.getNextCheckPoint() != null){
-        	setNext("/runs/" + cp.getFrom().getRun().getId() + "/checkpoints/" + cp.getNextCheckPoint().getId());
+        	setNext(cp.getNextCheckPoint().getUrl());
         } else {
         	setNext("");
         }
+        
+        if(cp.getPrevCheckPoint() != null){
+        	setPrev(cp.getPrevCheckPoint().getUrl());
+        } else {
+        	setPrev("");
+        }
+        
+        setUrl(cp.getUrl());
     }
 
-	public long getCheckPointId() {
-		return checkPointId;
+	public long getId() {
+		return id;
 	}
 
-	public void setCheckPointId(long checkPointId) {
-		this.checkPointId = checkPointId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public int getTime() {
-		return time;
+	public int getDt() {
+		return dt;
 	}
 
-	public void setTime(int time) {
-		this.time = time;
+	public void setDt(int dt) {
+		this.dt = dt;
 	}
 
 	public Coordinate getLatLon() {
@@ -80,5 +93,19 @@ public class CheckPoint {
 		this.next = next;
 	}
 	
-	
+    public String getPrev() {
+		return prev;
+	}
+
+	public void setPrev(String prev) {
+		this.prev = prev;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}	
 }

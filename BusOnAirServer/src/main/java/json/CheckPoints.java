@@ -18,12 +18,12 @@ public class CheckPoints
 
     public void add( CheckPoint cp, int runId )
     {
-    	checkpointlist.add( "/runs/" + runId + "/checkpoints/" +  cp.getCheckPointId() );
+    	checkpointlist.add(cp.getUrl());
     }
 
     public void add( domain.CheckPoint cp, int runId )
     {
-    	checkpointlist.add( "/runs/" + runId + "/checkpoints/" + cp.getId() );
+    	checkpointlist.add(cp.getUrl());
     }
 
 }

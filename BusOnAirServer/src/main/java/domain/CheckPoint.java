@@ -148,4 +148,8 @@ public class CheckPoint {
 		return new Coordinate(getLatitude(), getLongitude());
 	}
     
+	
+	public String getUrl(){
+		return "/runs/" + getFrom().getRun().getId() + "/checkpoints/" + getId();
+	}
 }

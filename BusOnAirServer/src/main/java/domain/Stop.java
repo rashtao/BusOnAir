@@ -197,4 +197,7 @@ public class Stop extends StopAbstract{
 //    	
 //    }
 
+    public String getUrl(){
+    	return "/stops/" + getId();
+    }
 }

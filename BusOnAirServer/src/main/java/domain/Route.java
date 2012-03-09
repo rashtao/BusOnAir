@@ -148,4 +148,8 @@ public class Route {
 		
 		return result;
 	}
+	
+    public String getUrl(){
+    	return "/routes/" + getId();
+    }
 }

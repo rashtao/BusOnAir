@@ -94,31 +94,6 @@ public class StopsResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getnextinrun")
-    public Response getNextInRun(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetNextInRun/" + id);
-        log.flush();
-        
-        if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
-        
-        domain.Stop stop = domain.Stops.getStops().getStopById(id);
-    	    	 
-    	if (stop == null)
-    		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
-
-    	Stop nr = stop.getNextInRun();
-    	
-        if(nr == null)
-        	return Response.ok().entity("").build();
-        	
-        json.Stop jstop = new json.Stop(nr);
-        return Response.ok().entity(jstop).build();
-    }
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getnextinstation")
     public Response getNextInStation(@PathParam("id") Integer id) throws IOException{
     	
@@ -142,12 +117,13 @@ public class StopsResource{
         return Response.ok().entity(jstop).build();
     }
     
+    
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getstation")
-    public Response getStation(@PathParam("id") Integer id) throws IOException{
+    @Path("{id}/getprevinstation")
+    public Response getPrevInStation(@PathParam("id") Integer id) throws IOException{
     	
-    	log.write("\ngetStation/" + id);
+    	log.write("\ngetPrevInStation/" + id);
         log.flush();
         
         if ( id == null)
@@ -158,21 +134,21 @@ public class StopsResource{
     	if (stop == null)
     		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
 
-    	Station s = stop.getStazione();
+    	Stop ns = stop.getPrevInStation();
     	
-        if(s == null)
+        if(ns == null)
         	return Response.ok().entity("").build();
         	
-        json.Station jstation = new json.Station(s);
-        return Response.ok().entity(jstation).build();
+        json.Stop jstop = new json.Stop(ns);
+        return Response.ok().entity(jstop).build();
     }
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getrun")
-    public Response getRun(@PathParam("id") Integer id) throws IOException{
+    @Path("{id}/gettime")
+    public Response getTime(@PathParam("id") Integer id) throws IOException{
     	
-    	log.write("\ngetRun/" + id);
+    	log.write("\ngetTime/" + id);
         log.flush();
         
         if ( id == null)
@@ -183,13 +159,7 @@ public class StopsResource{
     	if (stop == null)
     		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
 
-    	Run r = stop.getRun();
-    	
-        if(r == null)
-        	return Response.ok().entity("").build();
-        	
-        json.Run jrun = new json.Run(r);
-        return Response.ok().entity(jrun).build();
+    	return Response.ok().entity(stop.getTime()).build();
     }
-    
+        
 }

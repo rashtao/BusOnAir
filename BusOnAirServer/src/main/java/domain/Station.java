@@ -222,4 +222,7 @@ public class Station {
 		return result;
 	}
 
+    public String getUrl(){
+    	return "/stations/" + getId();
+    }
 }

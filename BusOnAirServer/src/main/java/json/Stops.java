@@ -16,14 +16,14 @@ public class Stops
     {
     }
 
-    public void add( Stop r )
+    public void add(Stop s)
     {
-        stoplist.add("/stops/" + r.getStopId() );
+        stoplist.add(s.getUrl());
     }
 
     public void add( domain.Stop s )
     {
-        stoplist.add("/stops/" + s.getId() );
+        stoplist.add(s.getUrl());
     }
 
 }

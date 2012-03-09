@@ -19,7 +19,7 @@ public class DirectionRoute
     }   
     
     private DirectionRoute(Stop dep, Stop arr){
-    	this(dep.getStopId(), arr.getStopId());
+    	this(dep.getId(), arr.getId());
     }
     
     public DirectionRoute(domain.Stop dep, domain.Stop arr){

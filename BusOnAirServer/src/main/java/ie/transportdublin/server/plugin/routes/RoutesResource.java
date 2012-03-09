@@ -166,52 +166,5 @@ public class RoutesResource{
         	jstations.add(s);
         	   
         return Response.ok().entity(jstations).build();
-    }
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/getfrom")
-    public Response getFrom(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetFrom/" + id);
-        log.flush();
-        
-        if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
-        
-    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
-    	 
-    	if (route == null)
-    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
-
-    	Station station = route.getFrom();
-    	
-        json.Station jstation = new json.Station(station);
-        	   
-        return Response.ok().entity(jstation).build();
-    }
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("{id}/gettowards")
-    public Response getTowards(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetTowards/" + id);
-        log.flush();
-        
-        if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
-        
-    	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
-    	 
-    	if (route == null)
-    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
-
-    	Station station = route.getTowards();
-    	
-        json.Station jstation = new json.Station(station);
-        	   
-        return Response.ok().entity(jstation).build();
-    }
-    
+    }    
 }

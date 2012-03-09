@@ -5,40 +5,40 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "stop" )
 public class Stop
 {
-    private int stopId;
-    private int time;
+    private int id;
     private int staticTime;
-
+    private String nextInRun;
+    private String prevInRun;
+    private String station;
+    private String run;
+    private String url;
+    
 	public Stop()
     {
     }
 
-    public Stop( int stopId, int time, int staticTime )
+    private Stop( int id, int staticTime )
     {
-        this.stopId = stopId;
-        this.time = time;
+        this.id = id;
         this.staticTime = staticTime;
     }
 
-    public Stop( domain.Stop ds )
+    public Stop( domain.Stop s )
     {
-    	this(ds.getId(), ds.getTime(), ds.getStaticTime());
+    	this(s.getId(), s.getStaticTime());
+    	setNextInRun(s.getNextInRun().getUrl());
+    	setPrevInRun(s.getPrevInRun().getUrl());
+    	setStation(s.getStazione().getUrl());
+    	setRun(s.getRun().getUrl());
+    	setUrl(s.getUrl());
     }
     
-    public int getStopId(){
-    	return stopId;
+    public int getId(){
+    	return id;
     }
     
-    public void setStopId(int stopId){
-    	this.stopId = stopId;
-    }
-    
-    public int getTime(){
-    	return time;
-    }
-    
-    public void setTime(int time){
-    	this.time = time;
+    public void setId(int id){
+    	this.id = id;
     }
     
     public int getStaticTime() {
@@ -48,4 +48,46 @@ public class Stop
 	public void setStaticTime(int staticTime) {
 		this.staticTime = staticTime;
 	}
+
+	public String getNextInRun() {
+		return nextInRun;
+	}
+
+	public void setNextInRun(String nextInRun) {
+		this.nextInRun = nextInRun;
+	}
+
+	public String getStation() {
+		return station;
+	}
+
+	public void setStation(String station) {
+		this.station = station;
+	}
+
+	public String getRun() {
+		return run;
+	}
+
+	public void setRun(String run) {
+		this.run = run;
+	}
+
+	public String getPrevInRun() {
+		return prevInRun;
+	}
+
+	public void setPrevInRun(String prevInRun) {
+		this.prevInRun = prevInRun;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	
 }

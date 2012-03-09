@@ -5,32 +5,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "route" )
 public class Route
 {
-    private int routeId;
+    private int id;
     private String routeLine;
     private String from;
     private String towards;
+    private String url;
+
     
     public Route()
     {
     }
 
-    public Route( int routeId, String routeLine)
+    private Route( int id, String routeLine)
     {
-        this.routeId = routeId;
+        this.id = id;
         this.routeLine = routeLine;
     }
 
     public Route( domain.Route r )
     {
     	this(r.getId(),r.getLine());
+    	setFrom(r.getFrom().getUrl());
+    	setTowards(r.getTowards().getUrl());
+    	setUrl(r.getUrl());
     }
     
-    public int getRouteId(){
-    	return routeId;
+    public int getId(){
+    	return id;
     }
     
-    public void setRouteId(int routeId){
-    	this.routeId = routeId;
+    public void setId(int id){
+    	this.id = id;
     }
     
     public String getRouteLine(){
@@ -40,20 +45,31 @@ public class Route
     public void setRouteLine(String routeLine){
     	this.routeLine = routeLine;
     }
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getTowards() {
+		return towards;
+	}
+
+	public void setTowards(String towards) {
+		this.towards = towards;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
     
-    public String getFrom(){
-    	return from;
-    }
     
-    public void setFrom(String from){
-    	this.from = from;
-    }
-    
-    public String getTowards(){
-    	return towards;
-    }
-    
-    public void setTowards(String towards){
-    	this.towards = towards;
-    }
 }
