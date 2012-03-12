@@ -1,7 +1,6 @@
 package json;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -14,8 +13,8 @@ public class Direction
 	private int numChanges;
 	private int minChangeTime;
 	private int walkingDistance;
-	private List<DirectionRoute> dirRoute;
-    private List<DirectionWalk> dirWalk;
+	private LinkedList<DirectionRoute> dirRoute;
+    private LinkedList<DirectionWalk> dirWalk;
 
     public Direction()
     {
@@ -25,8 +24,8 @@ public class Direction
     }
         
     public Direction(int departureTime, int arrivalTime, int numChanges,
-			int minChangeTime, List<DirectionRoute> dirRoute,
-			List<DirectionWalk> dirWalk) {
+			int minChangeTime, LinkedList<DirectionRoute> dirRoute,
+			LinkedList<DirectionWalk> dirWalk) {
 		super();
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
@@ -36,22 +35,22 @@ public class Direction
 		this.dirWalk = dirWalk;
 	}
 
-    public List<DirectionRoute> getRoutes()
+    public LinkedList<DirectionRoute> getRoutes()
     {
         return dirRoute;
     }
 
-    public List<DirectionWalk> getWalks()
+    public LinkedList<DirectionWalk> getWalks()
     {
         return dirWalk;
     }
 
-    public void setRoutes( List<DirectionRoute> dirRoute )
+    public void setRoutes( LinkedList<DirectionRoute> dirRoute )
     {
         this.dirRoute = dirRoute;
     }
 
-    public void setWalks( List<DirectionWalk> dirWalk )
+    public void setWalks( LinkedList<DirectionWalk> dirWalk )
     {
         this.dirWalk = dirWalk;
     }

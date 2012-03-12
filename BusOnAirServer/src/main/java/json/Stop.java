@@ -26,8 +26,8 @@ public class Stop
     public Stop( domain.Stop s )
     {
     	this(s.getId(), s.getStaticTime());
-    	setNextInRun(s.getNextInRun().getUrl());
-    	setPrevInRun(s.getPrevInRun().getUrl());
+    	setNextInRun(s.getNextInRun() != null ? s.getNextInRun().getUrl() : "");
+    	setPrevInRun(s.getPrevInRun() != null ? s.getPrevInRun().getUrl() : "");
     	setStation(s.getStazione().getUrl());
     	setRun(s.getRun().getUrl());
     	setUrl(s.getUrl());

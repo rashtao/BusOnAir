@@ -132,8 +132,8 @@ public class DirectionsResource
         json.Direction sp = directs.getDirectionsList().iterator().next();
         List<json.DirectionRoute> routesDirection = sp.getRoutes();
         List<json.DirectionWalk> walksDirection = sp.getWalks();
-        Collections.reverse(routesDirection);
-        Collections.reverse(walksDirection);
+//        Collections.reverse(routesDirection);
+//        Collections.reverse(walksDirection);
         
         List<DirectionsRoute> routes = new ArrayList<DirectionsRoute>();
         List<DirectionsWalk> walks = new ArrayList<DirectionsWalk>();      

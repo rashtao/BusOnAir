@@ -159,7 +159,8 @@ public class StopsResource{
     	if (stop == null)
     		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
 
-    	return Response.ok().entity(stop.getTime()).build();
+    	json.Time jt = new json.Time(stop.getTime());
+    	return Response.ok().entity(jt).build();
     }
         
 }

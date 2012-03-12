@@ -30,7 +30,7 @@ public class DirectionWalk
     	this(isChange, duration, distance, departure, arrival);
 //    	this.stazId = stazId;
     }
-    
+
 	public boolean isChange() {
 		return isChange;
 	}

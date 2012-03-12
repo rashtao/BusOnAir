@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Route
 {
     private int id;
-    private String routeLine;
+    private String line;
     private String from;
     private String towards;
     private String url;
@@ -16,10 +16,10 @@ public class Route
     {
     }
 
-    private Route( int id, String routeLine)
+    private Route( int id, String line)
     {
         this.id = id;
-        this.routeLine = routeLine;
+        this.line = line;
     }
 
     public Route( domain.Route r )
@@ -38,12 +38,12 @@ public class Route
     	this.id = id;
     }
     
-    public String getRouteLine(){
-    	return routeLine;
+    public String getline(){
+    	return line;
     }
     
-    public void setRouteLine(String routeLine){
-    	this.routeLine = routeLine;
+    public void setline(String line){
+    	this.line = line;
     }
 
 	public String getFrom() {

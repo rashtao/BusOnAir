@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -116,7 +117,9 @@ public class RunsResource{
                 
         run.checkPointPass(cp, time);
         	   
-        return Response.ok().entity("DONE").build();
+        json.Response jr = new json.Response(200, "OK");
+        
+        return Response.ok().entity(jr).build();
     }
     
     @GET
@@ -182,6 +185,30 @@ public class RunsResource{
         return Response.ok().entity(jscp).build();
     }
 
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/{id}/checkpoints/{idcp}/gettime")
+    public Response getCheckPointTime(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
+    	
+    	log.write("\ngetCheckPointTime/" + id);
+        log.flush();
+        
+        domain.Run run = domain.Runs.getRuns().getRunById(id);
+        
+        if(run == null)
+        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+    	
+        CheckPoint cp = run.getCheckPointById(idcp);
+        
+        if(cp == null)
+        	return Response.status( 404 ).entity( "No CheckPoint having the specified id." ).build();
+        
+        json.Time jt = new json.Time(cp.getTime());
+
+        return Response.ok().entity(jt).build();
+    }
+    
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/rt/restore")
@@ -197,7 +224,8 @@ public class RunsResource{
         
         run.restore();
                 	   
-        return Response.ok().entity("DONE").build();
+        json.Response jr = new json.Response(200, "OK");
+        return Response.ok().entity(jr).build();
     }
 
     @GET
@@ -264,7 +292,8 @@ public class RunsResource{
                 
         run.updatePosition(lat,lon,time);
         	   
-        return Response.ok().entity("DONE").build();
+        json.Response jr = new json.Response(200, "OK");
+        return Response.ok().entity(jr).build();
     }
     
     @GET
@@ -286,7 +315,8 @@ public class RunsResource{
         run.addCheckPoint(lat,lon,time);
         
         	   
-        return Response.ok().entity("DONE").build();
+        json.Response jr = new json.Response(200, "OK");
+        return Response.ok().entity(jr).build();
     }
     
     @GET
@@ -300,7 +330,8 @@ public class RunsResource{
         for(Run r : domain.Runs.getRuns().getAll())
         	r.restore();
         	   
-        return Response.ok().entity("DONE").build();
+        json.Response jr = new json.Response(200, "OK");
+        return Response.ok().entity(jr).build();
     }
 
     

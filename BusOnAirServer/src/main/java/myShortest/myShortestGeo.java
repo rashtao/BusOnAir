@@ -353,7 +353,7 @@ public class myShortestGeo {
  		Stop arrivo = dir.getStop();
  		Station s_arrivo = arrivo.getStazione();
 
-	    output.getWalks().add(new DirectionWalk(
+	    output.getWalks().addFirst(new DirectionWalk(
 	    		false, 
 	    		dir.getWalkTime(), 
 	    		(int) (dir.getDistance() * 1000.0), 
@@ -390,9 +390,9 @@ public class myShortestGeo {
 	    	}
 	    	
 	    	if(prevtmp != null){
-	    		output.getRoutes().add(new DirectionRoute(tmp, arrivo));
+	    		output.getRoutes().addFirst(new DirectionRoute(tmp, arrivo));
 	    		if(!depStat.equals(tmp.getStazione())){		// è un cambio
-			    	output.getWalks().add(new DirectionWalk(
+			    	output.getWalks().addFirst(new DirectionWalk(
 			    			true, 
 			    			tmp.getTime() - prevtmp.getTime(), 
 			    			0, 
@@ -405,7 +405,7 @@ public class myShortestGeo {
 	    			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
 	    			int walktime = (int) (dist / 5.0 * 60);
 	    			
-	    			output.getWalks().add(new DirectionWalk(
+	    			output.getWalks().addFirst(new DirectionWalk(
 		    	    		false, 
 		    	    		walktime, 
 		    	    		(int) (dist * 1000.0), 
