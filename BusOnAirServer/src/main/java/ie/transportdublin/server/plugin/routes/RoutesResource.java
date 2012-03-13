@@ -100,7 +100,7 @@ public class RoutesResource{
         log.flush();
     	
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
     	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
     	 
@@ -108,7 +108,7 @@ public class RoutesResource{
     		json.Route jr = new json.Route(route);    	
     		return Response.ok().entity(jr).build();
     	} else {
-    		return Response.status( 404 ).entity( "No route having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No route having the specified id value.")).build();
     	}
     }
         
@@ -121,12 +121,12 @@ public class RoutesResource{
         log.flush();
         
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
     	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route == null)
-    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No route having the specified id value.")).build();
 
     	ArrayList<Run> runs = route.getAllRuns();
     	
@@ -149,12 +149,12 @@ public class RoutesResource{
         log.flush();
         
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
     	domain.Route route = domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route == null)
-    		return Response.status( 404 ).entity( "No route having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No route having the specified id value.")).build();
 
     	ArrayList<Station> stations = route.getAllStations();
     	

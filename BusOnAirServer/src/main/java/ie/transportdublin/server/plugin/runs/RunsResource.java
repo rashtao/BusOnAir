@@ -80,7 +80,7 @@ public class RunsResource{
         log.flush();
 
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
     	domain.Run run = domain.Runs.getRuns().getRunById(id);
     	 
@@ -88,7 +88,7 @@ public class RunsResource{
     		json.Run jr = new json.Run(run);    	
     		return Response.ok().entity(jr).build();
     	} else {
-    		return Response.status( 404 ).entity( "No run having the specified id value." ).build();
+    		return Response.ok().entity(new json.Response(404, "No run having the specified id value.")).build();
     	}
     }
     
@@ -104,16 +104,16 @@ public class RunsResource{
         log.flush();
         
         if ( id == null || checkpointid == null || time == null )
-            return Response.status( 400 ).entity( "id, checkpointid, time cannot be blank" ).build();
-        
+        	return Response.ok().entity(new json.Response(400, "id, checkpointid, time cannot be blank")).build();
+
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
         
         domain.CheckPoint cp = run.getCheckPointById(checkpointid);
         
         if(cp == null)
-        	return Response.status( 400 ).entity( "No checkpoint having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No checkpoint having the specified id.")).build();
                 
         run.checkPointPass(cp, time);
         	   
@@ -133,7 +133,7 @@ public class RunsResource{
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
     	
     	json.Stops jstops = new json.Stops();
         for(Stop s : run.getAllStops())
@@ -153,7 +153,7 @@ public class RunsResource{
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
     	
     	json.CheckPoints cps = new json.CheckPoints();
         for(CheckPoint cp : run.getAllCheckPoints())
@@ -173,12 +173,12 @@ public class RunsResource{
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
     	
         CheckPoint cp = run.getCheckPointById(idcp);
         
         if(cp == null)
-        	return Response.status( 404 ).entity( "No CheckPoint having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No CheckPoint having the specified id.")).build();
         
         json.CheckPoint jscp = new json.CheckPoint(cp);
 
@@ -197,12 +197,12 @@ public class RunsResource{
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
     	
         CheckPoint cp = run.getCheckPointById(idcp);
         
         if(cp == null)
-        	return Response.status( 404 ).entity( "No CheckPoint having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No CheckPoint having the specified id.")).build();
         
         json.Time jt = new json.Time(cp.getTime());
 
@@ -220,7 +220,7 @@ public class RunsResource{
                 
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
         
         run.restore();
                 	   
@@ -239,7 +239,7 @@ public class RunsResource{
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
         
     	Stop stop = run.getLastStop();
                 	
@@ -259,12 +259,12 @@ public class RunsResource{
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
      
         CheckPoint cp = run.getLastCheckPoint();
         
         if(cp == null)
-        	return Response.status( 500 ).entity( "GRAVE: No CheckPoint found." ).build();
+        	return Response.ok().entity(new json.Response(500, "GRAVE: No CheckPoint found.")).build();
         
         json.CheckPoint jscp = new json.CheckPoint(cp);
         
@@ -284,16 +284,15 @@ public class RunsResource{
         log.flush();
         
         if ( id == null || lat == null || lon == null )
-            return Response.status( 400 ).entity( "id, lat, lon cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id, lat, lon cannot be blank")).build();
         
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
                 
         run.updatePosition(lat,lon,time);
         	   
-        json.Response jr = new json.Response(200, "OK");
-        return Response.ok().entity(jr).build();
+        return Response.ok().entity(new json.Response(200, "OK")).build();
     }
     
     @GET
@@ -310,7 +309,7 @@ public class RunsResource{
                 
         domain.Run run = domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.status( 404 ).entity( "No run having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id.")).build();
                 
         run.addCheckPoint(lat,lon,time);
         
@@ -344,7 +343,7 @@ public class RunsResource{
         log.flush();
 
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
     	domain.Run run = domain.Runs.getRuns().getRunById(id);
     	 
@@ -352,7 +351,7 @@ public class RunsResource{
     		json.Position p = new json.Position(new json.Coordinate(run.getLatitude(), run.getLongitude()), run.getLastUpdateTime());    	
     		return Response.ok().entity(p).build();
     	} else {
-    		return Response.status( 404 ).entity( "No run having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No run having the specified id value.")).build();
     	}
     }        
 }

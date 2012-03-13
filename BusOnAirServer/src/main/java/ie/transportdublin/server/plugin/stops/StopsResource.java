@@ -80,7 +80,7 @@ public class StopsResource{
 //        return Response.status( 404 ).entity( "Not implemented yet!" ).build();
 
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
     	domain.Stop stop = domain.Stops.getStops().getStopById(id);
     	 
@@ -88,7 +88,7 @@ public class StopsResource{
     		json.Stop jr = new json.Stop(stop);    	
     		return Response.ok().entity(jr).build();
     	} else {
-    		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No stop having the specified id value.")).build();
     	}
     }
     
@@ -101,12 +101,12 @@ public class StopsResource{
         log.flush();
         
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
         domain.Stop stop = domain.Stops.getStops().getStopById(id);
     	    	 
     	if (stop == null)
-    		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No stop having the specified id value.")).build();
 
     	Stop ns = stop.getNextInStation();
     	
@@ -127,12 +127,12 @@ public class StopsResource{
         log.flush();
         
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
         domain.Stop stop = domain.Stops.getStops().getStopById(id);
     	    	 
     	if (stop == null)
-    		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No stop having the specified id value.")).build();
 
     	Stop ns = stop.getPrevInStation();
     	
@@ -152,12 +152,12 @@ public class StopsResource{
         log.flush();
         
         if ( id == null)
-            return Response.status( 400 ).entity( "id cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "id cannot be blank")).build();
         
         domain.Stop stop = domain.Stops.getStops().getStopById(id);
     	    	 
     	if (stop == null)
-    		return Response.status( 404 ).entity( "No stop having the specified id value." ).build();
+        	return Response.ok().entity(new json.Response(404, "No stop having the specified id value.")).build();
 
     	json.Time jt = new json.Time(stop.getTime());
     	return Response.ok().entity(jt).build();

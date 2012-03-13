@@ -76,17 +76,18 @@ public class DirectionsResource
             @QueryParam( "lon1" ) Double lon1,
             @QueryParam( "lat2" ) Double lat2,
             @QueryParam( "lon2" ) Double lon2, 
+            @QueryParam( "departureday" ) Integer departureday,
             @QueryParam( "departuretime" ) Integer departuretime,
             @QueryParam( "minchangetime" ) Integer minchangetime,
             @QueryParam( "criterion" ) String criterion,
             @QueryParam( "timelimit" ) Integer timelimit,
             @QueryParam( "maxwalkdistance" ) Integer maxwalkdistance) throws IOException{
 
-    	log.write("\ngetDirection?lat1=" + lat1 + "&lon1=" + lon1 + "&lat2=" + lat2 + "&lon2=" + lon2 + "&departuretime=" + departuretime + "&minchangetime=" + minchangetime + "&criterion=" + criterion + "&timelimit=" + timelimit);
+    	log.write("\ngetDirection");
         log.flush();
         
-        if ( lat1 == null || lon1 == null || lat2 == null || lon2 == null || departuretime == null)
-            return Response.status( 400 ).entity( "lat1, lon1, lat2, lon2, departuretime cannot be blank" ).build();
+        if ( lat1 == null || lon1 == null || lat2 == null || lon2 == null || departureday == null || departuretime == null)
+        	return Response.ok().entity(new json.Response(400, "lat1, lon1, lat2, lon2, departureday, departuretime cannot be blank")).build();
            	
 
         if(maxwalkdistance == null)
@@ -97,7 +98,9 @@ public class DirectionsResource
         
     	myShortestGeo mysp = new myShortestGeo(departuretime, timelimit, lat1, lon1, lat2, lon2, maxwalkdistance);
         mysp.shortestPath(); 
-        json.Directions directs = mysp.getDirections();        
+        json.Directions directs = mysp.getDirections();      
+//        if(directs == null || directs.getDirectionsList() == null || directs.getDirectionsList().size() == 0)
+//        	return Response.ok().entity(new json.Response(204, "No path found")).build();
     	
     	return Response.ok().entity(directs).build();
     	
@@ -113,6 +116,10 @@ public class DirectionsResource
             @QueryParam( "lon2" ) double lon2, 
             @QueryParam( "time" ) double time ) throws IOException
     {
+    	
+    	// metodo utilizzato da web client di transportdublin
+    	
+    	
         if ( lat1 == 0 || lat1 == 0 || lon1 == 0 || lon2 == 0 || time==0 )
             return Response.serverError().entity( "params cannot be blank" ).build();
         

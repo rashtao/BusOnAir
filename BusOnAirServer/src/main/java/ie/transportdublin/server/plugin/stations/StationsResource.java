@@ -83,7 +83,7 @@ public class StationsResource
         log.flush();
         
         if ( (lat == null) || (lon == null))
-            return Response.status( 400 ).entity( "Lat and Lon cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "Lat and Lon cannot be blank")).build();
 
         Collection<Station> stations;
         
@@ -120,7 +120,7 @@ public class StationsResource
         log.flush();
     	
         if ( id == null)
-            return Response.status( 400 ).entity( "ID cannot be blank" ).build();
+        	return Response.ok().entity(new json.Response(400, "Id cannot be blank")).build();
         
     	domain.Station s = domain.Stations.getStations().getStationById(id);
     	
@@ -132,7 +132,7 @@ public class StationsResource
     		json.Station js = new json.Station(s);
     		return Response.ok().entity(js).build();
     	} else {
-    		return Response.status( 404 ).entity( "No station having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No station having the specified id.")).build();
     	}
     }
     
@@ -149,10 +149,10 @@ public class StationsResource
         domain.Station s = domain.Stations.getStations().getStationById(id);
         
         if(s == null)
-        	return Response.status( 404 ).entity( "No station having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No station having the specified id.")).build();
         
         if (time == null)
-            return Response.status( 400 ).entity( "Time cannot be blank" ).build();        
+        	time = new Integer(0);
         
         domain.Stop fs = s.getFirstStopsFromTime(time);
         
@@ -175,7 +175,7 @@ public class StationsResource
         domain.Station s = domain.Stations.getStations().getStationById(id);
         
         if(s == null)
-        	return Response.status( 404 ).entity( "No station having the specified id." ).build();
+        	return Response.ok().entity(new json.Response(404, "No station having the specified id.")).build();
         
         Collection<Route> routes = s.getAllRoutes();
         
