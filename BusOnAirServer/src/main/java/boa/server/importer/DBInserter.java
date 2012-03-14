@@ -34,7 +34,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 import boa.server.domain.*;
-import boa.server.utils.*;
+import boa.server.domain.utils.*;
 
 
 import java.util.ArrayList;
@@ -250,11 +250,11 @@ public class DBInserter
 			
 			for(Run run : route.getAllRuns()){
 				Stop stop = run.getFirstStop();
-				Station s = stop.getStazione();
+				Station s = stop.getStation();
 				partenze.add(s);
 				while(stop.getNextInRun() != null)
 					stop = stop.getNextInRun();
-				arrivi.add(stop.getStazione());				
+				arrivi.add(stop.getStation());				
 			}								
 
 			Object[] arrpartenze = partenze.toArray();
@@ -278,7 +278,7 @@ public class DBInserter
 				ArrayList<Run> runs = route.getAllRuns();
 				route.clearIndex();
 				for(Run run : runs){
-					Station s = run.getFirstStop().getStazione();
+					Station s = run.getFirstStop().getStation();
 					if(!s.equals(arrpartenze[0])){
 						run.setRoute(twinRoute);
 						twinRoute.addRun(run);
@@ -332,7 +332,7 @@ public class DBInserter
 		Transaction tx = db.beginTx();
 		try{
 			for(Stop s : Stops.getStops().getAll()){
-				Station staz = s.getStazione();
+				Station staz = s.getStation();
 				if(staz == null)
 					System.out.print("\nNULL STAZION FOR NODE: " + s.getUnderlyingNode().getId());
 			}
@@ -389,8 +389,8 @@ public class DBInserter
 					
 					while (s != null){
 						if(prev != null){	//iterazioni successive
-							double lat = (s.getStazione().getLatitude() + prev.getStazione().getLatitude()) / 2.0;
-							double lon = (s.getStazione().getLongitude() + prev.getStazione().getLongitude()) / 2.0;
+							double lat = (s.getStation().getLatitude() + prev.getStation().getLatitude()) / 2.0;
+							double lon = (s.getStation().getLongitude() + prev.getStation().getLongitude()) / 2.0;
 							int dt = (s.getTime() - prev.getTime()) / 2; 
 							Node n = db.createNode();
 							CheckPoint cp = new CheckPoint(n, lat, lon, dt);
@@ -398,11 +398,11 @@ public class DBInserter
 							cp.setFrom(prev);
 							prevCp.setNextCheckPoint(cp);
 							prevCp = cp;
-							r.addCheckPointImporter(cp);
+							r.importCheckPoint(cp);
 						} 
 						
-						double lat = s.getStazione().getLatitude();
-						double lon = s.getStazione().getLongitude();
+						double lat = s.getStation().getLatitude();
+						double lon = s.getStation().getLongitude();
 						Node n = db.createNode();
 						CheckPoint cp = new CheckPoint(n, lat, lon, 0);
 						cp.setTowards(s);		
@@ -410,7 +410,7 @@ public class DBInserter
 						if(prevCp != null)
 							prevCp.setNextCheckPoint(cp);
 						prevCp = cp;
-						r.addCheckPointImporter(cp);
+						r.importCheckPoint(cp);
 						
 						if(prev == null)	//prima iterazione / first stop
 							r.setFirstCheckPoint(cp);

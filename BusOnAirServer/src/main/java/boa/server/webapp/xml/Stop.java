@@ -6,7 +6,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.index.lucene.ValueContext;
 
-import boa.server.webapp.json.Coordinate;
+import boa.server.webapp.webappjson.Coordinate;
 
 
 public class Stop

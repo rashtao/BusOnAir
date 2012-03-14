@@ -50,7 +50,7 @@ public class ShortestPath9 {
 //            System.out.println( "ShortestPath: NULL");
 //
 //            }
-            Stop firstStop = s1.getFirstStopsFromTime(time);
+            Stop firstStop = s1.getFirstStopFromTime(time);
             int prevTime = time;
             
             while(time < 570){            

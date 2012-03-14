@@ -28,8 +28,8 @@ import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 import boa.server.domain.*;
-import boa.server.webapp.json.RouteStop;
-import boa.server.webapp.json.Routes;
+import boa.server.webapp.webappjson.RouteStop;
+import boa.server.webapp.webappjson.Routes;
 import boa.server.webapp.xml.Stop;
 
 

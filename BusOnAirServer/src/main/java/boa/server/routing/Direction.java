@@ -2,7 +2,7 @@ package boa.server.routing;
 
 import boa.server.domain.Station;
 import boa.server.domain.Stop;
-import boa.server.utils.GeoUtil;
+import boa.server.domain.utils.GeoUtil;
 
 public class Direction {
 	private Stop stop;
@@ -40,7 +40,7 @@ public class Direction {
 	}
 	
 	public double getDistance(){
-		Station s = stop.getStazione();
+		Station s = stop.getStation();
 		return GeoUtil.getDistance2(lat, lon, s.getLatitude(), s.getLongitude());
 	}
 	

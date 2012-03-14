@@ -28,7 +28,7 @@ public class Stop
     	this(s.getId(), s.getStaticTime());
     	setNextInRun(s.getNextInRun() != null ? s.getNextInRun().getUrl() : "");
     	setPrevInRun(s.getPrevInRun() != null ? s.getPrevInRun().getUrl() : "");
-    	setStation(s.getStazione().getUrl());
+    	setStation(s.getStation().getUrl());
     	setRun(s.getRun().getUrl());
     	setUrl(s.getUrl());
     }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package boa.server.domain;
 
 import java.util.ArrayList;
@@ -9,10 +5,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-/**
- *
- * @author rashta
- */
 public class Routes {
     private Index<Node> routesIndex;
 

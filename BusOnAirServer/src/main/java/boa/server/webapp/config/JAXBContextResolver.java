@@ -11,9 +11,9 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 
 
-import boa.server.webapp.json.Coordinate;
-import boa.server.webapp.json.Directions;
-import boa.server.webapp.json.DirectionsList;
+import boa.server.webapp.webappjson.Coordinate;
+import boa.server.webapp.webappjson.Directions;
+import boa.server.webapp.webappjson.DirectionsList;
 
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;

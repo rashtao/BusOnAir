@@ -89,9 +89,9 @@ public class StationsResource
         Collection<Station> stations;
         
         if(range == null)
-        	stations = boa.server.domain.Stations.getStations().nearestStations(lat, lon);
+        	stations = boa.server.domain.Stations.getStations().getNearestStations(lat, lon);
         else
-        	stations = boa.server.domain.Stations.getStations().nearestStations(lat, lon, range);
+        	stations = boa.server.domain.Stations.getStations().getNearestStations(lat, lon, range);
               
 //        if(stations.size() == 0){
 //            return Response.status( 204 ).entity(
@@ -155,7 +155,7 @@ public class StationsResource
         if (time == null)
         	time = new Integer(0);
         
-        boa.server.domain.Stop fs = s.getFirstStopsFromTime(time);
+        boa.server.domain.Stop fs = s.getFirstStopFromTime(time);
         
         if(fs == null)
         	return Response.ok().entity("").build();

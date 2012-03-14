@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import boa.server.domain.*;
-import boa.server.utils.AlphanumComparator;
+import boa.server.domain.utils.AlphanumComparator;
 
 
 

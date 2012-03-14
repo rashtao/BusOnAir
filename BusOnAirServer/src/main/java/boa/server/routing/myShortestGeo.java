@@ -38,10 +38,10 @@ import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.*;
 
 import boa.server.domain.*;
+import boa.server.domain.utils.GeoUtil;
 import boa.server.json.Coordinate;
 import boa.server.json.DirectionRoute;
 import boa.server.json.DirectionWalk;
-import boa.server.utils.GeoUtil;
 
 
 /**
@@ -97,7 +97,7 @@ public class myShortestGeo {
 
 
 	public Stop getShortestPath(Station dest, int fromTime){
-        Stop arrivo = dest.getFirstStopsFromTime(fromTime);
+        Stop arrivo = dest.getFirstStopFromTime(fromTime);
         if(arrivo != null)
             arrivo = cache.get(arrivo);
         
@@ -117,16 +117,16 @@ public class myShortestGeo {
     		Stop arrivo = dir.getStop();
 	        if(arrivo != null){
 	        	outPath = "(WALK: t:" + dir.getWalkTime() + "|arrtime:" + dir.getArrivalTime() + "|distwalk:" + dir.getDistance() + "|numchanges:" + dir.getNumChanges() + ")";
-	            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":RUNID" + arrivo.getRun().getId() + ":TIME" + arrivo.getTime() + ")-->" + outPath;
+	            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStation().getId() + ":RUNID" + arrivo.getRun().getId() + ":TIME" + arrivo.getTime() + ")-->" + outPath;
 	
 	            Stop arr = arrivo;
 	            arr = arr.prevSP;
 	            while(arr.prevSP != null){
 	                
-	                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":RUNID" + (arr.getRun() != null ? arr.getRun().getId() : "NN") + ":TIME" + arr.getTime() + ")-->" + outPath;                
+	                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":RUNID" + (arr.getRun() != null ? arr.getRun().getId() : "NN") + ":TIME" + arr.getTime() + ")-->" + outPath;                
 	                arr = arr.prevSP;
 	            }
-                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":RUNID" + "NN" + ":TIME" + arr.getTime() + ")-->" + outPath;                
+                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":RUNID" + "NN" + ":TIME" + arr.getTime() + ")-->" + outPath;                
 
 	        }
 	        strPath = strPath + "\n\n" + outPath; 
@@ -137,7 +137,7 @@ public class myShortestGeo {
     }
     
 	private void createStartStops() {
-		Collection<Station> startStations = Stations.getStations().nearestStations(lat1, lon1, walkLimit);
+		Collection<Station> startStations = Stations.getStations().getNearestStations(lat1, lon1, walkLimit);
 		
 //		System.out.print("\nLinked start stations: " + startStations.size());
 		for(Station s : startStations){
@@ -146,7 +146,7 @@ public class myShortestGeo {
 //			System.out.println("\n");
 			double distance = GeoUtil.getDistance2(lat1, lon1, s.getLatitude(), s.getLongitude());
 			int walktime = (int) (distance / 5.0 * 60);
-			Stop startStop = s.getFirstStopsFromTime(startTime + walktime);
+			Stop startStop = s.getFirstStopFromTime(startTime + walktime);
 			if(startStop != null){
 				startStop = cache.get(startStop);
 	//			System.out.print("\nstartStop: " + startStop);
@@ -163,7 +163,7 @@ public class myShortestGeo {
 	}
     
     private void linkArrivalPoint() {
-		Collection<Station> arrivalStations = Stations.getStations().nearestStations(lat2, lon2, walkLimit);
+		Collection<Station> arrivalStations = Stations.getStations().getNearestStations(lat2, lon2, walkLimit);
 
 	//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
 			for(Station s : arrivalStations){
@@ -241,7 +241,7 @@ public class myShortestGeo {
         
         for(Stop s : startQueue){        	
 			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
-			Coordinate coord2 = new boa.server.json.Coordinate(s.getStazione().getLatitude(), s.getStazione().getLongitude());
+			Coordinate coord2 = new boa.server.json.Coordinate(s.getStation().getLatitude(), s.getStation().getLongitude());
 			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
 			
 			s.departureTime = s.getTime();
@@ -352,7 +352,7 @@ public class myShortestGeo {
     	boa.server.json.Direction output = new boa.server.json.Direction();
     	 
  		Stop arrivo = dir.getStop();
- 		Station s_arrivo = arrivo.getStazione();
+ 		Station s_arrivo = arrivo.getStation();
 
 	    output.getWalks().addFirst(new DirectionWalk(
 	    		false, 
@@ -372,7 +372,7 @@ public class myShortestGeo {
     		tmp = tmp.prevSP;
     	}
     	
-    	Station depStat = tmp.getStazione();
+    	Station depStat = tmp.getStation();
     	
     	
     	
@@ -392,17 +392,17 @@ public class myShortestGeo {
 	    	
 	    	if(prevtmp != null){
 	    		output.getRoutes().addFirst(new DirectionRoute(tmp, arrivo));
-	    		if(!depStat.equals(tmp.getStazione())){		// è un cambio
+	    		if(!depStat.equals(tmp.getStation())){		// è un cambio
 			    	output.getWalks().addFirst(new DirectionWalk(
 			    			true, 
 			    			tmp.getTime() - prevtmp.getTime(), 
 			    			0, 
-			    			new boa.server.json.Coordinate(tmp.getStazione().getLatitude(), tmp.getStazione().getLongitude()),
-			    			new boa.server.json.Coordinate(tmp.getStazione().getLatitude(), tmp.getStazione().getLongitude()),
-			    			tmp.getStazione().getId()));
+			    			new boa.server.json.Coordinate(tmp.getStation().getLatitude(), tmp.getStation().getLongitude()),
+			    			new boa.server.json.Coordinate(tmp.getStation().getLatitude(), tmp.getStation().getLongitude()),
+			    			tmp.getStation().getId()));
 	    		} else {		// è la prima walk
 	    			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
-	    			Coordinate coord2 = new boa.server.json.Coordinate(prevtmp.getStazione().getLatitude(), prevtmp.getStazione().getLongitude());
+	    			Coordinate coord2 = new boa.server.json.Coordinate(prevtmp.getStation().getLatitude(), prevtmp.getStation().getLongitude());
 	    			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
 	    			int walktime = (int) (dist / 5.0 * 60);
 	    			
@@ -412,7 +412,7 @@ public class myShortestGeo {
 		    	    		(int) (dist * 1000.0), 
 		    	    		coord1, 
 		    	    		coord2,
-		    	    		prevtmp.getStazione().getId()));
+		    	    		prevtmp.getStation().getId()));
 	    			output.setDepartureTime(prevtmp.getTime() - walktime);
 	    			
 		    	    prevtmp = null;

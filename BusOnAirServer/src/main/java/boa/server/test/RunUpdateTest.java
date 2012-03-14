@@ -31,7 +31,7 @@ public class RunUpdateTest {
 		CheckPoint cp6 = cp5.getNextCheckPoint();
 		Stop s = cp.getTowards();
 
-		Station staz = s.getStazione();
+		Station staz = s.getStation();
 
 //		System.out.print("CheckPoint0:\n" + cp + "\n\n\n");
 //		System.out.print("CheckPoint1:\n" + cp2 + "\n\n\n");

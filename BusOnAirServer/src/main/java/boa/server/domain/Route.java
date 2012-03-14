@@ -78,11 +78,11 @@ public class Route {
     }    
 	
     public void addRun(Run r){
-        runIndex.add(r.getUnderlyingNode(), "order", runCount++);
+        runIndex.add(r.getUnderlyingNode(), "id", runCount++);
     }
     
-    public Run getRun(int order){
-        IndexHits<Node> result = runIndex.get("order", order);
+    public Run getRun(int id){
+        IndexHits<Node> result = runIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
         if(n == null){
@@ -126,7 +126,7 @@ public class Route {
 
     public ArrayList<Run> getAllRuns() {
         ArrayList<Run> output = new ArrayList<Run>();
-        IndexHits<Node> result = runIndex.query("order", "*");
+        IndexHits<Node> result = runIndex.query("id", "*");
         for(Node n : result){
             output.add(new Run(n));           
         }        
@@ -142,7 +142,7 @@ public class Route {
 		Stop s = fr.getFirstStop();
 		
 		while(s != null){
-			result.add(s.getStazione());
+			result.add(s.getStation());
 			s = s.getNextInRun();
 		}
 		

@@ -16,12 +16,12 @@ public class CheckPoints
     {
     }
 
-    public void add( CheckPoint cp, int runId )
+    public void add( CheckPoint cp)
     {
     	checkpointlist.add(cp.getUrl());
     }
 
-    public void add( boa.server.domain.CheckPoint cp, int runId )
+    public void add( boa.server.domain.CheckPoint cp)
     {
     	checkpointlist.add(cp.getUrl());
     }

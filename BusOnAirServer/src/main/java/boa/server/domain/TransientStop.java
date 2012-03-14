@@ -1,7 +1,5 @@
 package boa.server.domain;
 
-import org.neo4j.graphdb.Node;
-
 public class TransientStop extends Stop {
 	private static int count = 0;
 	private int id;
@@ -42,7 +40,7 @@ public class TransientStop extends Stop {
     }
 	
 	@Override	
-    public Station getStazione(){
+    public Station getStation(){
         return stazione;
     }
 

@@ -59,6 +59,12 @@ public enum NodeTypes {
         public String toString() {
             return "Routes";
         }    	
+    },
+        
+    CHECKPOINT{
+        public String toString() {
+            return "CheckPoint";
+        }    	
     }
         
     

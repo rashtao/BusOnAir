@@ -1,24 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package boa.server.domain;
 
-import java.io.File;
-import java.io.IOException;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.AbstractGraphDatabase;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.kernel.EmbeddedReadOnlyGraphDatabase;
-import org.neo4j.kernel.impl.util.FileUtils;
 import org.neo4j.server.database.Database;
 
-/**
- *
- * @author rashta
- */
 public class DbConnection {
-	private static String MODE;
 	private static final String dbpath = "/tmp/neo4j/busonairserver/data/graph.db";  
 //	private static final String dbpath = "/home/rashta/neo4j/busonairserver/data/graph.db";  
     private static DbConnection instance = null;

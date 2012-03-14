@@ -158,7 +158,7 @@ public class RunsResource{
     	
     	boa.server.json.CheckPoints cps = new boa.server.json.CheckPoints();
         for(CheckPoint cp : run.getAllCheckPoints())
-        	cps.add(cp, run.getId());
+        	cps.add(cp);
         	        	   
         return Response.ok().entity(cps).build();
     }

@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.neo4j.gis.spatial.GeometryEncoder;
 import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -20,11 +19,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-import boa.server.utils.*;
-
-
-
-
+import boa.server.domain.utils.*;
 
 public class Run {
     private static final String ID = "id";
@@ -35,7 +30,6 @@ public class Run {
         
     private LayerNodeIndex checkPointsSpatialIndex;
     private Index<Node> cpIndex;
-    //private static final int DELAYTH = 1;
     
     private final Node underlyingNode;
     
@@ -50,21 +44,6 @@ public class Run {
         setType();
     	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
     }   
-
-    
-    
-//    public Run(Node node, int id, int order){
-//        this(node, id);
-//        setOrder(order);
-//    }   
-
-//    public Integer getOrder() {
-//    	return (Integer) underlyingNode.getProperty(ORDER);	
-//	}
-
-//    public void setOrder(int order) {
-//    	underlyingNode.setProperty(Run.ORDER, order);		
-//	}
 
 	public void createCheckPointsSpatialIndex() {
 		if(checkPointsSpatialIndex == null)
@@ -179,10 +158,10 @@ public class Run {
         
         while(s2 != null){
             double dist = GeoUtil.getDistance2(
-                    s1.getStazione().getLatitude(), 
-                    s1.getStazione().getLongitude(),
-                    s2.getStazione().getLatitude(), 
-                    s2.getStazione().getLongitude());
+                    s1.getStation().getLatitude(), 
+                    s1.getStation().getLongitude(),
+                    s2.getStation().getLatitude(), 
+                    s2.getStation().getLongitude());
             length += dist;
             s1 = s2;
             s2 = s1.getNextInRun();        
@@ -191,7 +170,7 @@ public class Run {
         return length;
     }
     
-    public int getRitardo(){
+    public int getDelay(){
     	Stop ls = getLastStop(); 
     	Stop ns = ls.getNextInRun();
 
@@ -255,6 +234,7 @@ public class Run {
     
     public void restore(){
     	//setta lastvisitedcheckpoit all'ultimo checkpoint della run e reimposta i tempi di tutti gli stop con i tempi originali (static time)
+    	//setta lastUpdateTime = 0
     	
     	CheckPoint cp = getFirstCheckPoint();
     	
@@ -286,7 +266,6 @@ public class Run {
     	//propaga il ritardo da lastCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - lastCP.getTime();
-//    	System.out.print("\nRit: " + ritardo);
     	
     	if(lastCP.getNextCheckPoint() == null){		// fine RUN
     		restore();    		
@@ -297,15 +276,13 @@ public class Run {
 		    	setLastUpdateTime(time);
 		    	setLatitude(lastCP.getLatitude());
 		    	setLongitude(lastCP.getLongitude());
-		    	
-	//	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
-		    		Stop nextStop = lastCP.getTowards();
-			    	while(nextStop != null){
-			    		nextStop.setTime(nextStop.getTime() + ritardo);
-			    		updateStop(nextStop);
-			    		nextStop = nextStop.getNextInRun();
-			    	}
-	//	    	}
+	    	
+	    		Stop nextStop = lastCP.getTowards();
+		    	while(nextStop != null){
+		    		nextStop.setTime(nextStop.getTime() + ritardo);
+		    		updateStop(nextStop);
+		    		nextStop = nextStop.getNextInRun();
+		    	}
 				tx.success();
 			}finally{
 				tx.finish();			
@@ -325,20 +302,18 @@ public class Run {
 	    		nis = pis;
 	    		pis = pis.getPrevInStation();
 	    	}
-	    	spostaStop(pis, s, nis);
+	    	moveStop(pis, s, nis);
     	} else if(nis != null && nis.getTime() < s.getTime()){
 	    	while(nis != null && nis.getTime() < s.getTime()){
 	    		pis = nis;
 	    		nis = nis.getNextInStation();
 	    	}
-	    	spostaStop(pis, s, nis);    	
+	    	moveStop(pis, s, nis);    	
     	}
     }
     
-    private void spostaStop(Stop prev, Stop s, Stop next){
+    private void moveStop(Stop prev, Stop s, Stop next){
     	// sposta s tra prev e next
-    	
-//    	System.out.print("\n\n******\nspostaStop(" + prev + s + next + ")\n******\n");
     	
     	if(prev == null && s.getNextInStation() != null && s.getNextInStation().equals(next))
     		return;
@@ -347,7 +322,6 @@ public class Run {
     			s.getNextInStation() != null && s.getNextInStation().equals(next))
     		return;	
     	
-    		
     	Stop pis = s.getPrevInStation();
     	Stop nis = s.getNextInStation();
 		
@@ -359,7 +333,7 @@ public class Run {
 		}
     }
 
-	public void addCheckPointImporter(CheckPoint cp) {
+	public void importCheckPoint(CheckPoint cp) {
         cpIndex.add(cp.getUnderlyingNode(), "id", cp.getId());
     }
 	
@@ -392,11 +366,9 @@ public class Run {
 
 			checkPointsSpatialIndex.add(newCP.getUnderlyingNode(), "", "" );
 			
-			System.out.print("\n\n********\n" + newCP + "\n**********\n");
+//			System.out.print("\n\n********\n" + newCP + "\n**********\n");
 			
 			setLastCheckPoint(newCP);
-			
-			
 			tx.success();
 
 		}finally{
@@ -456,17 +428,13 @@ public class Run {
 		d = (a*a-b*b+c*c)/(2.0*c);
 		
 		percentualeAvanzamento = d / c;
-		
-		System.out.print("\npercentualeAvanzamento: " + percentualeAvanzamento);
-		
 		dt = (1.0 - percentualeAvanzamento)*(cp2.getTime() - cp1.getTime());	// tempo restante all'arrivo al prossimo cp
-
-		System.out.print("\ndt: " + dt);
+		
+//		System.out.print("\npercentualeAvanzamento: " + percentualeAvanzamento);
+//		System.out.print("\ndt: " + dt);
 				
 		checkPointPassExpected(cp2, (int) Math.round(time + dt));
-
 	}	
-
 
     private void calculateAndSetLastCP() {
     	CheckPoint nearestCP = getNearestCheckPoint(getLatitude(), getLongitude());
@@ -507,19 +475,15 @@ public class Run {
     	//propaga il ritardo da nextCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - nextCP.getTime();
-//    	System.out.print("\nRit: " + ritardo);
     	
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{	
-//	    	setLastCheckPoint(lastCP);
-//	    	if(ritardo > DELAYTH || ritardo < -DELAYTH){
-	    		Stop nextStop = nextCP.getTowards();
-		    	while(nextStop != null){
-		    		nextStop.setTime(nextStop.getTime() + ritardo);
-		    		updateStop(nextStop);
-		    		nextStop = nextStop.getNextInRun();
-		    	}
-//	    	}
+    		Stop nextStop = nextCP.getTowards();
+	    	while(nextStop != null){
+	    		nextStop.setTime(nextStop.getTime() + ritardo);
+	    		updateStop(nextStop);
+	    		nextStop = nextStop.getNextInRun();
+	    	}
 			tx.success();
 		}finally{
 			tx.finish();			
@@ -532,6 +496,7 @@ public class Run {
     	
     public Collection<CheckPoint> getNearestCheckPoints( double lat1, double lon1, int range){    
     	//range in meters
+
     	double kmrange = (double) range / 1000.0;
     	    	
     	Collection<CheckPoint> result = new ArrayList<CheckPoint>(); 
@@ -555,53 +520,50 @@ public class Run {
         
         if(entry != null && entry.getKey() != null){
         	CheckPoint out = new CheckPoint(entry.getKey());
-//            System.out.print("\n\n-----Dist: " + entry.getValue() + "\n" + out);          
             return out;
         } else {
             return null;
         }
     }    
 
-    public Map<Node, Double> queryWithinDistance( Double lat, Double lon){
+    private Map<Node, Double> queryWithinDistance( Double lat, Double lon){
     	return queryWithinDistance(lat, lon, 10000.0);
     }
 	    
-	public Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance)
-	    {       
-    		if(checkPointsSpatialIndex == null)
-    			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
+	private Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance){       
+		if(checkPointsSpatialIndex == null)
+			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
 
-	        Map<String, Object> params = new HashMap<String, Object>();
-	        params.put( LayerNodeIndex.DISTANCE_IN_KM_PARAMETER, distance);
-	        params.put( LayerNodeIndex.POINT_PARAMETER, new Double[] { lat, lon } );              
-	        Map<Node, Double> results = new HashMap<Node, Double>();
-	        for ( Node spatialRecord : checkPointsSpatialIndex.query( LayerNodeIndex.WITHIN_DISTANCE_QUERY, params ) )
-	          results.put( DbConnection.getDb().getNodeById( (Long) spatialRecord.getProperty( "id" )), (Double) spatialRecord.getProperty( "distanceInKm" ) );               
-	        return sortByValue( results );
-	    }
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put( LayerNodeIndex.DISTANCE_IN_KM_PARAMETER, distance);
+        params.put( LayerNodeIndex.POINT_PARAMETER, new Double[] { lat, lon } );              
+        Map<Node, Double> results = new HashMap<Node, Double>();
+        for ( Node spatialRecord : checkPointsSpatialIndex.query( LayerNodeIndex.WITHIN_DISTANCE_QUERY, params ) )
+          results.put( DbConnection.getDb().getNodeById( (Long) spatialRecord.getProperty( "id" )), (Double) spatialRecord.getProperty( "distanceInKm" ) );               
+        return sortByValue( results );    
+	}
 	
-	    @SuppressWarnings( "unchecked" )
-	    static Map<Node, Double> sortByValue( Map<Node, Double> map )
-	    {
-	        List<Map.Entry<Node, Double>> list = new LinkedList<Map.Entry<Node, Double>>( map.entrySet() );
-	        Collections.sort( list, new Comparator()
-	        {
-	            public int compare( Object o1, Object o2 )
-	            {
-	                return ( (Comparable) ( (Map.Entry) ( o1 ) ).getValue() ).compareTo( ( (Map.Entry) ( o2 ) ).getValue() );
-	            }
-	        } );
-	        Map<Node, Double> result = new LinkedHashMap();
-	        for ( Iterator it = list.iterator(); it.hasNext(); )
-	        {
-	            Map.Entry entry = (Map.Entry) it.next();
-	            result.put( (Node) entry.getKey(), (Double) entry.getValue() );
-	        }
-	        return result;
-	    }        
-	    
+    @SuppressWarnings( "unchecked" )
+    static Map<Node, Double> sortByValue( Map<Node, Double> map )
+    {
+        List<Map.Entry<Node, Double>> list = new LinkedList<Map.Entry<Node, Double>>( map.entrySet() );
+        Collections.sort( list, new Comparator()
+        {
+            public int compare( Object o1, Object o2 )
+            {
+                return ( (Comparable) ( (Map.Entry) ( o1 ) ).getValue() ).compareTo( ( (Map.Entry) ( o2 ) ).getValue() );
+            }
+        } );
+        Map<Node, Double> result = new LinkedHashMap();
+        for ( Iterator it = list.iterator(); it.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) it.next();
+            result.put( (Node) entry.getKey(), (Double) entry.getValue() );
+        }
+        return result;
+    }        	    
 
-	    public String getUrl(){
-	    	return "/runs/" + getId();
-	    }
+    public String getUrl(){
+    	return "/runs/" + getId();
+    }
 }

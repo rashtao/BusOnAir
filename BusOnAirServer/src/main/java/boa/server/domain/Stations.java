@@ -1,21 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package boa.server.domain;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-/**
- *
- * @author rashta
- */
 public class Stations {
     private LayerNodeIndex stationSpatialIndex;
     private Index<Node> stationIndex;
@@ -59,12 +50,13 @@ public class Stations {
     }
 
     
-    public Collection<Station> nearestStations( double lat1, double lon1){
-		return nearestStations(lat1, lon1, 100000);
+    public Collection<Station> getNearestStations( double lat1, double lon1){
+		return getNearestStations(lat1, lon1, 100000);
     }
     	
-    public Collection<Station> nearestStations( double lat1, double lon1, int range){    
+    public Collection<Station> getNearestStations( double lat1, double lon1, int range){    
     	//range in meters
+    	
     	double kmrange = (double) range / 1000.0;
     	    	
     	Collection<Station> result = new ArrayList<Station>(); 
@@ -82,24 +74,23 @@ public class Stations {
 		return result;
     }
     
-    public Station nearestStation( double lat1, double lon1){
+    public Station getNearestStation( double lat1, double lon1){
         Map<Node, Double> hits = queryWithinDistance( lat1, lon1 );
         Map.Entry<Node, Double> entry = hits.entrySet().iterator().next();
         
         if(entry != null && entry.getKey() != null){
             Station out = new Station(entry.getKey());
-//            System.out.print("\n\n-----Dist: " + entry.getValue() + "\n" + out);          
             return out;
         } else {
             return null;
         }
     }    
 
-    public Map<Node, Double> queryWithinDistance( Double lat, Double lon){
+    private Map<Node, Double> queryWithinDistance( Double lat, Double lon){
     	return queryWithinDistance(lat, lon, 1000.0);
     }
     
-public Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance)
+    private Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance)
     {        
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( LayerNodeIndex.DISTANCE_IN_KM_PARAMETER, distance);
@@ -111,8 +102,7 @@ public Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double dis
     }
 
     @SuppressWarnings( "unchecked" )
-    static Map<Node, Double> sortByValue( Map<Node, Double> map )
-    {
+    static Map<Node, Double> sortByValue( Map<Node, Double> map ){
         List<Map.Entry<Node, Double>> list = new LinkedList<Map.Entry<Node, Double>>( map.entrySet() );
         Collections.sort( list, new Comparator()
         {

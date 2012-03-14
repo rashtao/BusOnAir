@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import boa.server.domain.*;
-import boa.server.utils.GeoUtil;
+import boa.server.domain.utils.GeoUtil;
 
 
 
@@ -32,7 +32,7 @@ Station:
 		double lat = 42.352;
 		double lon = 13.349;
 		Run r = Runs.getRuns().getRunById(597);
-		Collection<Station> stations = Stations.getStations().nearestStations(lat, lon, range);
+		Collection<Station> stations = Stations.getStations().getNearestStations(lat, lon, range);
 		Collection<CheckPoint> cps = r.getNearestCheckPoints(lat, lon, range);
 		
 

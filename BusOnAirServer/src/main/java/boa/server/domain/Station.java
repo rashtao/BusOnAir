@@ -4,7 +4,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -110,15 +109,6 @@ public class Station {
             underlyingNode.setProperty(Station.IS_TERMINAL, isTerminal);
     }
 
-//    public void setFirstStop(Stop first){
-//    underlyingNode.createRelationshipTo(first.getUnderlyingNode(), RelTypes.STATION_FIRSTSTOP);		
-//    }
-
-//    public Stop getFirstStop(){
-//    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STATION_FIRSTSTOP, Direction.OUTGOING);
-//    return new Stop(rel.getEndNode());		
-//    }
-
     public void addStop(Stop s){
         stopIndex.add(s.getUnderlyingNode(), "time", new ValueContext(s.getTime()).indexNumeric());
     }
@@ -133,8 +123,7 @@ public class Station {
         return stops;
     }
 
-    public Stop getFirstStopsFromTime(int startTime){
-        List<Stop> stops = new ArrayList<Stop>();
+    public Stop getFirstStopFromTime(int startTime){
         QueryContext query = QueryContext.numericRange("time", startTime, 1440);
         query.sortNumeric("time", false);
         

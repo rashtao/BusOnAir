@@ -37,6 +37,6 @@ public abstract class StopAbstract{
 		underlyingNode.setProperty(StopAbstract.ID, id);		
 	}
 	
-	public abstract Station getStazione();
+	public abstract Station getStation();
 		
 }

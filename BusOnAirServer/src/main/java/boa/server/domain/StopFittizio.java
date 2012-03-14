@@ -21,7 +21,7 @@ public class StopFittizio extends StopAbstract {
 		underlyingNode.setProperty(StopFittizio.TYPE, "StopFittizio");		
 	}
 
-	public Station getStazione(){
+	public Station getStation(){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FITTIZIO_STAZIONE, Direction.OUTGOING);
         return new Station(rel.getEndNode());				
 	}

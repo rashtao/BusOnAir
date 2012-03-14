@@ -1,6 +1,6 @@
 package boa.server.importer;
 
-import boa.server.utils.*;
+import boa.server.domain.utils.*;
 
 public class StopSql {
 

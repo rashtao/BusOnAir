@@ -4,11 +4,10 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import boa.server.utils.Coordinate;
+import boa.server.domain.utils.Coordinate;
 
 
 public class CheckPoint {
-    private static final String ID = "id";
     private static final String TYPE = "type";
     private static final String DT = "dt";
     private static final String LATITUDE = "lat";
@@ -22,7 +21,6 @@ public class CheckPoint {
 
 	public CheckPoint(Node node, double lat, double lon, int dt) {
 		underlyingNode = node;
-//        setId(id);
         setLatitude(lat);
         setLongitude(lon);
         setDt(dt);
@@ -66,14 +64,7 @@ public class CheckPoint {
 	}
     
 	public Integer getDt(){
-//		System.out.print("\n-----------\nCheckPoint.getDt()\n" + underlyingNode);
-//		for(Object obj : underlyingNode.getPropertyKeys())
-//			System.out.print("\n" + obj);
-//			
-//		System.out.print("\n-----------\n");
-//		System.out.flush();
 		return (Integer) underlyingNode.getProperty(CheckPoint.DT);
-//		return 0;
     }
 
     public CheckPoint getNextCheckPoint(){
@@ -93,7 +84,6 @@ public class CheckPoint {
     		underlyingNode.createRelationshipTo(next.getUnderlyingNode(), RelTypes.NEXTCHECKPOINT);
     }
 	
-
     public Stop getFrom(){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.CHECKPOINTFROM, Direction.OUTGOING);
         if(rel == null)
@@ -147,8 +137,7 @@ public class CheckPoint {
 	
 	public Coordinate getCoordinate(){
 		return new Coordinate(getLatitude(), getLongitude());
-	}
-    
+	}    
 	
 	public String getUrl(){
 		return "/runs/" + getFrom().getRun().getId() + "/checkpoints/" + getId();

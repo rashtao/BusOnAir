@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "run" )
 public class Run
 {
-    private int id;
+    private long id;
     private String route;
     private String firstStop;
     private String firstCheckPoint;    
@@ -15,7 +15,7 @@ public class Run
     {
     }
 
-    private Run(int id){
+    private Run(long id){
         this.id = id;
     }
 
@@ -29,11 +29,11 @@ public class Run
     	
     }
     
-    public int getId(){
+    public long getId(){
     	return id;
     }
     
-    public void setId(int id){
+    public void setId(long id){
     	this.id = id;
     }
 

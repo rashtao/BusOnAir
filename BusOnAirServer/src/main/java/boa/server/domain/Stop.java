@@ -3,15 +3,13 @@ package boa.server.domain;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 public class Stop extends StopAbstract{
     private static final String TYPE = "type";
     private static final String TIME = "time";
     private static final String STATICTIME = "staticTime";
-    
-    
-    //ATTRIBUTI TRANSIENT
+        
+    // TRANSIENT ATTRIBUTES 
     public boolean visited = false;
     public Stop nextInRun = null;
     public Stop nextInStation = null;
@@ -63,8 +61,8 @@ public class Stop extends StopAbstract{
 	        underlyingNode.setProperty(Stop.STATICTIME, staticTime);		
 	}
 
-    public Station getStazione(){
-            return getStopFittizio().getStazione();
+    public Station getStation(){
+            return getStopFittizio().getStation();
     }
 
     public StopAbstract getStopFittizio(){
@@ -74,7 +72,7 @@ public class Stop extends StopAbstract{
 
     public void setStopFittizio(StopFittizio sf){
             underlyingNode.createRelationshipTo(sf.getUnderlyingNode(), RelTypes.FITTIZIO);		
-            getStazione().addStop(this);
+            getStation().addStop(this);
     }
 
     public Run getRun(){
@@ -157,10 +155,6 @@ public class Stop extends StopAbstract{
 
     @Override
 	public String toString(){
-//		return ("Stop: " +
-//				"\n\tidNode: " + getUnderlyingNode().getId() + 
-//				"\n\tid: " + getId() + 
-//				"\n\ttime: " + getTime());	
     	return ("(STOPID" + getId() + ":NODEID" + getUnderlyingNode().getId() + ":TIME" + getTime()+ ":STATICTIME" + getStaticTime() + ")");
 	}
 
@@ -170,7 +164,6 @@ public class Stop extends StopAbstract{
     }
 
     private void setRun(int idRun, String line) {
-//    	System.out.print("\nsetRun(" + idRun + ", " + line + ")");
         Route route = Routes.getRoutes().getRouteByLine(line);
         if(route == null){
             route = new Route(DbConnection.getDb().createNode(), line);
@@ -178,7 +171,7 @@ public class Stop extends StopAbstract{
         Routes.getRoutes().addRoute(route);
         
         Run run = Runs.getRuns().getRunById(idRun);
-//        System.out.print("\nRUN: " + run);
+
         if(run == null){
             run = new Run(DbConnection.getDb().createNode(), idRun);
         }
@@ -188,15 +181,6 @@ public class Stop extends StopAbstract{
         setRun(run);
     }
     
-//    public CheckPoint getCheckPoint(){
-//        Relationship rel = underlyingNode.getSingleRelationship(RelTypes., Direction.OUTGOING);
-//        if(rel == null)
-//            return null;
-//        else
-//            return new Stop(rel.getEndNode());								
-//    	
-//    }
-
     public String getUrl(){
     	return "/stops/" + getId();
     }

@@ -30,16 +30,16 @@ import boa.server.domain.Station;
 import boa.server.domain.Stations;
 import boa.server.domain.Stop;
 import boa.server.domain.Stops;
+import boa.server.domain.utils.GeoUtil;
 import boa.server.json.DirectionRoute;
 import boa.server.json.DirectionWalk;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
 import boa.server.routing.myShortestGeo;
-import boa.server.utils.GeoUtil;
-import boa.server.webapp.json.Directions;
-import boa.server.webapp.json.DirectionsList;
-import boa.server.webapp.json.DirectionsRoute;
-import boa.server.webapp.json.DirectionsWalk;
+import boa.server.webapp.webappjson.Directions;
+import boa.server.webapp.webappjson.DirectionsList;
+import boa.server.webapp.webappjson.DirectionsRoute;
+import boa.server.webapp.webappjson.DirectionsWalk;
 
 @Path( "/directions/getdirections" )
 public class DirectionsResource

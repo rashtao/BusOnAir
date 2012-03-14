@@ -1,11 +1,6 @@
 package boa.server.json;
 
-
-
 import javax.xml.bind.annotation.XmlRootElement;
-
-import boa.server.webapp.json.Coordinate;
-
 
 
 @XmlRootElement( name = "station" )

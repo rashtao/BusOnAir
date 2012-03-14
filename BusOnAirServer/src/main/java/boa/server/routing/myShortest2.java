@@ -34,7 +34,7 @@ public class myShortest2 {
     }
     
     public Stop getShortestPath(){
-        Stop arrivo = dest.getFirstStopsFromTime(source.getTime());
+        Stop arrivo = dest.getFirstStopFromTime(source.getTime());
         if(arrivo != null)
             arrivo = cache.get(arrivo);
         
@@ -69,7 +69,7 @@ public class myShortest2 {
                 source.nextInStation = null;
             }
             
-            if(s.getStazione().equals(dest)){
+            if(s.getStation().equals(dest)){
                 nir = null;
                 nis = null;                
             }
@@ -146,12 +146,12 @@ public class myShortest2 {
         Stop arrivo = getShortestPath();
         String outPath = "";    
         if(arrivo != null){
-            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":TIME" + arrivo.getTime() + ")";
+            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStation().getId() + ":TIME" + arrivo.getTime() + ")";
 
             Stop arr = arrivo;
             while(!arr.equals(source)){
                 arr = arr.prevSP;
-                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
+                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
             }
         }
         return outPath;
@@ -167,7 +167,7 @@ public class myShortest2 {
             Stop currentStop = cache.get(tp.currentNode());         
             if(currentStop.prevInStation != null && currentStop.prevInStation.equals(source)){  //esclude l'attesa nella stazione di partenza!
                 return true;
-            }else if(currentStop.getStazione().equals(dest)){
+            }else if(currentStop.getStation().equals(dest)){
                 return true;
             }else if((currentStop.getTime() > stopTime))
                 return true;    
