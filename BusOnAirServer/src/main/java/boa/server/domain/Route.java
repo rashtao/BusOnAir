@@ -34,13 +34,7 @@ public class Route {
     public void setId(int id){
         underlyingNode.setProperty(Route.ID, id);
     }
-    
-    public void clearIndex(){
-    	for(Run r : getAllRuns()){
-    		runIndex.remove(r.getUnderlyingNode());
-    	}    	
-    }
-    
+        
 	public void setType() {
             underlyingNode.setProperty(Route.TYPE, "Route");		
 	}

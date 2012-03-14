@@ -61,7 +61,7 @@ public class Run {
         return (Integer) underlyingNode.getProperty(LASTUPDATETIME);
     }
 
-    public void setLastUpdateTime(int time){
+    protected void setLastUpdateTime(int time){
         underlyingNode.setProperty(Run.LASTUPDATETIME, time);
     }
     
@@ -73,15 +73,15 @@ public class Run {
 	        return (Double) underlyingNode.getProperty(LONGITUDE);
 	}    
 	
-    public void setLatitude(double lat){
+    protected void setLatitude(double lat){
         underlyingNode.setProperty(Run.LATITUDE, lat);
 	}
 	
-	public void setLongitude(double lng){
+    protected void setLongitude(double lng){
 	        underlyingNode.setProperty(Run.LONGITUDE, lng);
 	}	
 
-    public void setLastCheckPoint(CheckPoint last){
+    protected void setLastCheckPoint(CheckPoint last){
     	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
     	if(rel != null)
     		rel.delete();

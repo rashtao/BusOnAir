@@ -367,7 +367,8 @@ public class DBInserter
 	public void setLastVisitedCheckPoints() {
 		Transaction tx = db.beginTx();
 		try{		
-			for(Run r : Runs.getRuns().getAll()){
+			for(Run run : Runs.getRuns().getAll()){
+				RunImporter r = new RunImporter(run);
 				CheckPoint cp = r.getFirstCheckPoint();
 				while(cp.getNextCheckPoint() != null)
 					cp = cp.getNextCheckPoint();

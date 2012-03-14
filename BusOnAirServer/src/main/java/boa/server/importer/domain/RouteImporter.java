@@ -28,5 +28,10 @@ public class RouteImporter extends Route {
         runIndex.add(r.getUnderlyingNode(), "id", runCount++);
     }
 
-	
+    public void clearIndex(){
+    	for(Run r : getAllRuns()){
+    		runIndex.remove(r.getUnderlyingNode());
+    	}    	
+    }
+
 }
