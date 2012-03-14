@@ -35,6 +35,10 @@ import org.opengis.util.InternationalString;
 
 import boa.server.domain.*;
 import boa.server.domain.utils.*;
+import boa.server.importer.domain.RouteImporter;
+import boa.server.importer.domain.RunImporter;
+import boa.server.importer.domain.StationImporter;
+import boa.server.importer.domain.StopImporter;
 
 
 import java.util.ArrayList;
@@ -122,7 +126,7 @@ public class DBInserter
 			  //Stations stations = new Stations(db.createNode(), 0);
 		      for (StationSql stationSql : sqlStations){
 		    	  //System.out.println( "\n\n\nAdding: " + stationSql);
-		    	  Station station = new Station(
+		    	  StationImporter station = new StationImporter(
 		    			  db.createNode(), 
 		    			  stationSql.Id_Station, 
 		    			  stationSql.name,
@@ -172,7 +176,7 @@ public class DBInserter
                 //System.out.println( "\n\n\nAdding: " + inStop);
 //                System.out.print("\nRUNID: " + (int) runCodeIndex.get(inStop.runcode));
 
-                Stop outStop = new Stop(
+                StopImporter outStop = new StopImporter(
 	                db.createNode(), 
 	                Integer.parseInt(inStop.Id_Stop), 
 	                inStop.getMinutesFromMidn(),
@@ -244,7 +248,8 @@ public class DBInserter
 		try{
 		
 		checkEmptyRoutes();
-		for(Route route : Routes.getRoutes().getAll()){
+		for(Route rt : Routes.getRoutes().getAll()){
+			RouteImporter route = new RouteImporter(rt);
 			HashSet<Station> partenze = new HashSet<Station>(); 
 			HashSet<Station> arrivi = new HashSet<Station>(); 
 			
@@ -268,7 +273,7 @@ public class DBInserter
 			
 			if(partenze.size() > 1 && arrivi.size() > 1){	// Route A/R
 				System.out.print("\nA/R Route founded... " + route.getLine() + ": " + route.getId() + ", ");
-				Route twinRoute = new Route(db.createNode(), route.getLine());
+				RouteImporter twinRoute = new RouteImporter(db.createNode(), route.getLine());
 				Routes.getRoutes().addRoute(twinRoute);
 				System.out.print(twinRoute.getId());
 				
@@ -378,7 +383,8 @@ public class DBInserter
 
 	public void linkCheckPoints() {
 		
-			for(Run r : Runs.getRuns().getAll()){
+			for(Run run : Runs.getRuns().getAll()){
+				RunImporter r = new RunImporter(run);
 				Transaction tx = db.beginTx();
 				try{		
 						
@@ -426,15 +432,16 @@ public class DBInserter
 	}
 
 	public void createCheckPointsSpatialIndices() {
-		Transaction tx = db.beginTx();
-		try{
 			for(Run r : Runs.getRuns().getAll()){
-				r.createCheckPointsSpatialIndex();
+				RunImporter run = new RunImporter(r);
+				Transaction tx = db.beginTx();
+				try{
+					run.createCheckPointsSpatialIndex();
+					tx.success();
+				}finally{
+					tx.finish();
+				}			
 			}
-			tx.success();
-		}finally{
-			tx.finish();
-		}			
 	}
 
 	public void restoreAllRuns() {

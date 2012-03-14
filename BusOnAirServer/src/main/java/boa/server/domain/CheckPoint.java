@@ -8,12 +8,12 @@ import boa.server.domain.utils.Coordinate;
 
 
 public class CheckPoint {
-    private static final String TYPE = "type";
-    private static final String DT = "dt";
-    private static final String LATITUDE = "lat";
-    private static final String LONGITUDE = "lon";
+    protected static final String TYPE = "type";
+    protected static final String DT = "dt";
+    protected static final String LATITUDE = "lat";
+    protected static final String LONGITUDE = "lon";
         
-    private final Node underlyingNode;
+    protected Node underlyingNode;
 	   
     public CheckPoint(Node node){
     	underlyingNode = node;

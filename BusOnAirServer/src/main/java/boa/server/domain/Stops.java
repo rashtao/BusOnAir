@@ -6,9 +6,9 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class Stops {
-    private Index<Node> stopsIndex;
+    protected Index<Node> stopsIndex;
 
-    private static Stops instance = null;
+    protected static Stops instance = null;
     
     public static synchronized Stops getStops() {
         if (instance == null) 
@@ -16,7 +16,7 @@ public class Stops {
         return instance;
     }    
     
-    private Stops(){
+    protected Stops(){
         stopsIndex = DbConnection.getDb().index().forNodes("stopsIndex");
     }
     

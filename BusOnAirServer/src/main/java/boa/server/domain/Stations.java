@@ -8,10 +8,10 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class Stations {
-    private LayerNodeIndex stationSpatialIndex;
-    private Index<Node> stationIndex;
+    protected LayerNodeIndex stationSpatialIndex;
+    protected Index<Node> stationIndex;
 
-    private static Stations instance = null;
+    protected static Stations instance = null;
     
     public static Stations getStations() {
         if (instance == null) 
@@ -19,7 +19,7 @@ public class Stations {
         return instance;
     }    
     
-    private Stations(){        
+    protected Stations(){        
         stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", DbConnection.getDb(), new HashMap<String, String>() );
         stationIndex = DbConnection.getDb().index().forNodes("stationsIndex");    
     }
@@ -86,11 +86,11 @@ public class Stations {
         }
     }    
 
-    private Map<Node, Double> queryWithinDistance( Double lat, Double lon){
+    protected Map<Node, Double> queryWithinDistance( Double lat, Double lon){
     	return queryWithinDistance(lat, lon, 1000.0);
     }
     
-    private Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance)
+    protected Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance)
     {        
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( LayerNodeIndex.DISTANCE_IN_KM_PARAMETER, distance);
@@ -102,7 +102,7 @@ public class Stations {
     }
 
     @SuppressWarnings( "unchecked" )
-    static Map<Node, Double> sortByValue( Map<Node, Double> map ){
+    protected static Map<Node, Double> sortByValue( Map<Node, Double> map ){
         List<Map.Entry<Node, Double>> list = new LinkedList<Map.Entry<Node, Double>>( map.entrySet() );
         Collections.sort( list, new Comparator()
         {

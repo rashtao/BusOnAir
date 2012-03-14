@@ -6,9 +6,9 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class Routes {
-    private Index<Node> routesIndex;
+    protected Index<Node> routesIndex;
 
-    private static Routes instance = null;
+    protected static Routes instance = null;
     
     public static synchronized Routes getRoutes() {
         if (instance == null) 
@@ -16,7 +16,7 @@ public class Routes {
         return instance;
     }    
     
-    private Routes(){
+    protected Routes(){
         routesIndex = DbConnection.getDb().index().forNodes("routesIndex");
     }
     

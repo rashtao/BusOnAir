@@ -16,42 +16,25 @@ import org.neo4j.index.lucene.ValueContext;
 import boa.server.domain.RelTypes;
 
 public class Station {
-    private static final String ID = "id";
-    private static final String TYPE = "type";
-    private static final String NAME = "name";
-    private static final String LATITUDE = "lat";
-    private static final String LONGITUDE = "lon";
-    private static final String IS_SCHOOL = "is_school";
-    private static final String IS_TERMINAL = "is_terminal";
+    protected static final String ID = "id";
+    protected static final String TYPE = "type";
+    protected static final String NAME = "name";
+    protected static final String LATITUDE = "lat";
+    protected static final String LONGITUDE = "lon";
+    protected static final String IS_SCHOOL = "is_school";
+    protected static final String IS_TERMINAL = "is_terminal";
         
-    private final Node underlyingNode;
-    private Index<Node> stopIndex;
+    protected Node underlyingNode;
+    protected Index<Node> stopIndex;
     
+    public Station(){
+    }  
+ 
     public Station(Node node){
     	underlyingNode = node;
         stopIndex = DbConnection.getDb().index().forNodes("stopIndex" + getId());
     }  
-
-    public Station(Node node, int id, String name, double latitude, double longitude, boolean isSchool, boolean isTerminal){
-    	underlyingNode = node;
-        setId(id);
-        setName(name);	
-        setLatitude(latitude);
-        setLongitude(longitude);
-        setIsSchool(isSchool);
-        setIsSchool(isTerminal);
-        setType();
-        stopIndex = DbConnection.getDb().index().forNodes("stopIndex" + getId());
-    }   
-
-    public Station(Node node, int id, String name, double latitude, double longitude){
-        this(node, id, name, latitude, longitude, false, false);
-    }   
-
-    public Station(Node node, int id, String name){
-        this(node, id, name, 0, 0, false, false);
-    }   
-
+ 
     public void setType() {
             underlyingNode.setProperty(Station.TYPE, "Station");		
     }

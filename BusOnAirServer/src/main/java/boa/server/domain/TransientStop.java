@@ -1,12 +1,12 @@
 package boa.server.domain;
 
 public class TransientStop extends Stop {
-	private static int count = 0;
-	private int id;
-	private int time;
-	private String type = "TransientStop";
-	private Stop nis;
-	private Station stazione;
+	protected static int count = 0;
+	protected int id;
+	protected int time;
+	protected String type = "TransientStop";
+	protected Stop nis;
+	protected Station stazione;
 	
 	public TransientStop(){
 		super();

@@ -9,29 +9,23 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class Route {
-	private static final String ID = "id";
-	private static final String TYPE = "type";
-    private static final String LINE = "line";
+	protected static final String ID = "id";
+	protected static final String TYPE = "type";
+    protected static final String LINE = "line";
+
     
-    private static int count = 0;
-    private static int runCount = 0;
+    protected Node underlyingNode;
     
-    private final Node underlyingNode;
+    protected Index<Node> runIndex;
     
-    private Index<Node> runIndex;
-    
+    protected Route(){
+    }  
+
     public Route(Node node){
     	underlyingNode = node;
         runIndex = DbConnection.getDb().index().forNodes("runIndex" + getId());
     }  
 
-	public Route(Node node, String line){
-        underlyingNode = node;
-	    setLine(line);
-	    setType();
-	    setId(count++);
-        runIndex = DbConnection.getDb().index().forNodes("runIndex" + getId());
-	}   
 
     public Integer getId(){
         return (Integer) underlyingNode.getProperty(ID);
@@ -76,11 +70,7 @@ public class Route {
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTETOWARDS, Direction.OUTGOING);
         return new Station(rel.getEndNode());		
     }    
-	
-    public void addRun(Run r){
-        runIndex.add(r.getUnderlyingNode(), "id", runCount++);
-    }
-    
+	    
     public Run getRun(int id){
         IndexHits<Node> result = runIndex.get("id", id);
         Node n = result.getSingle();

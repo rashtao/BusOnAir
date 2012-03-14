@@ -5,53 +5,36 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 public class Stop {
-    private static final String ID = "id";
-    private static final String TYPE = "type";
-    private static final String TIME = "time";
-    private static final String STATICTIME = "staticTime";
+    protected static final String ID = "id";
+    protected static final String TYPE = "type";
+    protected static final String TIME = "time";
+    protected static final String STATICTIME = "staticTime";
 
-    protected final Node underlyingNode;
+    protected Node underlyingNode;
     
-    // TRANSIENT ATTRIBUTES 
+    // --- TRANSIENT ATTRIBUTES --- 
     public boolean visited = false;
     public Stop nextInRun = null;
     public Stop nextInStation = null;
     public Stop prevInRun = null;
     public Stop prevInStation = null;
     public Stop nextWalk = null;
-    public Stop prevWalk = null;
-    
+    public Stop prevWalk = null;    
     public Stop prevSP = null;
     public int numeroCambi = 0;
     public int departureTime = 0;
     public int minChangeTime = 1400;
     public int walkDistance = 0;
+    // --- end TRANSIENT ATTRIBUTES ---
         
     
     public Stop(){
-    	// chiamato dal costruttore di TransientStop
-    	underlyingNode = null;
     }  
 
     public Stop(Node node){
     	underlyingNode = node;
     }  
 
-    public Stop(Node node, int id) {
-    	this(node);
-    	setId(id);
-    }  
-    
-    public Stop(Node node, int id, int time, int idStation, int idRun, String line){
-        this(node, id);
-        setTime(time);	    
-        setType();
-        Station s = Stations.getStations().getStationById(idStation);
-        setStation(s);        
-        setRun(idRun, line);          
-        Stops.getStops().addStop(this);
-        s.addStop(this);
-    }   
 
     public Node getUnderlyingNode(){
         return underlyingNode;
@@ -83,7 +66,7 @@ public class Stop {
 
     public Integer getStaticTime(){
         return (Integer) underlyingNode.getProperty(STATICTIME);
-}
+    }
 
 	public void setStaticTime(int staticTime){
 	        underlyingNode.setProperty(Stop.STATICTIME, staticTime);		
@@ -158,7 +141,13 @@ public class Stop {
     }
 
     public void setNextInRun(Stop stop){
-        underlyingNode.createRelationshipTo(stop.getUnderlyingNode(), RelTypes.NEXTINRUN);
+    	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.NEXTINRUN, Direction.OUTGOING);
+             	
+    	if(rel != null)
+    		rel.delete();    	
+    	
+    	if(stop != null)
+    		underlyingNode.createRelationshipTo(stop.getUnderlyingNode(), RelTypes.NEXTINRUN);
     }
 
     @Override
@@ -185,23 +174,6 @@ public class Stop {
     	return ("(STOPID" + getId() + ":NODEID" + getUnderlyingNode().getId() + ":TIME" + getTime()+ ":STATICTIME" + getStaticTime() + ")");
 	}
 
-    private void setRun(int idRun, String line) {
-        Route route = Routes.getRoutes().getRouteByLine(line);
-        if(route == null){
-            route = new Route(DbConnection.getDb().createNode(), line);
-        }
-        Routes.getRoutes().addRoute(route);
-        
-        Run run = Runs.getRuns().getRunById(idRun);
-
-        if(run == null){
-            run = new Run(DbConnection.getDb().createNode(), idRun);
-        }
-        run.setRoute(route);
-        Runs.getRuns().addRun(run);
-        route.addRun(run);        
-        setRun(run);
-    }
     
     public String getUrl(){
     	return "/stops/" + getId();

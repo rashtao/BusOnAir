@@ -26,6 +26,7 @@ public class ImportTest {
 	}
 
 	public static void importTest(){
+    	System.out.print("\n\n ---- IMPORT TEST ---");
 		db = DbConnection.getDb();
 
 		int routesCount = 0;
@@ -61,6 +62,7 @@ public class ImportTest {
         System.out.println(runsCount);
         System.out.println(stopsCount);
         
+    	System.out.print("\n\n ---- end IMPORT TEST ---");
 	}		
 	
 }

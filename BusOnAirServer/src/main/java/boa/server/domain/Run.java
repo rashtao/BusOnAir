@@ -22,37 +22,24 @@ import org.neo4j.graphdb.index.IndexHits;
 import boa.server.domain.utils.*;
 
 public class Run {
-    private static final String ID = "id";
-    private static final String TYPE = "type";
-    private static final String LATITUDE = "lat";
-    private static final String LONGITUDE = "lon";
-    private static final String LASTUPDATETIME = "lastupdatetime";
+    protected static final String ID = "id";
+    protected static final String TYPE = "type";
+    protected static final String LATITUDE = "lat";
+    protected static final String LONGITUDE = "lon";
+    protected static final String LASTUPDATETIME = "lastupdatetime";
         
-    private LayerNodeIndex checkPointsSpatialIndex;
-    private Index<Node> cpIndex;
+    protected LayerNodeIndex checkPointsSpatialIndex;
+    protected Index<Node> cpIndex;
     
-    private final Node underlyingNode;
+    protected Node underlyingNode;
     
+    public Run(){
+    }  
+
     public Run(Node node){
     	underlyingNode = node;
     	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
     }  
-
-    public Run(Node node, int id){
-    	underlyingNode = node;
-        setId(id);
-        setType();
-    	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
-    }   
-
-	public void createCheckPointsSpatialIndex() {
-		if(checkPointsSpatialIndex == null)
-			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-
-		for(CheckPoint cp : getAllCheckPoints()){
-			checkPointsSpatialIndex.add(cp.getUnderlyingNode(), "", "" );
-		}
-	}
 
 	public void setType() {
         underlyingNode.setProperty(Run.TYPE, "Run");		
@@ -290,7 +277,7 @@ public class Run {
     	}
     }
     
-    private void updateStop(Stop s){
+    protected void updateStop(Stop s){
     	if(s == null)
     		return;
     	
@@ -312,7 +299,7 @@ public class Run {
     	}
     }
     
-    private void moveStop(Stop prev, Stop s, Stop next){
+    protected void moveStop(Stop prev, Stop s, Stop next){
     	// sposta s tra prev e next
     	
     	if(prev == null && s.getNextInStation() != null && s.getNextInStation().equals(next))
@@ -331,10 +318,6 @@ public class Run {
 		if(pis != null){
 			pis.setNextInStation(nis);
 		}
-    }
-
-	public void importCheckPoint(CheckPoint cp) {
-        cpIndex.add(cp.getUnderlyingNode(), "id", cp.getId());
     }
 	
 	public void addCheckPoint(Double lat, Double lon, int time){
@@ -436,7 +419,7 @@ public class Run {
 		checkPointPassExpected(cp2, (int) Math.round(time + dt));
 	}	
 
-    private void calculateAndSetLastCP() {
+    protected void calculateAndSetLastCP() {
     	CheckPoint nearestCP = getNearestCheckPoint(getLatitude(), getLongitude());
     	CheckPoint prevCP = nearestCP.getPrevCheckPoint();
     	CheckPoint nextCP = nearestCP.getNextCheckPoint();
@@ -471,7 +454,7 @@ public class Run {
     	}
 	}
 
-	private void checkPointPassExpected(CheckPoint nextCP, int time){
+	protected void checkPointPassExpected(CheckPoint nextCP, int time){
     	//propaga il ritardo da nextCP.getTowards():Stop fino a fine run
     	
     	int ritardo = time - nextCP.getTime();
@@ -526,11 +509,11 @@ public class Run {
         }
     }    
 
-    private Map<Node, Double> queryWithinDistance( Double lat, Double lon){
+    protected Map<Node, Double> queryWithinDistance( Double lat, Double lon){
     	return queryWithinDistance(lat, lon, 10000.0);
     }
 	    
-	private Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance){       
+	protected Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance){       
 		if(checkPointsSpatialIndex == null)
 			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
 
@@ -544,7 +527,7 @@ public class Run {
 	}
 	
     @SuppressWarnings( "unchecked" )
-    static Map<Node, Double> sortByValue( Map<Node, Double> map )
+    protected static Map<Node, Double> sortByValue( Map<Node, Double> map )
     {
         List<Map.Entry<Node, Double>> list = new LinkedList<Map.Entry<Node, Double>>( map.entrySet() );
         Collections.sort( list, new Comparator()

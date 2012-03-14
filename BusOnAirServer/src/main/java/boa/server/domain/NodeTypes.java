@@ -42,18 +42,6 @@ public enum NodeTypes {
             return "Route";
         }    	
     },
-    
-    STATIONS{
-        public String toString() {
-            return "Stations";
-        }    	
-    },
-    
-    ROUTES{
-        public String toString() {
-            return "Routes";
-        }    	
-    },
         
     CHECKPOINT{
         public String toString() {

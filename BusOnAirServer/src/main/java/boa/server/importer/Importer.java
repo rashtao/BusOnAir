@@ -44,7 +44,7 @@ public class Importer {
         dbInserter = new DBInserter();
         dbInserter.addData();
         dbInserter.addSpatialIndex();
-        ImportTest.importTest();
+//        ImportTest.importTest();
         dbInserter.generateRunsId();
         dbInserter.duplicateRoutes();
         dbInserter.checkStopStations();

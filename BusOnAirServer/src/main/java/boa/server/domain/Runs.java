@@ -6,9 +6,9 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class Runs {
-    private Index<Node> runsIndex;
+    protected Index<Node> runsIndex;
 
-    private static Runs instance = null;
+    protected static Runs instance = null;
     
     public static synchronized Runs getRuns() {
         if (instance == null) 
@@ -16,7 +16,7 @@ public class Runs {
         return instance;
     }    
     
-    private Runs(){
+    protected Runs(){
         runsIndex = DbConnection.getDb().index().forNodes("runsIndex");
     }
     
