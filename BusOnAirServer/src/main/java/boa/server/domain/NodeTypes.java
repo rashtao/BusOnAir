@@ -25,12 +25,6 @@ public enum NodeTypes {
         }    	
     },
     
-    STOPFITTIZIO{
-        public String toString() {
-            return "StopFittizio";
-        }    	
-    },
-    
     RUN{
         public String toString() {
             return "Run";

@@ -41,7 +41,6 @@ public class Station {
         setIsSchool(isSchool);
         setIsSchool(isTerminal);
         setType();
-        setStopFittizio();
         stopIndex = DbConnection.getDb().index().forNodes("stopIndex" + getId());
     }   
 
@@ -152,17 +151,11 @@ public class Station {
     public Iterable<Stop> getStopsFromTime(int startTime){
         return getStopsFromTime(startTime, 1440);
     }        
-    
-    public StopFittizio getStopFittizio(){
-        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FITTIZIO_STAZIONE, Direction.INCOMING);
-        return new StopFittizio(rel.getStartNode());	
-    }
-    
+        
     public ArrayList<Stop> getAllStops(){
         ArrayList<Stop> output = new ArrayList<Stop>();
         
-        Iterable<Relationship> rels = getStopFittizio()
-                .getUnderlyingNode().getRelationships(RelTypes.FITTIZIO, Direction.INCOMING);
+        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.STOP_STATION, Direction.INCOMING);
         for(Relationship r : rels){
             output.add(new Stop(r.getStartNode()));   
         }
@@ -194,11 +187,6 @@ public class Station {
 				"\n\tlongitude: " + getLongitude().toString());
 //				"\n\tIsSchool: " + getIsSchool().toString() +
 //				"\n\tIsTerminal: " + getIsTerminal().toString());	    
-    }
-
-    private void setStopFittizio() {
-        StopFittizio sf = new StopFittizio(DbConnection.getDb().createNode(), getId());
-        sf.setStazione(this);
     }
 
 	public ArrayList<Route> getAllRoutes() {

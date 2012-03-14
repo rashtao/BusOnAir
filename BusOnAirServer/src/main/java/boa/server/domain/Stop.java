@@ -36,9 +36,11 @@ public class Stop extends StopAbstract{
         super(node, id);
         setTime(time);	    
         setType();
-        setStopFittizio(idStation);
+        Station s = Stations.getStations().getStationById(idStation);
+        setStation(s);        
         setRun(idRun, line);          
         Stops.getStops().addStop(this);
+        s.addStop(this);
     }   
     
     public void setType() {
@@ -62,24 +64,23 @@ public class Stop extends StopAbstract{
 	}
 
     public Station getStation(){
-            return getStopFittizio().getStation();
+	    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STOP_STATION, Direction.OUTGOING);
+	    return new Station(rel.getEndNode());						
     }
-
-    public StopAbstract getStopFittizio(){
-    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FITTIZIO, Direction.OUTGOING);
-    return new StopFittizio(rel.getEndNode());						
-    }
-
-    public void setStopFittizio(StopFittizio sf){
-            underlyingNode.createRelationshipTo(sf.getUnderlyingNode(), RelTypes.FITTIZIO);		
-            getStation().addStop(this);
+    
+    public void setStation(Station s){
+		Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STOP_STATION, Direction.OUTGOING);
+		if(rel != null)
+			rel.delete();
+		
+		if(s != null)
+			underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.STOP_STATION);		
     }
 
     public Run getRun(){
-    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STOP_RUN, Direction.OUTGOING);
-    return new Run(rel.getEndNode());						
+	    Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STOP_RUN, Direction.OUTGOING);
+	    return new Run(rel.getEndNode());						
     }
-
 
     public void setRun(Run r){
         underlyingNode.createRelationshipTo(r.getUnderlyingNode(), RelTypes.STOP_RUN);
@@ -157,11 +158,6 @@ public class Stop extends StopAbstract{
 	public String toString(){
     	return ("(STOPID" + getId() + ":NODEID" + getUnderlyingNode().getId() + ":TIME" + getTime()+ ":STATICTIME" + getStaticTime() + ")");
 	}
-
-    private void setStopFittizio(int idStation) {
-        StopFittizio sf = Stations.getStations().getStationById(idStation).getStopFittizio();
-        setStopFittizio(sf);
-    }
 
     private void setRun(int idRun, String line) {
         Route route = Routes.getRoutes().getRouteByLine(line);

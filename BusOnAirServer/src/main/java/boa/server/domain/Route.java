@@ -52,15 +52,15 @@ public class Route {
 	}
 
     public void setFrom(Station s){
-        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FROM, Direction.OUTGOING);
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTEFROM, Direction.OUTGOING);
     	if(rel != null)
     		rel.delete();
     	
-    	underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.FROM);		
+    	underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTEFROM);		
     }
 
     public Station getFrom(){
-        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.FROM, Direction.OUTGOING);
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTEFROM, Direction.OUTGOING);
         return new Station(rel.getEndNode());		
     }    
 	
