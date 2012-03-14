@@ -4,11 +4,14 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-public class Stop extends StopAbstract{
+public class Stop {
+    private static final String ID = "id";
     private static final String TYPE = "type";
     private static final String TIME = "time";
     private static final String STATICTIME = "staticTime";
-        
+
+    protected final Node underlyingNode;
+    
     // TRANSIENT ATTRIBUTES 
     public boolean visited = false;
     public Stop nextInRun = null;
@@ -24,16 +27,23 @@ public class Stop extends StopAbstract{
     public int minChangeTime = 1400;
     public int walkDistance = 0;
         
-    public Stop(){
-    	super();
-    }
     
-    public Stop(Node node){
-    	super(node);
+    public Stop(){
+    	// chiamato dal costruttore di TransientStop
+    	underlyingNode = null;
     }  
 
+    public Stop(Node node){
+    	underlyingNode = node;
+    }  
+
+    public Stop(Node node, int id) {
+    	this(node);
+    	setId(id);
+    }  
+    
     public Stop(Node node, int id, int time, int idStation, int idRun, String line){
-        super(node, id);
+        this(node, id);
         setTime(time);	    
         setType();
         Station s = Stations.getStations().getStationById(idStation);
@@ -42,7 +52,23 @@ public class Stop extends StopAbstract{
         Stops.getStops().addStop(this);
         s.addStop(this);
     }   
-    
+
+    public Node getUnderlyingNode(){
+        return underlyingNode;
+    }
+
+	public Integer getId(){
+		return (Integer) underlyingNode.getProperty(ID);
+	}
+
+	public void setId(int id){
+		underlyingNode.setProperty(Stop.ID, id);		
+	}
+	
+    public String getType(){
+    	return (String) underlyingNode.getProperty(TYPE);
+    }
+	
     public void setType() {
             underlyingNode.setProperty(Stop.TYPE, "Stop");		
     }
