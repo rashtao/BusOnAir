@@ -25,6 +25,10 @@ public class Stop {
     public int departureTime = 0;
     public int minChangeTime = 1400;
     public int walkDistance = 0;
+    public int travelTime = 0;
+    public int waitTime = 0;
+    public int walkTime = 0;
+    
     // --- end TRANSIENT ATTRIBUTES ---
         
     
@@ -173,9 +177,12 @@ public class Stop {
 	public String toString(){
     	return ("(STOPID" + getId() + ":NODEID" + getUnderlyingNode().getId() + ":TIME" + getTime()+ ":STATICTIME" + getStaticTime() + ")");
 	}
+    
+    
 
     
     public String getUrl(){
     	return "/stops/" + getId();
     }
+
 }

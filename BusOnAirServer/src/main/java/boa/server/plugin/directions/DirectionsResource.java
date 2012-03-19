@@ -33,6 +33,7 @@ import boa.server.domain.Stops;
 import boa.server.domain.utils.GeoUtil;
 import boa.server.json.DirectionRoute;
 import boa.server.json.DirectionWalk;
+import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
 import boa.server.routing.myShortestGeo;
@@ -80,7 +81,7 @@ public class DirectionsResource
             @QueryParam( "departuretime" ) Integer departuretime,
             @QueryParam( "minchangetime" ) Integer minchangetime,
             @QueryParam( "criterion" ) String criterion,
-            @QueryParam( "timelimit" ) Integer timelimit,
+//            @QueryParam( "timelimit" ) Integer timelimit,
             @QueryParam( "maxwalkdistance" ) Integer maxwalkdistance) throws IOException{
 
     	log.write("\ngetDirection");
@@ -93,10 +94,21 @@ public class DirectionsResource
         if(maxwalkdistance == null)
         	maxwalkdistance = new Integer(1000);
         
-        if(timelimit == null)
-        	timelimit = new Integer(600);
+//        if(timelimit == null)
+//        	timelimit = new Integer(600);
         
-    	myShortestGeo mysp = new myShortestGeo(departuretime, timelimit, lat1, lon1, lat2, lon2, maxwalkdistance);
+        Criteria crit;
+        
+        if(criterion == null || criterion.equals("MINCHANGES"))
+        	crit = Criteria.MINCHANGES;
+        else if(criterion.equals("LATESTLEAVING"))
+        	crit = Criteria.LATESTLEAVING;
+        else if(criterion.equals("MINWALK"))
+        	crit = Criteria.MINWALK;
+        else
+        	crit = Criteria.MINCHANGES;
+        
+    	myShortestGeo mysp = new myShortestGeo(departuretime, 1440, lat1, lon1, lat2, lon2, maxwalkdistance, crit);
         mysp.shortestPath(); 
         boa.server.json.Directions directs = mysp.getDirections();      
 //        if(directs == null || directs.getDirectionsList() == null || directs.getDirectionsList().size() == 0)

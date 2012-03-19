@@ -12,6 +12,13 @@
 
  */
 
+
+//
+
+// NB: output in /tmp/sp1.log
+ 
+
+
 package boa.server.test;
 
 import java.io.BufferedWriter;
@@ -91,8 +98,8 @@ public class ShortestPath8 {
         	double lat2 = 42.34300;
         	double lon2 = 13.46300;
 
-        	myShortestGeo mysp = new myShortestGeo(time, 1400, lat1, lon1, lat2, lon2, 1000);
-            mysp.shortestPath(Criteria.MINCHANGES); 
+        	myShortestGeo mysp = new myShortestGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
+            mysp.shortestPath(); 
             boa.server.json.Directions directs = mysp.getDirections();
             for(boa.server.json.Direction d : directs.getDirectionsList()){
             	log.write(d.toString());

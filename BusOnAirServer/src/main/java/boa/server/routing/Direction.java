@@ -45,7 +45,7 @@ public class Direction {
 	}
 	
 	public int getWalkTime(){
-		return (int) (getDistance() / 5.0 * 60);
+		return (int) (getDistance() / Config.WALKSPEED * 60);
 	}
 	
 	public int getArrivalTime(){
@@ -64,7 +64,7 @@ public class Direction {
 		return (int)(getDistance() * 1000.0) + stop.walkDistance;
 	}
 	
-	public int departureTime(){
+	public int getDepartureTime(){
 		return stop.departureTime;
 	}
 	
