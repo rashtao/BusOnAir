@@ -5,10 +5,6 @@ import org.neo4j.graphdb.Node;
 
 import boa.server.domain.Stop;
 
-/**
- *
- * @author rashta
- */
 public final class StopMediator {
     private HashMap<Long, Stop> cache;
     

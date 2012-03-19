@@ -14,6 +14,9 @@
 
 package boa.server.test;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
@@ -31,6 +34,7 @@ import org.neo4j.kernel.Traversal;
 
 import boa.server.domain.*;
 import boa.server.json.Directions;
+import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
 import boa.server.routing.myShortestGeo;
@@ -42,28 +46,34 @@ import boa.server.routing.myShortestGeo;
  */
 public class ShortestPath8 {
 		private static GraphDatabaseService db;
-    
+		private static BufferedWriter log;
 
-        public static void main(String[] args) {     
+        public static void main(String[] args) throws IOException {     
     		DbConnection.createEmbeddedDbConnection();
     		db = DbConnection.getDb();
     		
+    		
+            FileWriter logFile = new FileWriter("/tmp/sp1.log");
+            log = new BufferedWriter(logFile);
+
+            
+            
             int time = 670;     //9h00
             Station s1 = Stations.getStations().getStationById(70);
             Station s2 = Stations.getStations().getStationById(1);
                 
-            System.out.print("\ns1: " + s1);
-            System.out.print("\ns2: " + s2);
+            log.write("\ns1: " + s1);
+            log.write("\ns2: " + s2);
             
 //            shortestpath.BreadthTraverser.shortestPath(s1, s2, time);
 //            Path foundPath = shortestpath.ShortestPath.shortestPath(s1, s2, time);
 //            
 //                
 //            if(foundPath != null){
-//            System.out.println( "ShortestPath: "
+//            log.writeln( "ShortestPath: "
 //                                + Traversal.simplePathToString( foundPath) );
 //            } else {
-//            System.out.println( "ShortestPath: NULL");
+//            log.writeln( "ShortestPath: NULL");
 //
 //            }
             Stop firstStop = s1.getFirstStopFromTime(time);
@@ -71,7 +81,7 @@ public class ShortestPath8 {
             
                 
                 
-                //System.out.print(firstStop);
+                //log.write(firstStop);
 //                myShortest mysp = new myShortest(firstStop, s2, 1440);
 //                myShortestGeo mysp = new myShortestGeo(firstStop, s2, 1440);
   
@@ -82,21 +92,21 @@ public class ShortestPath8 {
         	double lon2 = 13.46300;
 
         	myShortestGeo mysp = new myShortestGeo(time, 1400, lat1, lon1, lat2, lon2, 1000);
-            mysp.shortestPath(); 
+            mysp.shortestPath(Criteria.MINCHANGES); 
             boa.server.json.Directions directs = mysp.getDirections();
             for(boa.server.json.Direction d : directs.getDirectionsList()){
-            	System.out.print(d);
+            	log.write(d.toString());
             }
             
             
 
                 
 //                Stop arrivo = mysp.getShortestPath();
-                //System.out.print("\n\nSTOP ARRIVO" + arrivo);
-//                System.out.print("\n-------\ndt: " + (arrivo.getTime() - prevTime));
+                //log.write("\n\nSTOP ARRIVO" + arrivo);
+//                log.write("\n-------\ndt: " + (arrivo.getTime() - prevTime));
 
 
-                System.out.println( "\n\n" + mysp.toString());
+                log.write( "\n\n" + mysp.toString());
 //                String outPath = "";
 //                for(Stop s : mysp.getWeightedPath()){
 //                    outPath = "(" + s.getUnderlyingNode().getId() + ":ID" + s.getId()  + ":STAZID" + s.getStazione().getId() + ":TIME" + s.getTime() + ")-->" + outPath;                
@@ -111,14 +121,14 @@ public class ShortestPath8 {
 //            
 //            while(arrivo != null && !cache.check(arrivo)){
 //                arrivo = arrivo.getNextInStation();
-////                System.out.println( "\n\nNot reachable node: " + arrivo);
+////                log.writeln( "\n\nNot reachable node: " + arrivo);
 //            }
 //
 //            arrivo = cache.get(arrivo);
 //            while(arrivo != null){
 //                arrivo = cache.get(arrivo);
 //
-//                System.out.println("\n\n#cambi: " + arrivo.numeroCambi);
+//                log.writeln("\n\n#cambi: " + arrivo.numeroCambi);
 //
 //                String outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":TIME" + arrivo.getTime() + ")";
 //                
@@ -129,7 +139,7 @@ public class ShortestPath8 {
 //                    outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
 //                }
 //
-//                System.out.println( "myShortestPath: " + outPath);
+//                log.writeln( "myShortestPath: " + outPath);
 //
 //   
 //                do{
@@ -139,6 +149,9 @@ public class ShortestPath8 {
 //                } while(arrivo != null && arrivo.prevSP == null);
 //            }
 //            
+
+                
+                log.flush(); 
             
             DbConnection.turnoff();
         }

@@ -9,6 +9,7 @@
  * 		double lat2, 
  * 		double lon2, 
  * 		int departureTime, 
+ * 		int departureDay, 
  * 		int minChangeTime, 
  * 		String criterion, 
  * 		int timeLimit)
@@ -49,6 +50,7 @@ import boa.server.json.DirectionWalk;
  * @author rashta
  */
 public class myShortestGeo {
+	public Criteria secondCriterion; 
     private StopMediator cache;
     private int startTime;
     private int stopTime;
@@ -57,8 +59,8 @@ public class myShortestGeo {
     private double lat2;
     private double lon2;
     private int walkLimit;
-    private  PriorityQueue<TransientStop> startQueue;
-    private  PriorityQueue<Direction> arrivalQueue;
+    private  Stack<TransientStop> startStack;
+    private  LinkedList<Direction> arrivalList;
    
     public myShortestGeo(int startTime, int _timeInterval, double lat1, double lon1, double lat2, double lon2, int walkLimit){
         cache = new StopMediator();   
@@ -69,23 +71,29 @@ public class myShortestGeo {
         this.lat2 = lat2;
         this.lon2 = lon2;
         this.walkLimit = walkLimit;
-        startQueue = new PriorityQueue<TransientStop>(10, new TransientStopComparator());
-        arrivalQueue = new PriorityQueue<Direction>(10, new DirectionComparator());        
+        startStack = new Stack<TransientStop>();
+        arrivalList = new LinkedList<Direction>();        
     }
     
     public StopMediator shortestPath(){
+    	return shortestPath(Criteria.MINCHANGES);
+    }
+    
+    public StopMediator shortestPath(Criteria crit){
     	
     	createStartStops();
-//    	System.out.print("\n\n**** startQueue ****");
-//    	for(TransientStop ts : startQueue){
+//    	System.out.print("\n\n**** startStack ****");
+//    	for(TransientStop ts : startStack){
 //    		System.out.print("\n" + ts);
 //    	}
     	
-    	for(TransientStop ts : startQueue){
+    	for(TransientStop ts : startStack){
     		loadSubgraph(ts.nextWalk);
     	}
             
-        topologicalVisit();
+//        topologicalVisit();
+    	secondCriterion = crit;
+        multiCriteriaTopologicalVisit();
         
         linkArrivalPoint();
         
@@ -112,24 +120,30 @@ public class myShortestGeo {
     
     public String toString() {
     	String strPath = "";    
-    	for(Direction dir : arrivalQueue){
+    	for(Direction dir : arrivalList){
 	        String outPath = "";
     		Stop arrivo = dir.getStop();
-	        if(arrivo != null){
+            String dirstr = "";
+            String LASTsTAZ = "";
+
+            if(arrivo != null){
+	        	
 	        	outPath = "(WALK: t:" + dir.getWalkTime() + "|arrtime:" + dir.getArrivalTime() + "|distwalk:" + dir.getDistance() + "|numchanges:" + dir.getNumChanges() + ")";
-	            outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStation().getId() + ":RUNID" + arrivo.getRun().getId() + ":TIME" + arrivo.getTime() + ")-->" + outPath;
+        		dirstr = outPath;
+	            
+        		LASTsTAZ = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStation().getId() + ":RUNID" + arrivo.getRun().getId() + ":TIME" + arrivo.getTime() + ")-->"; 
+	        	outPath =  LASTsTAZ + outPath;
 	
 	            Stop arr = arrivo;
 	            arr = arr.prevSP;
-	            while(arr.prevSP != null){
-	                
+	            while(arr.prevSP != null){    
 	                outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":RUNID" + (arr.getRun() != null ? arr.getRun().getId() : "NN") + ":TIME" + arr.getTime() + ")-->" + outPath;                
 	                arr = arr.prevSP;
 	            }
                 outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":RUNID" + "NN" + ":TIME" + arr.getTime() + ")-->" + outPath;                
 
 	        }
-	        strPath = strPath + "\n\n" + outPath; 
+	        strPath = strPath + "\n\n" + dirstr + ":\tARRIVAL:" + LASTsTAZ + "\t\t" + outPath; 
     	}
     	
         return strPath;
@@ -157,12 +171,26 @@ public class myShortestGeo {
 				ts.setStazione(s);
 				startStop.prevWalk = ts;
 	
-				startQueue.add(ts);		
+				startStack.add(ts);		
 			}
 		}	
 	}
     
     private void linkArrivalPoint() {
+/*    	 collega l'arrival point agli stop delle stazioni adiacenti tramite archi walk
+  
+    	 collegando tutti gli stop delle stazioni adiacenti (entro WALKLIMIT),
+    	 
+    	 Infine per ogni stazione, per ogni percorso trovato, si deve creare una lista di risultati. I risultati si inseriscono
+    	 in ordine di orario di arrivo, quindi secondo l'ordine dei nodi nelle rispettive stazioni.
+    	 
+    	 Quindi si procede a fare un merge-sort di tutte le liste di tutte le stazioni di arrivo, tenendo ordinati i risultati
+    	 per arrival-time e scartando on-the-fly i risultati che non sono ottimi di pareto. ==> arrivalList
+    	 
+    	 Gli ottimi si valutano in base al secondo criterio di ottimizzazione scelto. Banalmente, dati 2 Stop di arrivo successivi
+    	 s1 e s2, con t(s1) < t(s2), allora s2 è un ottimo di pareto se SECONDOCRITERIO(s2) < SECONDOCRITERIO(s1) 
+*/
+    	
 		Collection<Station> arrivalStations = Stations.getStations().getNearestStations(lat2, lon2, walkLimit);
 
 	//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
@@ -172,7 +200,7 @@ public class myShortestGeo {
 					Stop arrivalStop = getShortestPath(s, time);
 		//			System.out.print("\nsp: " + arrivalStop);
 					if(arrivalStop != null){
-						arrivalQueue.add(new Direction(arrivalStop, lat2, lon2));
+						arrivalList.add(new Direction(arrivalStop, lat2, lon2));
 					}
 					
 					while(arrivalStop != null && arrivalStop.nextInStation != null && arrivalStop.equals(arrivalStop.nextInStation.prevSP)){
@@ -234,12 +262,257 @@ public class myShortestGeo {
         }		
 	}
 	
+	private int compareMinWalk(Stop s, Stop next){
+		// confronta s con il suo Next rispetto al criterio di ottimizzazione MINWALK
+		// ritorna 1 se s rappresenta un prevSP MIGLIORE per il suo Next
+		// ritorna -1 se s rappresenta un prevSP PEGGIORE per il suo Next
+		// ritorna 0 se s rappresenta un prevSP UGUALE per il suo Next
+		
+		if(s.walkDistance < next.walkDistance)
+			return 1;
+		else if(s.walkDistance > next.walkDistance)
+			return -1;
+		else
+			return 0;
+	}
+
+	private int compareNIRMinChanges(Stop s, Stop nir){
+		// confronta s con il suo NextInRun rispetto al criterio di ottimizzazione MINCHANGES
+		// ritorna 1 se s rappresenta un prevSP MIGLIORE per il suo NextInRun
+		// ritorna -1 se s rappresenta un prevSP PEGGIORE per il suo NextInRun
+		// ritorna 0 se s rappresenta un prevSP UGUALE per il suo NextInRun
+		
+		if(s.numeroCambi < nir.numeroCambi)
+			return 1;
+		else if(s.numeroCambi > nir.numeroCambi)
+			return -1;
+		else
+			return 0;
+	}
 	
+	private int compareLatestLeaving(Stop s, Stop next){
+		// confronta s con il suo Next rispetto al criterio di ottimizzazione LATESTLEAVING
+		// ritorna 1 se s rappresenta un prevSP MIGLIORE per il suo Next
+		// ritorna -1 se s rappresenta un prevSP PEGGIORE per il suo Next
+		// ritorna 0 se s rappresenta un prevSP UGUALE per il suo Next
+		
+		if(s.departureTime > next.departureTime)
+			return 1;
+		else if(s.departureTime < next.departureTime)
+			return -1;
+		else
+			return 0;
+	}
+
+	private int compareNISMinChanges(Stop s, Stop nis){
+		// confronta s con il suo NextInStation rispetto al criterio di ottimizzazione MINCHANGES
+		// ritorna 1 se s rappresenta un prevSP MIGLIORE per il suo NextInStation
+		// ritorna -1 se s rappresenta un prevSP PEGGIORE per il suo NextInStation
+		// ritorna 0 se s rappresenta un prevSP UGUALE per il suo NextInStation
+		
+        int cambio = 0;
+        if((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))){
+            cambio = 1;
+        }
+        
+        int cambiPerNis = s.numeroCambi + cambio;                
+        
+        if(cambiPerNis < nis.numeroCambi)
+        	return 1;
+        else if(cambiPerNis > nis.numeroCambi)
+        	return -1;
+        else
+        	return 0;
+	}
+		
+	private boolean compareNIR(Stop s, Stop nir){
+		// confronta s con il suo NextInRun
+		// ritorna TRUE se s rappresenta un prevSP migliore per il suo NextInRun
+
+		// di default l'ordine dei criteri di ottimizzazione è:
+		// - EARLIESTARRIVAL 
+		// - MINCHANGES
+		// - LATESTLEAVING
+		// - MINWALK
+
+		int result = 0;
+
+		if(secondCriterion == Criteria.LATESTLEAVING){
+			if(result == 0)
+				compareLatestLeaving(s, nir);
+			if(result == 0)
+				result = compareNIRMinChanges(s, nir);
+			if(result == 0)
+				compareMinWalk(s, nir);				
+		} else if(secondCriterion == Criteria.MINWALK){
+			if(result == 0)
+				compareMinWalk(s, nir);				
+			if(result == 0)
+				result = compareNIRMinChanges(s, nir);
+			if(result == 0)
+				compareLatestLeaving(s, nir);
+		} else {	// secondCriterion == Criteria.MINCHANGES
+			if(result == 0)
+				result = compareNIRMinChanges(s, nir);
+			if(result == 0)
+				compareLatestLeaving(s, nir);
+			if(result == 0)
+				compareMinWalk(s, nir);				
+		}
+		
+		if(result == -1)
+			return false;
+		else
+			return true;
+	}
+	
+	private boolean compareNIS(Stop s, Stop nis){
+		// confronta s con il suo NextInStation
+		// ritorna TRUE se s rappresenta un prevSP migliore per il suo NextInStation
+
+		// di default l'ordine dei criteri di ottimizzazione è:
+		// - EARLIESTARRIVAL 
+		// - MINCHANGES
+		// - LATESTLEAVING
+		// - MINWALK
+
+		int result = 0;
+
+		if(secondCriterion == Criteria.LATESTLEAVING){
+			if(result == 0)
+				compareLatestLeaving(s, nis);
+			if(result == 0)
+				result = compareNISMinChanges(s, nis);
+			if(result == 0)
+				compareMinWalk(s, nis);				
+		} else if(secondCriterion == Criteria.MINWALK){
+			if(result == 0)
+				compareMinWalk(s, nis);				
+			if(result == 0)
+				result = compareNISMinChanges(s, nis);
+			if(result == 0)
+				compareLatestLeaving(s, nis);
+		} else {	// secondCriterion == Criteria.MINCHANGES
+			if(result == 0)
+				result = compareNISMinChanges(s, nis);
+			if(result == 0)
+				compareLatestLeaving(s, nis);
+			if(result == 0)
+				compareMinWalk(s, nis);				
+		}
+		
+		if(result == 1)
+			return true;
+		else
+			return false;		
+	}
+	
+	private void visitNIW(Stop s, Stop niw){
+		if(niw.prevSP == null || compareNIR(s, niw)){
+			// linka s al suo nextInRun
+			niw.prevSP = s;
+	        
+	        // aggiornamento valori nir
+			niw.departureTime = s.departureTime;
+			niw.numeroCambi = s.numeroCambi;
+			niw.walkDistance = s.walkDistance;
+		}
+	}
+	
+	private void visitNIR(Stop s, Stop nir){
+		if(nir.prevSP == null || compareNIR(s, nir)){
+			// linka s al suo nextInRun
+			nir.prevSP = s;
+	        
+	        // aggiornamento valori nir
+			nir.departureTime = s.departureTime;
+			nir.numeroCambi = s.numeroCambi;
+			nir.walkDistance = s.walkDistance;
+		}
+	}
+	
+	private void visitNIS(Stop s, Stop nis){
+		if(nis.prevSP == null || compareNIS(s, nis)){		
+			// linka s al suo nextInStation
+			nis.prevSP = s;
+	
+	        int cambio = 0;
+	        if((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))){
+	            cambio = 1;
+	        }
+			        
+	        // aggiornamento valori nis
+			nis.departureTime = s.departureTime;
+			nis.numeroCambi = s.numeroCambi + cambio;
+			nis.walkDistance = s.walkDistance;
+		}
+	}
+		
+    public void multiCriteriaTopologicalVisit(){
+
+        Stack<Stop> toVisit = new Stack<Stop>();
+        
+        for(Stop s : startStack){        	
+			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
+			Coordinate coord2 = new boa.server.json.Coordinate(s.getStation().getLatitude(), s.getStation().getLongitude());
+			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
+			
+			s.departureTime = s.getTime();
+			s.walkDistance = (int) (dist * 1000.0);
+			s.numeroCambi = 0;
+			
+    		toVisit.push(s);
+        }        
+        
+        while(!toVisit.isEmpty()){
+            Stop s = toVisit.pop();
+            Stop nir = s.nextInRun;
+            Stop nis = s.nextInStation;
+            Stop niw = s.nextWalk;
+                        
+            if(nir != null){
+            	visitNIR(s, nir);
+
+                // Gestione visita topologica
+                nir.prevInRun = null;
+                if(nir.prevInStation == null && nir.prevWalk == null){
+                    toVisit.push(nir);
+                }
+            }
+            
+            if(nis != null){
+            	visitNIS(s, nis);
+
+            	// Gestione visita topologica
+                nis.prevInStation = null;
+                if(nis.prevInRun == null && nis.prevWalk == null){
+                    toVisit.push(nis);
+                }            
+            }
+            
+            
+            if(niw != null){
+            	visitNIW(s, niw);
+            	
+                // Gestione visita topologica
+                niw.prevWalk = null;
+                if(niw.prevInStation == null && niw.prevInRun == null){
+                    toVisit.push(niw);
+                }
+            }
+            
+            if(s.prevSP != null){
+            	s.departureTime = s.prevSP.departureTime;
+            	s.walkDistance = s.prevSP.walkDistance;
+            }
+        }
+    }            
+
     public void topologicalVisit(){
 
         Stack<Stop> toVisit = new Stack<Stop>();
         
-        for(Stop s : startQueue){        	
+        for(Stop s : startStack){        	
 			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
 			Coordinate coord2 = new boa.server.json.Coordinate(s.getStation().getLatitude(), s.getStation().getLongitude());
 			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
@@ -319,7 +592,7 @@ public class myShortestGeo {
             	s.walkDistance = s.prevSP.walkDistance;
             }
         }
-    }            
+    }     
     
      public class StopExplorer implements StopEvaluator{
 //        int count = 0;
@@ -341,7 +614,7 @@ public class myShortestGeo {
 
      public boa.server.json.Directions getDirections(){
     	 boa.server.json.Directions output = new boa.server.json.Directions();
-    	 for(Direction dir : arrivalQueue)
+    	 for(Direction dir : arrivalList)
     		 output.add(getDirection(dir));
     	 
     	 return output;
