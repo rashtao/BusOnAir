@@ -116,6 +116,4 @@ public class Direction
 		return out;   
 	    
     }
-    
-
 }

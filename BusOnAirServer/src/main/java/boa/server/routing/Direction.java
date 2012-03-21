@@ -45,7 +45,7 @@ public class Direction {
 	}
 	
 	public int getWalkTime(){
-		return (int) (getDistance() / Config.WALKSPEED * 60);
+		return (int) Math.round(getDistance() / Config.WALKSPEED * 60);
 	}
 	
 	public int getArrivalTime(){
@@ -61,21 +61,46 @@ public class Direction {
 	}
 	
 	public int getWalkDistance(){
-		return (int)(getDistance() * 1000.0) + stop.walkDistance;
+		return (int) Math.round(getDistance() * 1000.0) + stop.walkDistance;
 	}
 	
 	public int getDepartureTime(){
 		return stop.departureTime;
 	}
 	
+	public int getTravelTime(){
+		return stop.travelTime;
+	}
 	
-  @Override
-	public String toString(){
-		return ("Direction: " +
-			"\n\tstop: " + stop + 
-			"\n\tlatitude: " + lat +
-			"\n\tlongitude: " + lon);
-  		
-  }
+	public int getDuration(){
+		return getArrivalTime() - getDepartureTime();
+	}
+
+	@Override
+	public String toString() {
+		return "Direction [WALKTIME:" + getWalkTime()
+				+ ":ARRIVALTIME:" + getArrivalTime()
+				+ ":NUMCHANGES:" + getNumChanges()
+				+ ":MINCHANGETIME:" + getMinChangeTime()
+				+ ":WALKDISTANCE:" + getWalkDistance()
+				+ ":DEPTIME:" + getDepartureTime()
+				+ ":TRAVELTIME:" + getTravelTime() 
+				+ ":DURATION:" + getDuration() + "]";
+	}
+	
+	
+//  @Override
+//	public String toString(){
+//		return ("Direction: " +
+//			"\n\tstop: " + stop + 
+//			"\n\tlatitude: " + lat +
+//			"\n\tlongitude: " + lon);
+//  		
+//  }
+  
+	
+	
+  
+  
 	
 }

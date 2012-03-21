@@ -2,7 +2,7 @@ package boa.server.routing;
 
 public enum Criteria {
 	EARLIESTARRIVAL,
-	LATESTLEAVING,
+	DURATION,
 	MINCHANGES,
 	MINWALK
 }

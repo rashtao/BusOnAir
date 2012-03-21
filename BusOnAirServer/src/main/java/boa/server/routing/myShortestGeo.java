@@ -25,6 +25,7 @@ package boa.server.routing;
 
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -118,7 +119,7 @@ public class myShortestGeo {
                 outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":RUNID" + "NN" + ":TIME" + arr.getTime() + ")-->" + outPath;                
 
 	        }
-	        strPath = strPath + "\n\n" + dirstr + ":\tARRIVAL:" + LASTsTAZ + "\t\t" + outPath; 
+	        strPath = strPath + "\n\n" + dirstr + ":\tARRIVAL:" + LASTsTAZ + "dep:" + dir.getDepartureTime() + "walk:" + dir.getWalkDistance() + "\t\t" + outPath; 
     	}
     	
         return strPath;
@@ -237,6 +238,7 @@ public class myShortestGeo {
 	    	 s1 e s2, con t(s1) < t(s2), allora s2 è un ottimo di pareto se SECONDOCRITERIO(s2) < SECONDOCRITERIO(s1) 
 	*/
 	    	
+	  		LinkedList<Direction> arrivals = new LinkedList<Direction>();
 			Collection<Station> arrivalStations = Stations.getStations().getNearestStations(lat2, lon2, walkLimit);
 	
 		//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
@@ -246,7 +248,7 @@ public class myShortestGeo {
 
 					while(arrivalStop != null){
 			//			System.out.print("\nsp: " + arrivalStop);
-						arrivalList.add(new Direction(arrivalStop, lat2, lon2));
+						arrivals.add(new Direction(arrivalStop, lat2, lon2));
 						
 //						while(arrivalStop != null && arrivalStop.nextInStation != null && arrivalStop.equals(arrivalStop.nextInStation.prevSP)){
 //							arrivalStop = arrivalStop.nextInStation;
@@ -255,7 +257,24 @@ public class myShortestGeo {
 						if(arrivalStop != null)
 							arrivalStop = arrivalStop.nextInStation; 						
 					}
-				}		
+				}	
+				
+				Collections.sort(arrivals, new DirectionComparator(secondCriterion));
+				
+				
+				
+				// --- ELIMINAZIONE ESITI DOMINATI
+				Direction prev = null;
+				DirectionComparator comp = new DirectionComparator(secondCriterion);
+				
+				for(Direction d : arrivals){
+//					System.out.print("\n\n---------- Comparing: \nd:\n" + d + "\nprev:\n" + prev + "\nRIS: " +comp.secondCriterionCompare(d, prev) + "\n-------\n\n");
+					if(comp.secondCriterionCompare(d, prev) < 0){
+						arrivalList.add(d);							
+						prev = d;	
+					}
+				}
+				// --- ELIMINAZIONE ESITI DOMINATI (end)
 			
 		}
 	
@@ -341,8 +360,8 @@ public class myShortestGeo {
 			return 0;
 	}
 	
-	private int compareLatestLeaving(Stop s, Stop next){
-		// confronta s con il suo Next rispetto al criterio di ottimizzazione LATESTLEAVING
+	private int compareDuration(Stop s, Stop next){
+		// confronta s con il suo Next rispetto al criterio di ottimizzazione DURATION
 		// ritorna 1 se s rappresenta un prevSP MIGLIORE per il suo Next
 		// ritorna -1 se s rappresenta un prevSP PEGGIORE per il suo Next
 		// ritorna 0 se s rappresenta un prevSP UGUALE per il suo Next
@@ -383,15 +402,15 @@ public class myShortestGeo {
 		// di default l'ordine dei criteri di ottimizzazione è:
 		// - EARLIESTARRIVAL 
 		// - MINCHANGES
-		// - LATESTLEAVING
+		// - DURATION
 		// - MINWALK
 		// - MINTRAVELTIME
 
 		int result = 0;
 
-		if(secondCriterion == Criteria.LATESTLEAVING){
+		if(secondCriterion == Criteria.DURATION){
 			if(result == 0)
-				result = compareLatestLeaving(s, nir);
+				result = compareDuration(s, nir);
 			if(result == 0)
 				result = compareNIRMinChanges(s, nir);
 			if(result == 0)
@@ -402,12 +421,12 @@ public class myShortestGeo {
 			if(result == 0)
 				result = compareNIRMinChanges(s, nir);
 			if(result == 0)
-				result = compareLatestLeaving(s, nir);
+				result = compareDuration(s, nir);
 		} else {	// secondCriterion == Criteria.MINCHANGES
 			if(result == 0)
 				result = compareNIRMinChanges(s, nir);
 			if(result == 0)
-				result = compareLatestLeaving(s, nir);
+				result = compareDuration(s, nir);
 			if(result == 0)
 				result = compareMinWalk(s, nir);				
 		}
@@ -430,15 +449,15 @@ public class myShortestGeo {
 		// di default l'ordine dei criteri di ottimizzazione è:
 		// - EARLIESTARRIVAL 
 		// - MINCHANGES
-		// - LATESTLEAVING
+		// - DURATION
 		// - MINWALK
 		// - MINTRAVELTIME		
 
 		int result = 0;
 
-		if(secondCriterion == Criteria.LATESTLEAVING){
+		if(secondCriterion == Criteria.DURATION){
 			if(result == 0)
-				result = compareLatestLeaving(s, nis);
+				result = compareDuration(s, nis);
 			if(result == 0)
 				result = compareNISMinChanges(s, nis);
 			if(result == 0)
@@ -449,12 +468,12 @@ public class myShortestGeo {
 			if(result == 0)
 				result = compareNISMinChanges(s, nis);
 			if(result == 0)
-				compareLatestLeaving(s, nis);
+				compareDuration(s, nis);
 		} else {	// secondCriterion == Criteria.MINCHANGES
 			if(result == 0)
 				result = compareNISMinChanges(s, nis);
 			if(result == 0)
-				result = compareLatestLeaving(s, nis);
+				result = compareDuration(s, nis);
 			if(result == 0)
 				result = compareMinWalk(s, nis);				
 		}
@@ -694,7 +713,7 @@ public class myShortestGeo {
 	    output.getWalks().addFirst(new DirectionWalk(
 	    		false, 
 	    		dir.getWalkTime(), 
-	    		(int) (dir.getDistance() * 1000.0), 
+	    		(int) Math.round(dir.getDistance() * 1000.0), 
 	    		new boa.server.json.Coordinate(s_arrivo.getLatitude(), s_arrivo.getLongitude()), 
 	    		new boa.server.json.Coordinate(dir.getLat(), dir.getLon()),
 	    		s_arrivo.getId()));
@@ -741,16 +760,22 @@ public class myShortestGeo {
 	    			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
 	    			Coordinate coord2 = new boa.server.json.Coordinate(prevtmp.getStation().getLatitude(), prevtmp.getStation().getLongitude());
 	    			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
-	    			int walktime = (int) (dist / Config.WALKSPEED * 60);
+	    			int walktime = (int) Math.round(dist / Config.WALKSPEED * 60);
 	    			
 	    			output.getWalks().addFirst(new DirectionWalk(
 		    	    		false, 
 		    	    		walktime, 
-		    	    		(int) (dist * 1000.0), 
+		    	    		(int) Math.round(dist * 1000.0), 
 		    	    		coord1, 
 		    	    		coord2,
 		    	    		prevtmp.getStation().getId()));
-	    			output.setDepartureTime(prevtmp.getTime() - walktime);
+	    			
+//		    		while(prevtmp != null){
+//			    		tmp = prevtmp;
+//			    		prevtmp = prevtmp.prevSP;
+//		    		}
+		    		
+	    			output.setDepartureTime(dir.getDepartureTime());
 	    			
 		    	    prevtmp = null;
 	    		}

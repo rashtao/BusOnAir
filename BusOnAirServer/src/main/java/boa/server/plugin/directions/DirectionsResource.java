@@ -101,8 +101,8 @@ public class DirectionsResource
         
         if(criterion == null || criterion.equals("MINCHANGES"))
         	crit = Criteria.MINCHANGES;
-        else if(criterion.equals("LATESTLEAVING"))
-        	crit = Criteria.LATESTLEAVING;
+        else if(criterion.equals("LATESTLEAVING") || criterion.equals("DURATION"))
+        	crit = Criteria.DURATION;
         else if(criterion.equals("MINWALK"))
         	crit = Criteria.MINWALK;
         else
