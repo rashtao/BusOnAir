@@ -37,7 +37,7 @@ import boa.server.json.DirectionWalk;
 import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
-import boa.server.routing.myShortestGeo;
+import boa.server.routing.ShortestPathGeo;
 import boa.server.webapp.webappjson.Directions;
 import boa.server.webapp.webappjson.DirectionsList;
 import boa.server.webapp.webappjson.DirectionsRoute;
@@ -90,7 +90,7 @@ public class DirectionsSearch
     	log.write("\ngetDirection?lat1=" + lat1 + "&lon1=" + lon1 + "&lat2=" + lat2 + "&lon2=" + lon2 + "&time=" + time);
         log.flush();
         
-    	myShortestGeo mysp = new myShortestGeo((int) time, 1000, lat1, lon1, lat2, lon2, 500, Criteria.MINCHANGES);
+    	ShortestPathGeo mysp = new ShortestPathGeo((int) time, 1000, lat1, lon1, lat2, lon2, 500, Criteria.MINCHANGES);
         StopMediator cache = mysp.shortestPath(); 
         boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lat1,lon1), mysp.getArrivalList());      
         

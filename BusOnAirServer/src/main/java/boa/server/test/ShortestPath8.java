@@ -44,7 +44,7 @@ import boa.server.json.Directions;
 import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
-import boa.server.routing.myShortestGeo;
+import boa.server.routing.ShortestPathGeo;
 
 
 /**
@@ -101,7 +101,7 @@ public class ShortestPath8 {
         	double lat2 = 42.34300;
         	double lon2 = 13.46300;
 
-        	myShortestGeo mysp = new myShortestGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
+        	ShortestPathGeo mysp = new ShortestPathGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
             mysp.shortestPath(); 
             boa.server.json.Directions directs = new boa.server.json.Directions(new boa.server.domain.utils.Coordinate(lat1,lon1), mysp.getArrivalList());
             for(boa.server.json.Direction d : directs.getDirectionsList()){

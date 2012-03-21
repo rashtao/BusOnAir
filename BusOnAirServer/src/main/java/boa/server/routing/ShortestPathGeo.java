@@ -34,7 +34,7 @@ import org.neo4j.graphdb.*;
 import boa.server.domain.*;
 import boa.server.domain.utils.GeoUtil;
 
-public class myShortestGeo {
+public class ShortestPathGeo {
     private StopMediator cache;
     private int startTime;
     private int stopTime;
@@ -47,7 +47,7 @@ public class myShortestGeo {
     private  Stack<TransientStop> startStack;
     private  LinkedList<Direction> arrivalList;
    
-    public myShortestGeo(int startTime, int _timeInterval, double lat1, double lon1, double lat2, double lon2, int walkLimit, Criteria criterion){
+    public ShortestPathGeo(int startTime, int _timeInterval, double lat1, double lon1, double lat2, double lon2, int walkLimit, Criteria criterion){
         cache = new StopMediator();   
         this.startTime = startTime;
         stopTime = startTime + _timeInterval;

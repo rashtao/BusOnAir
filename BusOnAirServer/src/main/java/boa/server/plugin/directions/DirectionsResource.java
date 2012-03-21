@@ -37,7 +37,7 @@ import boa.server.json.DirectionWalk;
 import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
-import boa.server.routing.myShortestGeo;
+import boa.server.routing.ShortestPathGeo;
 import boa.server.webapp.webappjson.Directions;
 import boa.server.webapp.webappjson.DirectionsList;
 import boa.server.webapp.webappjson.DirectionsRoute;
@@ -109,7 +109,7 @@ public class DirectionsResource
         else
         	crit = Criteria.MINCHANGES;
         
-    	myShortestGeo mysp = new myShortestGeo(departuretime, 1440, lat1, lon1, lat2, lon2, maxwalkdistance, crit);
+    	ShortestPathGeo mysp = new ShortestPathGeo(departuretime, 1440, lat1, lon1, lat2, lon2, maxwalkdistance, crit);
         mysp.shortestPath(); 
         boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lat1, lon1), mysp.getArrivalList());   
 //        if(directs == null || directs.getDirectionsList() == null || directs.getDirectionsList().size() == 0)
