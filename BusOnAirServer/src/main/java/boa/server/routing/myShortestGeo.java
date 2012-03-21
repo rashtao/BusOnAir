@@ -33,10 +33,6 @@ import org.neo4j.graphdb.*;
 
 import boa.server.domain.*;
 import boa.server.domain.utils.GeoUtil;
-import boa.server.json.Coordinate;
-import boa.server.json.DirectionRoute;
-import boa.server.json.DirectionWalk;
-
 
 public class myShortestGeo {
     private StopMediator cache;
@@ -67,7 +63,7 @@ public class myShortestGeo {
         
     public StopMediator shortestPath(){
     	
-    	createStartStops();
+    	createTransientStops();
     	
     	for(TransientStop ts : startStack){
     		loadSubgraph(ts.nextWalk);
@@ -80,7 +76,7 @@ public class myShortestGeo {
         return cache;        
     }
 
-	public Stop getShortestPath(Station dest, int fromTime){
+	private Stop getShortestPath(Station dest, int fromTime){
         Stop arrivo = dest.getFirstStopFromTime(fromTime);
         if(arrivo != null)
             arrivo = cache.get(arrivo);
@@ -119,14 +115,14 @@ public class myShortestGeo {
                 outPath = "(" + arr.getType() + ":" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":RUNID" + "NN" + ":TIME" + arr.getTime() + ")-->" + outPath;                
 
 	        }
-	        strPath = strPath + "\n\n" + dirstr + ":\tARRIVAL:" + LASTsTAZ + "dep:" + dir.getDepartureTime() + "walk:" + dir.getWalkDistance() + "\t\t" + outPath; 
+	        strPath = strPath + dir + "\n\n" + dirstr + ":\tARRIVAL:" + LASTsTAZ + "dep:" + dir.getDepartureTime() + "walk:" + dir.getWalkDistance() + "\t\t" + outPath; 
     	}
     	
         return strPath;
 
     }
     
-	private void createStartStops() {
+	private void createTransientStops() {
 		Collection<Station> startStations = Stations.getStations().getNearestStations(lat1, lon1, walkLimit);
 		
 		for(Station s : startStations){
@@ -152,76 +148,6 @@ public class myShortestGeo {
 			}
 		}	
 	}
-    
-//	private void createStartStops() {
-//		Collection<Station> startStations = Stations.getStations().getNearestStations(lat1, lon1, walkLimit);
-//		
-//		for(Station s : startStations){
-//			double distance = GeoUtil.getDistance2(lat1, lon1, s.getLatitude(), s.getLongitude());
-//			int walktime = (int) (distance / Config.WALKSPEED * 60);
-//			Stop startStop = s.getFirstStopFromTime(startTime + walktime);
-//			if(startStop != null){
-//				startStop = cache.get(startStop);
-//				
-//				TransientStop ts = new TransientStop();
-//				ts.setTime(startStop.getTime() - walktime);
-//				ts.nextWalk = startStop;
-//				ts.setStazione(s);
-//				startStop.prevWalk = ts;
-//	
-//				startStack.add(ts);		
-//			}
-//		}	
-//	}
-    
-//    private void linkArrivalPoint() {
-///*    	 collega l'arrival point agli stop delle stazioni adiacenti tramite archi walk
-//  
-//    	 collegando tutti gli stop delle stazioni adiacenti (entro WALKLIMIT),
-//    	 
-//    	 Infine per ogni stazione, per ogni percorso trovato, crea una lista di risultati. I risultati si inseriscono
-//    	 in ordine di orario di arrivo, quindi secondo l'ordine dei nodi nelle rispettive stazioni.
-//    	 
-//    	 Quindi si procede a fare un merge-sort di tutte le liste di tutte le stazioni di arrivo, tenendo ordinati i risultati
-//    	 per arrival-time e scartando on-the-fly i risultati che non sono ottimi di pareto. ==> arrivalList
-//    	 
-//    	 Gli ottimi si valutano in base al secondo criterio di ottimizzazione scelto. Banalmente, dati 2 Stop di arrivo successivi
-//    	 s1 e s2, con t(s1) < t(s2), allora s2 è un ottimo di pareto se SECONDOCRITERIO(s2) < SECONDOCRITERIO(s1) 
-//*/
-//    	
-//		Collection<Station> arrivalStations = Stations.getStations().getNearestStations(lat2, lon2, walkLimit);
-//
-//	//		System.out.print("\nLnked arrival stations: " + arrivalStations.size());
-//			for(Station s : arrivalStations){
-//				int time = startTime;
-//				while(time < stopTime){
-//					Stop arrivalStop = getShortestPath(s, time);
-//		//			System.out.print("\nsp: " + arrivalStop);
-//					if(arrivalStop != null){
-//						arrivalList.add(new Direction(arrivalStop, lat2, lon2));
-//					}
-//					
-//					while(arrivalStop != null && arrivalStop.nextInStation != null && arrivalStop.equals(arrivalStop.nextInStation.prevSP)){
-//						arrivalStop = arrivalStop.nextInStation;
-//					}
-//										
-//					if(arrivalStop == null){
-//						time = stopTime;
-//					} else {
-//						arrivalStop = arrivalStop.nextInStation;
-//						
-//						if(arrivalStop == null){
-//							time = stopTime;
-//						} else {
-//							time = arrivalStop.getTime() + 1;	//+1 necessario per bug di modellazione dei cambi a tempo zero
-//						}					
-//					}	
-//				}
-//			}		
-//		
-//	}
-    
-    
   
   private void linkArrivalPoint() {
 	/*    	 collega l'arrival point agli stop delle stazioni adiacenti tramite archi walk
@@ -234,8 +160,11 @@ public class myShortestGeo {
 	    	 Quindi si procede a fare un merge-sort di tutte le liste di tutte le stazioni di arrivo, tenendo ordinati i risultati
 	    	 per arrival-time e scartando on-the-fly i risultati che non sono ottimi di pareto. ==> arrivalList
 	    	 
-	    	 Gli ottimi si valutano in base al secondo criterio di ottimizzazione scelto. Banalmente, dati 2 Stop di arrivo successivi
+	    	 Gli ottimi si valutano in base al secondo criterio di ottimizzazione scelto. Dati 2 Stop di arrivo successivi
 	    	 s1 e s2, con t(s1) < t(s2), allora s2 è un ottimo di pareto se SECONDOCRITERIO(s2) < SECONDOCRITERIO(s1) 
+	    	 
+	    	 NB: nell'attuale implementazione il secondo criterio di ottimizzazzione è la composizione di tutti i criteri ammissibili,
+	    	 	 mettendo prima il secondo criterio scelto e, a seguire tutti gli altri criteri
 	*/
 	    	
 	  		LinkedList<Direction> arrivals = new LinkedList<Direction>();
@@ -260,8 +189,7 @@ public class myShortestGeo {
 				}	
 				
 				Collections.sort(arrivals, new DirectionComparator(secondCriterion));
-				
-				
+
 				
 				// --- ELIMINAZIONE ESITI DOMINATI
 				Direction prev = null;
@@ -591,91 +519,89 @@ public class myShortestGeo {
         }
     }            
 
-    public void topologicalVisit(){
-
-        Stack<Stop> toVisit = new Stack<Stop>();
-        
-        for(Stop s : startStack){        	
-			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
-			Coordinate coord2 = new boa.server.json.Coordinate(s.getStation().getLatitude(), s.getStation().getLongitude());
-			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
-			
-			s.departureTime = s.getTime();
-			s.walkDistance = (int) (dist * 1000.0);
-			
-    		toVisit.push(s);
-        }        
-        
-        while(!toVisit.isEmpty()){
-            Stop s = toVisit.pop();
-            Stop nir = s.nextInRun;
-            Stop nis = s.nextInStation;
-            Stop niw = s.nextWalk;
-                        
-            if(nir != null){
-                // UPDATE Shortest path e cambi
-                if(nir.prevSP == null){
-                    nir.prevSP = s;
-                    nir.numeroCambi = s.numeroCambi;
-                } else if(s.numeroCambi < nir.numeroCambi){
-                    nir.prevSP = s;
-                    nir.numeroCambi = s.numeroCambi;
-                }
-
-                // Gestione visita topologica
-                nir.prevInRun = null;
-                if(nir.prevInStation == null && nir.prevWalk == null){
-                    toVisit.push(nir);
-                }
-            }
-            
-            if(nis != null){
-                // UPDATE Shortest path e cambi
-                int cambio = 0;
-                if((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))){
-                    cambio = 1;
-                }
-                
-                int cambiPerNis = s.numeroCambi + cambio;                
-                if(nis.prevSP == null){
-                    nis.prevSP = s;
-                    nis.numeroCambi = cambiPerNis;
-                } else if(cambiPerNis <= nis.numeroCambi){
-                    nis.prevSP = s;
-                    nis.numeroCambi = cambiPerNis;
-                }
-
-                // Gestione visita topologica
-                nis.prevInStation = null;
-                if(nis.prevInRun == null && nis.prevWalk == null){
-                    toVisit.push(nis);
-                }            
-            }
-            
-            
-            if(niw != null){
-                // UPDATE Shortest path e cambi
-                if(niw.prevSP == null){
-                    niw.prevSP = s;
-                    niw.numeroCambi = s.numeroCambi;
-                } else if(s.numeroCambi < niw.numeroCambi){
-                    niw.prevSP = s;
-                    niw.numeroCambi = s.numeroCambi;
-                }
-
-                // Gestione visita topologica
-                niw.prevWalk = null;
-                if(niw.prevInStation == null && niw.prevInRun == null){
-                    toVisit.push(niw);
-                }
-            }
-            
-            if(s.prevSP != null){
-            	s.departureTime = s.prevSP.departureTime;
-            	s.walkDistance = s.prevSP.walkDistance;
-            }
-        }
-    }     
+//    public void topologicalVisit(){
+//
+//        Stack<Stop> toVisit = new Stack<Stop>();
+//        
+//        for(Stop s : startStack){        	
+//			double dist = GeoUtil.getDistance2(lat1, lon1, s.getStation().getLatitude(), s.getStation().getLongitude());
+//			
+//			s.departureTime = s.getTime();
+//			s.walkDistance = (int) (dist * 1000.0);
+//			
+//    		toVisit.push(s);
+//        }        
+//        
+//        while(!toVisit.isEmpty()){
+//            Stop s = toVisit.pop();
+//            Stop nir = s.nextInRun;
+//            Stop nis = s.nextInStation;
+//            Stop niw = s.nextWalk;
+//                        
+//            if(nir != null){
+//                // UPDATE Shortest path e cambi
+//                if(nir.prevSP == null){
+//                    nir.prevSP = s;
+//                    nir.numeroCambi = s.numeroCambi;
+//                } else if(s.numeroCambi < nir.numeroCambi){
+//                    nir.prevSP = s;
+//                    nir.numeroCambi = s.numeroCambi;
+//                }
+//
+//                // Gestione visita topologica
+//                nir.prevInRun = null;
+//                if(nir.prevInStation == null && nir.prevWalk == null){
+//                    toVisit.push(nir);
+//                }
+//            }
+//            
+//            if(nis != null){
+//                // UPDATE Shortest path e cambi
+//                int cambio = 0;
+//                if((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))){
+//                    cambio = 1;
+//                }
+//                
+//                int cambiPerNis = s.numeroCambi + cambio;                
+//                if(nis.prevSP == null){
+//                    nis.prevSP = s;
+//                    nis.numeroCambi = cambiPerNis;
+//                } else if(cambiPerNis <= nis.numeroCambi){
+//                    nis.prevSP = s;
+//                    nis.numeroCambi = cambiPerNis;
+//                }
+//
+//                // Gestione visita topologica
+//                nis.prevInStation = null;
+//                if(nis.prevInRun == null && nis.prevWalk == null){
+//                    toVisit.push(nis);
+//                }            
+//            }
+//            
+//            
+//            if(niw != null){
+//                // UPDATE Shortest path e cambi
+//                if(niw.prevSP == null){
+//                    niw.prevSP = s;
+//                    niw.numeroCambi = s.numeroCambi;
+//                } else if(s.numeroCambi < niw.numeroCambi){
+//                    niw.prevSP = s;
+//                    niw.numeroCambi = s.numeroCambi;
+//                }
+//
+//                // Gestione visita topologica
+//                niw.prevWalk = null;
+//                if(niw.prevInStation == null && niw.prevInRun == null){
+//                    toVisit.push(niw);
+//                }
+//            }
+//            
+//            if(s.prevSP != null){
+//            	s.departureTime = s.prevSP.departureTime;
+//            	s.walkDistance = s.prevSP.walkDistance;
+//            }
+//        }
+//    }     
     
      public class StopExplorer implements StopEvaluator{
 //        int count = 0;
@@ -692,106 +618,10 @@ public class myShortestGeo {
                 return false;
             }
         }
-    }   
+    }
 
-
-     public boa.server.json.Directions getDirections(){
-    	 boa.server.json.Directions output = new boa.server.json.Directions();
-    	 for(Direction dir : arrivalList)
-    		 output.add(getDirection(dir));
-    	 
-    	 return output;
-     }
+	public LinkedList<Direction> getArrivalList() {
+		return arrivalList;
+	}
      
-     public boa.server.json.Direction getDirection(Direction dir) {
-//    	System.out.print("\ngetDirection( " + dir); 
-    	boa.server.json.Direction output = new boa.server.json.Direction();
-    	 
- 		Stop arrivo = dir.getStop();
- 		Station s_arrivo = arrivo.getStation();
-
-	    output.getWalks().addFirst(new DirectionWalk(
-	    		false, 
-	    		dir.getWalkTime(), 
-	    		(int) Math.round(dir.getDistance() * 1000.0), 
-	    		new boa.server.json.Coordinate(s_arrivo.getLatitude(), s_arrivo.getLongitude()), 
-	    		new boa.server.json.Coordinate(dir.getLat(), dir.getLon()),
-	    		s_arrivo.getId()));
-	    
-    	output.setArrivalTime(dir.getArrivalTime());
-    	output.setNumChanges(dir.getNumChanges());
-    	output.setWalkingDistance(dir.getWalkDistance());
-
-    	Stop tmp, prevtmp;
-    	tmp = arrivo;
-    	while(tmp.prevSP != null){
-    		tmp = tmp.prevSP;
-    	}
-    	
-    	Station depStat = tmp.getStation();
-    	
-    	
-    	
-    	tmp = arrivo;
-    	prevtmp = tmp.prevSP;
-    	
-
-    	
-    	while(prevtmp != null){
-	    	while(prevtmp != null && tmp.equals(prevtmp.getNextInRun())){
-//	    		System.out.print("\ntmp: " + tmp);
-//	    		System.out.print("\nprevtmp: " + prevtmp);
-	    		
-	    		tmp = prevtmp;
-	    		prevtmp = prevtmp.prevSP;
-	    	}
-	    	
-	    	if(prevtmp != null){
-	    		output.getRoutes().addFirst(new DirectionRoute(tmp, arrivo));
-	    		if(!depStat.equals(tmp.getStation())){		// è un cambio
-			    	output.getWalks().addFirst(new DirectionWalk(
-			    			true, 
-			    			tmp.getTime() - prevtmp.getTime(), 
-			    			0, 
-			    			new boa.server.json.Coordinate(tmp.getStation().getLatitude(), tmp.getStation().getLongitude()),
-			    			new boa.server.json.Coordinate(tmp.getStation().getLatitude(), tmp.getStation().getLongitude()),
-			    			tmp.getStation().getId()));
-	    		} else {		// è la prima walk
-	    			Coordinate coord1 = new boa.server.json.Coordinate(lat1, lon1);
-	    			Coordinate coord2 = new boa.server.json.Coordinate(prevtmp.getStation().getLatitude(), prevtmp.getStation().getLongitude());
-	    			double dist = GeoUtil.getDistance2(coord1.getLat(), coord1.getLon(), coord2.getLat(), coord2.getLon());
-	    			int walktime = (int) Math.round(dist / Config.WALKSPEED * 60);
-	    			
-	    			output.getWalks().addFirst(new DirectionWalk(
-		    	    		false, 
-		    	    		walktime, 
-		    	    		(int) Math.round(dist * 1000.0), 
-		    	    		coord1, 
-		    	    		coord2,
-		    	    		prevtmp.getStation().getId()));
-	    			
-//		    		while(prevtmp != null){
-//			    		tmp = prevtmp;
-//			    		prevtmp = prevtmp.prevSP;
-//		    		}
-		    		
-	    			output.setDepartureTime(dir.getDepartureTime());
-	    			
-		    	    prevtmp = null;
-	    		}
-	    		
-	    		while(tmp.prevSP != null && tmp.equals(tmp.prevSP.nextInStation)){
-		    		tmp = tmp.prevSP;
-	    		}
-	    		
-	    		if(prevtmp != null){
-					prevtmp = tmp.prevSP;
-					arrivo = tmp;
-	    		}
-	    	}
-    	}
-
-    	return output;
-     }     
-
 }

@@ -30,6 +30,7 @@ import boa.server.domain.Station;
 import boa.server.domain.Stations;
 import boa.server.domain.Stop;
 import boa.server.domain.Stops;
+import boa.server.domain.utils.Coordinate;
 import boa.server.domain.utils.GeoUtil;
 import boa.server.json.DirectionRoute;
 import boa.server.json.DirectionWalk;
@@ -110,7 +111,7 @@ public class DirectionsResource
         
     	myShortestGeo mysp = new myShortestGeo(departuretime, 1440, lat1, lon1, lat2, lon2, maxwalkdistance, crit);
         mysp.shortestPath(); 
-        boa.server.json.Directions directs = mysp.getDirections();      
+        boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lat1, lon1), mysp.getArrivalList());   
 //        if(directs == null || directs.getDirectionsList() == null || directs.getDirectionsList().size() == 0)
 //        	return Response.ok().entity(new json.Response(204, "No path found")).build();
     	

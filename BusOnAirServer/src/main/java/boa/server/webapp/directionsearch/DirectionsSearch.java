@@ -30,6 +30,7 @@ import boa.server.domain.Station;
 import boa.server.domain.Stations;
 import boa.server.domain.Stop;
 import boa.server.domain.Stops;
+import boa.server.domain.utils.Coordinate;
 import boa.server.domain.utils.GeoUtil;
 import boa.server.json.DirectionRoute;
 import boa.server.json.DirectionWalk;
@@ -91,7 +92,7 @@ public class DirectionsSearch
         
     	myShortestGeo mysp = new myShortestGeo((int) time, 1000, lat1, lon1, lat2, lon2, 500, Criteria.MINCHANGES);
         StopMediator cache = mysp.shortestPath(); 
-        boa.server.json.Directions directs = mysp.getDirections();      
+        boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lat1,lon1), mysp.getArrivalList());      
         
         DirectionsList  directionsList2  = new DirectionsList();
 

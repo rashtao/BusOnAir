@@ -146,19 +146,7 @@ import java.util.Comparator;
             
             return 0;
         }
-        
-        public int compareSecondCriterion(Direction o1, Direction o2){
-        	if(criterion == Criteria.MINCHANGES){
-            	return(compareMinChanges(o1, o2));
-            } else if(criterion == Criteria.DURATION){
-            	return(compareMinDuration(o1, o2));
-            } else if(criterion == Criteria.MINWALK){            	
-            	return(compareMinWalk(o1, o2));
-            }     
-        	
-        	return 0;
-        }
-        
+                
         public int secondCriterionCompare(Object o1, Object o2){
         	if(o1 == null && o2 == null)
         		return 0;

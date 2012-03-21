@@ -103,7 +103,7 @@ public class ShortestPath8 {
 
         	myShortestGeo mysp = new myShortestGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
             mysp.shortestPath(); 
-            boa.server.json.Directions directs = mysp.getDirections();
+            boa.server.json.Directions directs = new boa.server.json.Directions(new boa.server.domain.utils.Coordinate(lat1,lon1), mysp.getArrivalList());
             for(boa.server.json.Direction d : directs.getDirectionsList()){
             	log.write(d.toString());
             }
