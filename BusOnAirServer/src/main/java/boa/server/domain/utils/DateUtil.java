@@ -462,4 +462,30 @@ public class DateUtil
         throw new IllegalArgumentException( "Unsupported type " + date.getClass() );
     }
 
+    
+    public static long getSecondsSinceMidnight() {         
+
+        DateFormat dateFormat = new SimpleDateFormat();      
+        java.util.Date date = new java.util.Date();
+
+        dateFormat = new SimpleDateFormat("HH");
+        date = new java.util.Date();
+        int hour = Integer.parseInt(dateFormat.format(date));         
+
+        dateFormat = new SimpleDateFormat("mm");
+        date = new java.util.Date();
+        int minute = Integer.parseInt(dateFormat.format(date));
+
+        dateFormat = new SimpleDateFormat("ss");
+        date = new java.util.Date();
+        int second = Integer.parseInt(dateFormat.format(date));   
+
+        long secondsSinceMidnight = (hour* 3600) + (minute * 60) + second;      
+
+//        System.out.println("Current Time:" + hour + ":" + minute + ":" + second);
+//        System.out.print("Seconds Since Midnight: " + secondsSinceMidnight);       
+        
+        return secondsSinceMidnight;
+
+     }    
 }

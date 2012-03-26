@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "checkpoint" )
 public class CheckPoint {
     private long id;
-    private int dt;
+    private long dt;
     private Coordinate latLon;
     private String from;
     private String towards;
@@ -16,7 +16,7 @@ public class CheckPoint {
 	public CheckPoint() {
 	}
 
-    private CheckPoint( long id, int dt, Coordinate latLon ){
+    private CheckPoint( long id, long dt, Coordinate latLon ){
     	super();
         this.id = id;
         this.dt = dt;
@@ -53,11 +53,11 @@ public class CheckPoint {
 		this.id = id;
 	}
 
-	public int getDt() {
+	public long getDt() {
 		return dt;
 	}
 
-	public void setDt(int dt) {
+	public void setDt(long dt) {
 		this.dt = dt;
 	}
 

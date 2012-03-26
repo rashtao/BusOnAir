@@ -20,6 +20,7 @@ public class RunUpdateTest {
 		
 		Run r = Runs.getRuns().getRunById(11);
 
+		
 		r.restore();
 
 		System.out.print("\n\n\nRunning Buses:\n");
@@ -56,18 +57,17 @@ public class RunUpdateTest {
 		Double lati = (cp4.getLatitude()*.8 + cp6.getLatitude()*.2);
 		Double longi = (cp4.getLongitude()*.8 + cp6.getLongitude()*.2);
 	
-//		r.updateRun(cp, 420);
+		r.checkPointPass(cp2, 547*60);
 //		r.updatePosition(lati,longi,500);
-		r.addCheckPoint(lati,longi,500);
+//		r.addCheckPoint(lati,longi,500*60);
 
 		System.out.print("\nDopo:\n");
 		System.out.print(r.toString());
 		
-		r.updatePosition(lati, longi, 505);
-		
-		System.out.print("\n\n\nRunning Buses:\n");
-		for(Run rr : Runs.getRuns().getAllRunningBuses())
-			System.out.println(rr);
+//		r.updatePosition(lati, longi, 505);		
+//		System.out.print("\n\n\nRunning Buses:\n");
+//		for(Run rr : Runs.getRuns().getAllRunningBuses())
+//			System.out.println(rr);
 
 
 		

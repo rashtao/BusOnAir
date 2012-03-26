@@ -22,12 +22,14 @@ import org.neo4j.graphdb.index.IndexHits;
 import boa.server.domain.utils.*;
 
 public class Run {
-    protected static final String ID = "id";
+	protected static final String ID = "id";
     protected static final String TYPE = "type";
-    protected static final String LATITUDE = "lat";
-    protected static final String LONGITUDE = "lon";
-    protected static final String LASTUPDATETIME = "lastupdatetime";
-        
+    protected static final String LATITUDE = "lat";		// ultima posizione rilevata con GPS e comunicata
+    protected static final String LONGITUDE = "lon";	// ultima posizione rilevata con GPS e comunicata	
+    protected static final String LASTUPDATETIME = "lastupdatetime";	// in secondi dalla mezzanotte
+
+    protected static final int SERVER_TIMEOUT = 30;
+    
     protected LayerNodeIndex checkPointsSpatialIndex;
     protected Index<Node> cpIndex;
     
@@ -57,19 +59,19 @@ public class Run {
         underlyingNode.setProperty(Run.ID, id);
     }
     
-    public Integer getLastUpdateTime(){
-        return (Integer) underlyingNode.getProperty(LASTUPDATETIME);
+    public Long getLastUpdateTime(){
+        return (Long) underlyingNode.getProperty(LASTUPDATETIME);
     }
 
-    protected void setLastUpdateTime(int time){
+    protected void setLastUpdateTime(long time){
         underlyingNode.setProperty(Run.LASTUPDATETIME, time);
     }
     
-    public Double getLatitude(){
+    public Double getLastGPSLatitude(){
         return (Double) underlyingNode.getProperty(LATITUDE);
 	}
 	
-	public Double getLongitude(){
+	public Double getLastGPSLongitude(){
 	        return (Double) underlyingNode.getProperty(LONGITUDE);
 	}    
 	
@@ -88,13 +90,38 @@ public class Run {
         underlyingNode.createRelationshipTo(last.getUnderlyingNode(), RelTypes.RUN_LASTCHECKPOINT);		
     }
     
-    public CheckPoint getLastCheckPoint(){
+    public CheckPoint getLastGPSCheckPoint(){
+    	// Ritorna l'ultimo CheckPoint (lastCheckPoint memorizzato) aggiornato da 
+    	// updatePosition o da checkPointPass (chiamate dalla tracking app)
+    	
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
-        return new CheckPoint(rel.getEndNode());		
+        return new CheckPoint(rel.getEndNode());
     }
     
-    public Stop getLastStop(){
-    	return getLastCheckPoint().getFrom();
+    public CheckPoint calculateLastCheckPoint(){
+    	// Ritorna l'ultimo CheckPoint visitato se la tracking app ha problemi di (comunicazione / ricezione GPS)
+    	// viene cmq restituito l'ultimo CheckPoint che ipoteticamente dovrebbe essere stato visitato al tempo corrente, 
+    	// basandosi sull'ultima comunicazione della tracking app e sul tempo corrente
+    	
+    	long currentTime = boa.server.domain.utils.DateUtil.getSecondsSinceMidnight();
+        Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
+        CheckPoint lastCP = new CheckPoint(rel.getEndNode());
+        CheckPoint nextCP = lastCP.getNextCheckPoint(); 
+        
+    	while(nextCP != null && currentTime > nextCP.getTimeInSeconds()){
+    		lastCP = nextCP;
+    		nextCP = nextCP.getNextCheckPoint();    		
+    	}
+    	
+    	return lastCP;    	
+    }
+    
+    public Stop getLastGPSStop(){
+    	return getLastGPSCheckPoint().getFrom();
+    }
+
+    public Stop calculateLastStop(){
+    	return calculateLastCheckPoint().getFrom();
     }
 
     public void setRoute(Route route){
@@ -158,7 +185,7 @@ public class Run {
     }
     
     public int getDelay(){
-    	Stop ls = getLastStop(); 
+    	Stop ls = getLastGPSStop(); 
     	Stop ns = ls.getNextInRun();
 
     	if(ns == null)		// la Run non sta circolando
@@ -185,10 +212,12 @@ public class Run {
     	String output = "";
 		output += ("Run: " +
 				"\n\tid: " + getId() + 
-				"\n\tlon:" + getLatitude() + 
-				"\n\tlat:" + getLongitude() + 				
-				"\n\tlastStop:" + getLastStop() + 
-				"\n\tlastCheckPoint:" + getLastCheckPoint());	 
+				"\n\tlon:" + getLastGPSLatitude() + 
+				"\n\tlat:" + getLastGPSLongitude() + 				
+				"\n\tlastGPSStop:" + getLastGPSStop() + 
+				"\n\tlastGPSCheckPoint:" + getLastGPSCheckPoint() +
+				"\n\tlastCalculatedStop:" + calculateLastStop() + 
+				"\n\tlastCalculatedCheckPoint:" + calculateLastCheckPoint());	 
 		
 		output += "\nStops:\n";
 		Stop s = getFirstStop();
@@ -221,7 +250,7 @@ public class Run {
     
     public void restore(){
     	// setta lastvisitedcheckpoit all'ultimo checkpoint della run e reimposta i tempi di tutti gli stop con i tempi originali (static time)
-    	// setta lastUpdateTime = 0
+    	// setta lastUpdateTime = 1440*60
     	// rimuove la run dall'indice Runs.runningBuses
     	
     	CheckPoint cp = getFirstCheckPoint();
@@ -235,7 +264,7 @@ public class Run {
 	    	setLastCheckPoint(cp);
 	    	setLatitude(cp.getLatitude());
 	    	setLongitude(cp.getLongitude());
-	    	setLastUpdateTime(0);
+	    	setLastUpdateTime(1440*60);
 	    	
 	    	Stop s = getFirstStop();
 	    	
@@ -251,11 +280,12 @@ public class Run {
     }
     
     
-    public void checkPointPass(CheckPoint lastCP, int time){
+    public void checkPointPass(CheckPoint lastCP, long time){
     	//propaga il ritardo da lastCP.getTowards():Stop fino a fine run
     	// aggiunge la run dall'indice Runs.runningBuses
     	
-    	int ritardo = time - lastCP.getTime();
+    	int timeInMinutes = (int) Math.round(time/60.0);
+    	int ritardo = timeInMinutes - lastCP.getTimeInMinutes();
     	
     	if(lastCP.getNextCheckPoint() == null){		// fine RUN
     		restore();    		
@@ -324,13 +354,13 @@ public class Run {
 		}
     }
 	
-	public void addCheckPoint(Double lat, Double lon, int time){
+	public void addCheckPoint(Double lat, Double lon, long time){
 		updatePosition(lat, lon, time);
 		
-		CheckPoint lastCP = getLastCheckPoint();
+		CheckPoint lastCP = getLastGPSCheckPoint();
 		CheckPoint nextCP = lastCP.getNextCheckPoint();
 		
-		int dt = nextCP.getTowards().getTime() - getLastUpdateTime();		
+		long dt = nextCP.getTowards().getTime()*60 - getLastUpdateTime();		
 
 		if(dt < 0)
 			return;
@@ -338,7 +368,7 @@ public class Run {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Node n = DbConnection.getDb().createNode();
-			CheckPoint newCP = new CheckPoint(n, getLatitude(), getLongitude(), dt);
+			CheckPoint newCP = new CheckPoint(n, getLastGPSLatitude(), getLastGPSLongitude(), dt);
 			
 			newCP.setTowards(nextCP.getTowards());	
 			newCP.setFrom(lastCP.getFrom());
@@ -384,7 +414,7 @@ public class Run {
 	        }
 	}
 
-	public void updatePosition(Double lat, Double lon, int time) {
+	public void updatePosition(Double lat, Double lon, long time) {
 		// aggiorna la posizione lat,lon della run
 		// setta l'ultimo checkpoint visitato (calcolandolo dalla posizione attuale)
 		// calcola il rapporto (percentualeAvanzamento) tra la proiezione della segmento posAttuale-cp1 sul segmento cp1-cp2
@@ -406,27 +436,32 @@ public class Run {
 			tx.finish();			
 		} 
 		
+//		System.out.print("\n\n------ DEBUG --------");
+//		System.out.print("\n\nLASTCP: " + getLastCheckPoint());		
+//		System.out.print("\n------ DEBUG --------\n\n");
 		
-		double a,b,c,d,percentualeAvanzamento, dt;
-		CheckPoint cp1 = getLastCheckPoint();
+		double a,b,c,d,percentualeAvanzamento;
+		long dt;
+		
+		CheckPoint cp1 = getLastGPSCheckPoint();
 		CheckPoint cp2 = cp1.getNextCheckPoint();
-		a = GeoUtil.getDistance2(cp1.getLatitude(), cp1.getLongitude(), getLatitude(), getLongitude());
-		b = GeoUtil.getDistance2(cp2.getLatitude(), cp2.getLongitude(), getLatitude(), getLongitude());
+		a = GeoUtil.getDistance2(cp1.getLatitude(), cp1.getLongitude(), getLastGPSLatitude(), getLastGPSLongitude());
+		b = GeoUtil.getDistance2(cp2.getLatitude(), cp2.getLongitude(), getLastGPSLatitude(), getLastGPSLongitude());
 		c = GeoUtil.getDistance2(cp1.getLatitude(), cp1.getLongitude(), cp2.getLatitude(), cp2.getLongitude());
 		
 		d = (a*a-b*b+c*c)/(2.0*c);
 		
 		percentualeAvanzamento = d / c;
-		dt = (1.0 - percentualeAvanzamento)*(cp2.getTime() - cp1.getTime());	// tempo restante all'arrivo al prossimo cp
+		dt = (long) ((1.0 - percentualeAvanzamento)*(cp2.getTimeInSeconds() - cp1.getTimeInSeconds()));	// tempo restante all'arrivo al prossimo cp
 		
 //		System.out.print("\npercentualeAvanzamento: " + percentualeAvanzamento);
 //		System.out.print("\ndt: " + dt);
 				
-		checkPointPassExpected(cp2, (int) Math.round(time + dt));
+		checkPointPassExpected(cp2, time + dt);
 	}	
 
     protected void calculateAndSetLastCP() {
-    	CheckPoint nearestCP = getNearestCheckPoint(getLatitude(), getLongitude());
+    	CheckPoint nearestCP = getNearestCheckPoint(getLastGPSLatitude(), getLastGPSLongitude());
     	CheckPoint prevCP = nearestCP.getPrevCheckPoint();
     	CheckPoint nextCP = nearestCP.getNextCheckPoint();
 		
@@ -448,8 +483,8 @@ public class Run {
     	
     	Coordinate p = GeomUtil.proiezione(c1, c2, c3);
     	
-    	double dist1 = GeoUtil.getDistance2(c3.lat, c3.lon, getLatitude(), getLongitude());
-    	double dist2 = GeoUtil.getDistance2(p.lat,p.lon,getLatitude(), getLongitude());
+    	double dist1 = GeoUtil.getDistance2(c3.lat, c3.lon, getLastGPSLatitude(), getLastGPSLongitude());
+    	double dist2 = GeoUtil.getDistance2(p.lat,p.lon,getLastGPSLatitude(), getLastGPSLongitude());
     	
     	if(dist1 < dist2){
     		System.out.print("\n----- CP tra: " + nearestCP.getId() + ", " + nextCP.getId());
@@ -460,10 +495,10 @@ public class Run {
     	}
 	}
 
-	protected void checkPointPassExpected(CheckPoint nextCP, int time){
+	protected void checkPointPassExpected(CheckPoint nextCP, long time){
     	//propaga il ritardo da nextCP.getTowards():Stop fino a fine run
     	
-    	int ritardo = time - nextCP.getTime();
+    	int ritardo = (int) (Math.round(time/60.0) - nextCP.getTimeInMinutes());
     	
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{	

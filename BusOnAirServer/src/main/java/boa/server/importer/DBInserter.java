@@ -398,7 +398,7 @@ public class DBInserter
 						if(prev != null){	//iterazioni successive
 							double lat = (s.getStation().getLatitude() + prev.getStation().getLatitude()) / 2.0;
 							double lon = (s.getStation().getLongitude() + prev.getStation().getLongitude()) / 2.0;
-							int dt = (s.getTime() - prev.getTime()) / 2; 
+							int dt = (s.getTime()*60 - prev.getTime()*60) / 2; 
 							Node n = db.createNode();
 							CheckPoint cp = new CheckPoint(n, lat, lon, dt);
 							cp.setTowards(s);	

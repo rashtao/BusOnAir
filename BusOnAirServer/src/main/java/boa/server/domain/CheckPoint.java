@@ -9,7 +9,7 @@ import boa.server.domain.utils.Coordinate;
 
 public class CheckPoint {
     protected static final String TYPE = "type";
-    protected static final String DT = "dt";
+    protected static final String DT = "dt";	// in secondi
     protected static final String LATITUDE = "lat";
     protected static final String LONGITUDE = "lon";
         
@@ -19,7 +19,7 @@ public class CheckPoint {
     	underlyingNode = node;
     }  
 
-	public CheckPoint(Node node, double lat, double lon, int dt) {
+	public CheckPoint(Node node, double lat, double lon, long dt) {
 		underlyingNode = node;
         setLatitude(lat);
         setLongitude(lon);
@@ -59,12 +59,12 @@ public class CheckPoint {
             underlyingNode.setProperty(CheckPoint.LONGITUDE, lng);
     }
 
-    public void setDt(int dt) {
+    public void setDt(long dt) {
     	 underlyingNode.setProperty(CheckPoint.DT, dt);
 	}
     
-	public Integer getDt(){
-		return (Integer) underlyingNode.getProperty(CheckPoint.DT);
+	public Long getDt(){
+		return (Long) underlyingNode.getProperty(CheckPoint.DT);
     }
 
     public CheckPoint getNextCheckPoint(){
@@ -118,13 +118,17 @@ public class CheckPoint {
     		underlyingNode.createRelationshipTo(towards.getUnderlyingNode(), RelTypes.CHECKPOINTTOWARDS);
     }
 	
-    public int getTime(){
-    	return getTowards().getTime() - getDt();
+    public int getTimeInMinutes(){
+    	return (int) (getTowards().getTime() - Math.round(getDt()/60.0));
+    }
+
+    public long getTimeInSeconds(){
+    	return getTowards().getTime()*60 - getDt();
     }
 
 	@Override
 	public String toString() {
-		return ("(CPID" + getId() + ":DT" + getDt()+  ":TIME" + getTime()+ ":FROM" + getFrom().getId() + ":TOWARDS" + getTowards().getId() + ")");
+		return ("(CPID" + getId() + ":DT" + getDt()+  ":TIME" + getTimeInMinutes() + ":FROM STOPID" + getFrom().getId() + ":TOWARDS STOPID" + getTowards().getId() + ")");
 	}
 
 	public CheckPoint getPrevCheckPoint() {

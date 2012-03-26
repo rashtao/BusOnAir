@@ -7,13 +7,13 @@ public class Position
 {
 
     private Coordinate latLon;
-    private int time;
+    private long time;
 
     public Position(){
 		super();
 	}
 
-	public Position(Coordinate latLon, int time) {
+	public Position(Coordinate latLon, long time) {
 		super();
 		this.latLon = latLon;
 		this.time = time;
@@ -27,11 +27,11 @@ public class Position
 		this.latLon = latLon;
 	}
 
-	public int getTime() {
+	public long getTime() {
 		return time;
 	}
 
-	public void setTime(int time) {
+	public void setTime(long time) {
 		this.time = time;
 	}
 
