@@ -220,8 +220,9 @@ public class Run {
     }
     
     public void restore(){
-    	//setta lastvisitedcheckpoit all'ultimo checkpoint della run e reimposta i tempi di tutti gli stop con i tempi originali (static time)
-    	//setta lastUpdateTime = 0
+    	// setta lastvisitedcheckpoit all'ultimo checkpoint della run e reimposta i tempi di tutti gli stop con i tempi originali (static time)
+    	// setta lastUpdateTime = 0
+    	// rimuove la run dall'indice Runs.runningBuses
     	
     	CheckPoint cp = getFirstCheckPoint();
     	
@@ -230,6 +231,7 @@ public class Run {
     	
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
+			Runs.getRuns().removeRunningBus(this);
 	    	setLastCheckPoint(cp);
 	    	setLatitude(cp.getLatitude());
 	    	setLongitude(cp.getLongitude());
@@ -251,6 +253,7 @@ public class Run {
     
     public void checkPointPass(CheckPoint lastCP, int time){
     	//propaga il ritardo da lastCP.getTowards():Stop fino a fine run
+    	// aggiunge la run dall'indice Runs.runningBuses
     	
     	int ritardo = time - lastCP.getTime();
     	
@@ -259,6 +262,7 @@ public class Run {
     	} else {    	
 			Transaction tx = DbConnection.getDb().beginTx();
 			try{	
+				Runs.getRuns().addRunningBus(this);
 		    	setLastCheckPoint(lastCP);
 		    	setLastUpdateTime(time);
 		    	setLatitude(lastCP.getLatitude());
@@ -386,9 +390,11 @@ public class Run {
 		// calcola il rapporto (percentualeAvanzamento) tra la proiezione della segmento posAttuale-cp1 sul segmento cp1-cp2
 		// calcola il ritardo relativamente alla percentuale di avanzamento
 		// propaga il ritardo ai nodi successivi
+    	// aggiunge la run dall'indice Runs.runningBuses
 		
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
+			Runs.getRuns().addRunningBus(this);
 			setLatitude(lat);
 			setLongitude(lon);
 			setLastUpdateTime(time);

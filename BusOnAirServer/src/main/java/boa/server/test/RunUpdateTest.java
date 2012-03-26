@@ -22,6 +22,9 @@ public class RunUpdateTest {
 
 		r.restore();
 
+		System.out.print("\n\n\nRunning Buses:\n");
+		for(Run rr : Runs.getRuns().getAllRunningBuses())
+			System.out.println(rr);
 		
 		CheckPoint cp = r.getFirstCheckPoint();
 		CheckPoint cp2 = cp.getNextCheckPoint();
@@ -59,6 +62,12 @@ public class RunUpdateTest {
 
 		System.out.print("\nDopo:\n");
 		System.out.print(r.toString());
+		
+		r.updatePosition(lati, longi, 505);
+		
+		System.out.print("\n\n\nRunning Buses:\n");
+		for(Run rr : Runs.getRuns().getAllRunningBuses())
+			System.out.println(rr);
 
 
 		
