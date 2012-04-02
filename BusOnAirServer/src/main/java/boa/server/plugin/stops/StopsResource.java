@@ -54,33 +54,35 @@ public class StopsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll() throws IOException{        
-        log.write("\nstops/getall");
-        log.flush();
-              
-        boa.server.json.Stops stopList = new boa.server.json.Stops();
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
 
         Iterable<Stop> stops = boa.server.domain.Stops.getStops().getAll();
-         
-        for(Stop r : stops){
-        	boa.server.json.Stop jr = new boa.server.json.Stop(r);  
-        	stopList.add(jr);        	
-        }
 
-        return Response.ok().entity(stopList).build();
+        if(obj != null && obj){
+            boa.server.json.StopsObjects stopList = new boa.server.json.StopsObjects();
+            for(Stop r : stops){
+            	boa.server.json.Stop jr = new boa.server.json.Stop(r);  
+            	stopList.add(jr);        	
+            }
+
+            return Response.ok().entity(stopList).build();        	
+        } else {
+            boa.server.json.Stops stopList = new boa.server.json.Stops();
+            for(Stop r : stops){
+            	boa.server.json.Stop jr = new boa.server.json.Stop(r);  
+            	stopList.add(jr);        	
+            }
+
+            return Response.ok().entity(stopList).build();        	
+        }
     }
-    
+        
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}")
     public Response getStop(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\nstops/" + id);
-        log.flush();
 
-//        return Response.status( 404 ).entity( "Not implemented yet!" ).build();
-
-        if ( id == null)
+    	if ( id == null)
         	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Stop stop = boa.server.domain.Stops.getStops().getStopById(id);

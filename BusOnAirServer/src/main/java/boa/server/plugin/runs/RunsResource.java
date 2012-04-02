@@ -56,22 +56,26 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll() throws IOException{        
-        log.write("\nruns/getall");
-        log.flush();
-                      
-        boa.server.json.Runs runList = new boa.server.json.Runs();
-
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
         Iterable<Run> runs = boa.server.domain.Runs.getRuns().getAll();
-         
-        for(Run r : runs){
-        	boa.server.json.Run jr = new boa.server.json.Run(r);  
-        	runList.add(jr);        	
-        }
 
-        return Response.ok().entity(runList).build();
+        if(obj != null && obj){
+        	boa.server.json.RunsObjects runList = new boa.server.json.RunsObjects();        	
+            for(Run r : runs){
+            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	runList.add(jr);        	
+            }
+            return Response.ok().entity(runList).build();   
+        } else {
+            boa.server.json.Runs runList = new boa.server.json.Runs();
+            for(Run r : runs){
+            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	runList.add(jr);        	
+            }
+            return Response.ok().entity(runList).build();              	
+        }
     }
-    
+        
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}")
@@ -123,37 +127,55 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/getallstops")
-    public Response getAllStops(@PathParam("id") Integer id) throws IOException{
+    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
         	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
-    	
-    	boa.server.json.Stops jstops = new boa.server.json.Stops();
-        for(Stop s : run.getAllStops())
-        	jstops.add(s);
-        	        	   
-        return Response.ok().entity(jstops).build();
+
+        
+        if(obj != null && obj){
+        	boa.server.json.StopsObjects jstops = new boa.server.json.StopsObjects();
+            for(Stop s : run.getAllStops())
+            	jstops.add(s);
+            	        	   
+            return Response.ok().entity(jstops).build();
+        	
+        } else {
+        	boa.server.json.Stops jstops = new boa.server.json.Stops();
+            for(Stop s : run.getAllStops())
+            	jstops.add(s);
+            	        	   
+            return Response.ok().entity(jstops).build();
+        }        
     }
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/checkpoints/getall")
-    public Response getAllCheckPoints(@PathParam("id") Integer id) throws IOException{
+    public Response getAllCheckPoints(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
         	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
-    	
-    	boa.server.json.CheckPoints cps = new boa.server.json.CheckPoints();
-        for(CheckPoint cp : run.getAllCheckPoints())
-        	cps.add(cp);
-        	        	   
-        return Response.ok().entity(cps).build();
+
+        if(obj != null && obj){
+        	boa.server.json.CheckPointsObjects cps = new boa.server.json.CheckPointsObjects();
+            for(CheckPoint cp : run.getAllCheckPoints())
+            	cps.add(cp);
+            	        	   
+            return Response.ok().entity(cps).build();        	
+        } else {       
+	    	boa.server.json.CheckPoints cps = new boa.server.json.CheckPoints();
+	        for(CheckPoint cp : run.getAllCheckPoints())
+	        	cps.add(cp);
+	        	        	   
+	        return Response.ok().entity(cps).build();
+        }
     }
-    
+        
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/checkpoints/{idcp}")

@@ -18,7 +18,7 @@ public class Geotest {
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
 
-		int range = 200;
+		int range = 2000;
 		
 /*
 Station: 

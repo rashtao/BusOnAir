@@ -55,22 +55,29 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll() throws IOException{        
-        log.write("\nroutes/getall");
-        log.flush();
-              
-        boa.server.json.Routes routeList = new boa.server.json.Routes();
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
 
         Iterable<Route> routes = boa.server.domain.Routes.getRoutes().getAll();
-         
-        for(Route r : routes){
-        	boa.server.json.Route jr = new boa.server.json.Route(r);  
-        	routeList.add(jr);        	
-        }
 
-        return Response.ok().entity(routeList).build();
+        if(obj != null && obj){
+            boa.server.json.RoutesObjects routeList = new boa.server.json.RoutesObjects();
+            for(Route r : routes){
+            	boa.server.json.Route jr = new boa.server.json.Route(r);  
+            	routeList.add(jr);        	
+            }
+
+            return Response.ok().entity(routeList).build();        	
+        } else {
+	        boa.server.json.Routes routeList = new boa.server.json.Routes();        
+	        for(Route r : routes){
+	        	boa.server.json.Route jr = new boa.server.json.Route(r);  
+	        	routeList.add(jr);        	
+	        }
+	
+	        return Response.ok().entity(routeList).build();
+        }
     }
-    
+        
 //    @GET
 //    @Produces( MediaType.APPLICATION_JSON )    
 //    @Path("{id}")
@@ -116,11 +123,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallruns")
-    public Response getAllRuns(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetAllRuns/" + id);
-        log.flush();
-        
+    public Response getAllRuns(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         if ( id == null)
         	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
         
@@ -133,22 +136,26 @@ public class RoutesResource{
     	
         if(runs.size() == 0)
         	return Response.ok().entity("").build();
-        	
-        boa.server.json.Runs jruns = new boa.server.json.Runs();
-        for(boa.server.domain.Run r : runs)
-        	jruns.add(r);
-        	   
-        return Response.ok().entity(jruns).build();
+
+        if(obj != null && obj){
+            boa.server.json.RunsObjects jruns = new boa.server.json.RunsObjects();
+            for(boa.server.domain.Run r : runs)
+            	jruns.add(r);
+            	   
+            return Response.ok().entity(jruns).build();        	
+        } else {
+            boa.server.json.Runs jruns = new boa.server.json.Runs();
+            for(boa.server.domain.Run r : runs)
+            	jruns.add(r);
+            	   
+            return Response.ok().entity(jruns).build();        	
+        }
     }
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallstations")
-    public Response getAllStations(@PathParam("id") Integer id) throws IOException{
-    	
-    	log.write("\ngetAllStations/" + id);
-        log.flush();
-        
+    public Response getAllStations(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         if ( id == null)
         	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
         
@@ -161,11 +168,19 @@ public class RoutesResource{
     	
         if(stations.size() == 0)
         	return Response.ok().entity("").build();
-        	
-        boa.server.json.Stations jstations = new boa.server.json.Stations();
-        for(boa.server.domain.Station s : stations)
-        	jstations.add(s);
-        	   
-        return Response.ok().entity(jstations).build();
+
+        if(obj != null && obj){
+            boa.server.json.StationsObjects jstations = new boa.server.json.StationsObjects();
+            for(boa.server.domain.Station s : stations)
+            	jstations.add(s);
+            	   
+            return Response.ok().entity(jstations).build();        	
+        } else {
+            boa.server.json.Stations jstations = new boa.server.json.Stations();
+            for(boa.server.domain.Station s : stations)
+            	jstations.add(s);
+            	   
+            return Response.ok().entity(jstations).build();        	
+        }
     }    
 }
