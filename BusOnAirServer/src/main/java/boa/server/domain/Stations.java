@@ -36,18 +36,6 @@ public class Stations {
       stationSpatialIndex.add(s.getUnderlyingNode(), "", "" );
   }
   
-	public void deleteAllStations() {
-		for(Station s : getAll()){
-			Transaction tx = DbConnection.getDb().beginTx();
-			try{
-				deleteStation(s);
-				tx.success();
-			}finally{
-				tx.finish();			
-			}   
-		}		
-	}        
-
     public void deleteStation(Station staz){
     	ArrayList<Route> routes = staz.getAllRoutes();
 
@@ -70,7 +58,7 @@ public class Stations {
     		Runs.getRuns().deleteRun(run);
     	}
     	
-    	stationSpatialIndex.delete();
+    	
     	stationIndex.remove(staz.getUnderlyingNode());
     	for(Relationship rel : staz.getUnderlyingNode().getRelationships()){
     		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
@@ -78,11 +66,14 @@ public class Stations {
     	
     	staz.getUnderlyingNode().delete();    	
     	
-    	stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", DbConnection.getDb(), new HashMap<String, String>() );
-    	createSpatialIndex();
+    	updateSpatialIndex();
     }
         
-    public void createSpatialIndex() {
+    public void updateSpatialIndex() {
+    	stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", DbConnection.getDb(), new HashMap<String, String>() );
+    	stationSpatialIndex.delete();
+    	
+    	stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", DbConnection.getDb(), new HashMap<String, String>() );
     	for(Station s : getAll()){
     		addStationToSpatialIndex(s);
     	}
@@ -178,5 +169,11 @@ public class Stations {
         }
         return result;
     }
+
+//	public void updateSpatialIndex(Station station) {
+//    	stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", DbConnection.getDb(), new HashMap<String, String>() );    	
+//    	stationSpatialIndex.remove(station.getUnderlyingNode(), "", "" );
+//    	addStationToSpatialIndex(station);
+//	}
     
 }

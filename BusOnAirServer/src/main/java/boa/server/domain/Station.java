@@ -14,6 +14,7 @@ import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
 import boa.server.domain.RelTypes;
+import boa.server.json.Coordinate;
 
 public class Station {
     protected static final String ID = "id";
@@ -198,6 +199,21 @@ public class Station {
 		return result;
 	}
 
+	public void updateName(String name){
+		setName(name);
+	}
+	
+	public void updatePosition(double lat, double lon){
+		setLatitude(lat);
+		setLongitude(lon);
+		
+		Stations.getStations().updateSpatialIndex();
+		
+//		Stations.getStations().updateSpatialIndex(this);
+		
+	}
+	
+	
     public String getUrl(){
     	return "/stations/" + getId();
     }

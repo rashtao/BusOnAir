@@ -3,6 +3,7 @@ package boa.server.test;
 import java.util.Collection;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import boa.server.domain.*;
 import boa.server.domain.utils.GeoUtil;
@@ -18,7 +19,7 @@ public class Geotest {
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
 
-		int range = 2000;
+		int range = 400;
 		
 /*
 Station: 
@@ -31,9 +32,19 @@ Station:
 
 		double lat = 42.352;
 		double lon = 13.349;
-		Run r = Runs.getRuns().getRunById(597);
+		
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stations.getStations().getStationById(32).updatePosition(43.352, 14.349);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+
+		
+//		Run r = Runs.getRuns().getRunById(597);
 		Collection<Station> stations = Stations.getStations().getNearestStations(lat, lon, range);
-		Collection<CheckPoint> cps = r.getNearestCheckPoints(lat, lon, range);
+//		Collection<CheckPoint> cps = r.getNearestCheckPoints(lat, lon, range);
 		
 
 		
@@ -42,24 +53,8 @@ Station:
 //		}
 		
 		
-		Station s1 = stations.iterator().next();
-		System.out.print("\n" + stations.size() + "\n" + s1 + "\n");
-		
-		Double slat= s1.getLatitude();
-		Double slon= s1.getLongitude();
-		Double distance = GeoUtil.getDistance2(lat, lon, slat, slon);
-		
-		System.out.print(distance*1000.0 + "\n-------------\n");
-		
-		CheckPoint cp = cps.iterator().next();
-		System.out.print(cps.size() + "\n" + cp + "\n");
-		
-		slat= cp.getLatitude();
-		slon= cp.getLongitude();
-		distance = GeoUtil.getDistance2(lat, lon, slat, slon);
-		
-		System.out.print(distance*1000.0 + "\n-------------\n");
-		
+
+		System.out.print("\n" + stations.size());
 		
 		
 		

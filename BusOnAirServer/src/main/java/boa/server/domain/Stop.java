@@ -192,6 +192,51 @@ public class Stop {
     
     
 
+    public void updateStaticTime(int staticTime){
+    	setStaticTime(staticTime);
+    	setTime(staticTime);    
+    	updateStopPosition();
+    }
+        
+    public void updateStopPosition(){    	
+    	Stop pis = getPrevInStation();
+    	Stop nis = getNextInStation();
+    	
+    	if(pis != null && pis.getTime() > getTime()){
+	    	while(pis != null && pis.getTime() > getTime()){
+	    		nis = pis;
+	    		pis = pis.getPrevInStation();
+	    	}
+	    	moveStop(pis, nis);
+    	} else if(nis != null && nis.getTime() < getTime()){
+	    	while(nis != null && nis.getTime() < getTime()){
+	    		pis = nis;
+	    		nis = nis.getNextInStation();
+	    	}
+	    	moveStop(pis, nis);    	
+    	}
+    }
+    
+    public void moveStop(Stop prev, Stop next){
+    	// sposta s tra prev e next
+    	
+    	if(prev == null && getNextInStation() != null && getNextInStation().equals(next))
+    		return;
+    	
+    	if(prev != null && prev.getNextInStation() != null && prev.getNextInStation().equals(this) && 
+    			getNextInStation() != null && getNextInStation().equals(next))
+    		return;	
+    	
+    	Stop pis = getPrevInStation();
+    	Stop nis = getNextInStation();
+		
+		if(prev != null)
+			prev.setNextInStation(this);
+		setNextInStation(next);
+		if(pis != null){
+			pis.setNextInStation(nis);
+		}
+    }    
     
     public String getUrl(){
     	return "/stops/" + getId();

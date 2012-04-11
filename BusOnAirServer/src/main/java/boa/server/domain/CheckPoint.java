@@ -142,6 +142,18 @@ public class CheckPoint {
 	public Coordinate getCoordinate(){
 		return new Coordinate(getLatitude(), getLongitude());
 	}    
+
+	
+	public void updateDt(long dt){
+		setDt(dt);
+	}
+	
+	public void updatePosition(double lat, double lon){
+		setLatitude(lat);
+		setLongitude(lon);
+		
+		getFrom().getRun().updateSpatialIndex();
+	}
 	
 	public String getUrl(){
 		return "/runs/" + getFrom().getRun().getId() + "/checkpoints/" + getId();

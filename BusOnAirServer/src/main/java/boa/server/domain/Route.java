@@ -8,6 +8,8 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import boa.server.json.Coordinate;
+
 public class Route {
 	protected static final String ID = "id";
 	protected static final String TYPE = "type";
@@ -142,6 +144,19 @@ public class Route {
 		}
 		
 		return result;
+	}
+	public void updateLine(String line){
+		setLine(line);
+		Routes.getRoutes().addRoute(this);	//aggiorna gli indici
+		
+	}
+	
+	public void updateFrom(Station from){
+		setFrom(from);
+	}
+	
+	public void updateTowards(Station towards){
+		setTowards(towards);
 	}
 	
     public String getUrl(){

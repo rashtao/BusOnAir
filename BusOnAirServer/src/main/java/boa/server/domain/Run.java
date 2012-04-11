@@ -47,7 +47,10 @@ public class Run {
 		setFirstCheckPoint(null);
 		setLastCheckPoint(null);
 		for(CheckPoint cp : getAllCheckPoints()){
-			deleteCheckPoint(cp);
+			cp.setFrom(null);
+			cp.setTowards(null);
+			cp.setNextCheckPoint(null);
+			cp.getUnderlyingNode().delete();
 		}						
 	}
 	
@@ -62,10 +65,33 @@ public class Run {
 	}
 	   
 	public void deleteCheckPoint( CheckPoint cp ) {
+		// se il CheckPoint corrisponde ad uno Stop non viene rimosso
+		if(cp.getFrom().equals(cp.getTowards()))
+			return;
+
+		cpIndex.remove(cp.getUnderlyingNode());
+		
+		CheckPoint prev = cp.getPrevCheckPoint();
+		CheckPoint next = cp.getNextCheckPoint();
+
+		prev.setNextCheckPoint(next);
+		
 		cp.setFrom(null);
 		cp.setTowards(null);
 		cp.setNextCheckPoint(null);
 		cp.getUnderlyingNode().delete();
+		
+		updateSpatialIndex();
+	}
+    
+    public void updateSpatialIndex() {
+		checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
+		checkPointsSpatialIndex.delete();
+
+		checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
+    	for(CheckPoint cp : getAllCheckPoints()){
+    		addCheckPointToSpatialIndex(cp);
+    	}
 	}
     
 	public void setType() {
@@ -299,7 +325,7 @@ public class Run {
 	    	
 	    	while(s != null){
 	    		s.setTime(s.getStaticTime());
-	    		updateStop(s);
+	    		s.updateStopPosition();
 	    		s = s.getNextInRun();
 	    	}
 			tx.success();
@@ -330,7 +356,7 @@ public class Run {
 	    		Stop nextStop = lastCP.getTowards();
 		    	while(nextStop != null){
 		    		nextStop.setTime(nextStop.getTime() + ritardo);
-		    		updateStop(nextStop);
+		    		nextStop.updateStopPosition();
 		    		nextStop = nextStop.getNextInRun();
 		    	}
 				tx.success();
@@ -339,49 +365,7 @@ public class Run {
 			}    	
     	}
     }
-    
-    protected void updateStop(Stop s){
-    	if(s == null)
-    		return;
-    	
-    	Stop pis = s.getPrevInStation();
-    	Stop nis = s.getNextInStation();
-    	
-    	if(pis != null && pis.getTime() > s.getTime()){
-	    	while(pis != null && pis.getTime() > s.getTime()){
-	    		nis = pis;
-	    		pis = pis.getPrevInStation();
-	    	}
-	    	moveStop(pis, s, nis);
-    	} else if(nis != null && nis.getTime() < s.getTime()){
-	    	while(nis != null && nis.getTime() < s.getTime()){
-	    		pis = nis;
-	    		nis = nis.getNextInStation();
-	    	}
-	    	moveStop(pis, s, nis);    	
-    	}
-    }
-    
-    protected void moveStop(Stop prev, Stop s, Stop next){
-    	// sposta s tra prev e next
-    	
-    	if(prev == null && s.getNextInStation() != null && s.getNextInStation().equals(next))
-    		return;
-    	
-    	if(prev != null && prev.getNextInStation() != null && prev.getNextInStation().equals(s) && 
-    			s.getNextInStation() != null && s.getNextInStation().equals(next))
-    		return;	
-    	
-    	Stop pis = s.getPrevInStation();
-    	Stop nis = s.getNextInStation();
-		
-		if(prev != null)
-			prev.setNextInStation(s);
-		s.setNextInStation(next);
-		if(pis != null){
-			pis.setNextInStation(nis);
-		}
-    }
+
 	
 	public void addCheckPoint(Double lat, Double lon, long time){
 		updatePosition(lat, lon, time);
@@ -410,7 +394,7 @@ public class Run {
 			if(checkPointsSpatialIndex == null)
 				checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
 
-			checkPointsSpatialIndex.add(newCP.getUnderlyingNode(), "", "" );
+			addCheckPointToSpatialIndex(newCP);
 			
 //			System.out.print("\n\n********\n" + newCP + "\n**********\n");
 			
@@ -421,6 +405,10 @@ public class Run {
 			tx.finish();			
 		} 
     }
+	
+	public void addCheckPointToSpatialIndex(CheckPoint cp){
+		checkPointsSpatialIndex.add(cp.getUnderlyingNode(), "", "" );
+	}
 	
     public ArrayList<CheckPoint> getAllCheckPoints() {
         ArrayList<CheckPoint> output = new ArrayList<CheckPoint>();
@@ -534,7 +522,7 @@ public class Run {
     		Stop nextStop = nextCP.getTowards();
 	    	while(nextStop != null){
 	    		nextStop.setTime(nextStop.getTime() + ritardo);
-	    		updateStop(nextStop);
+	    		nextStop.updateStopPosition();
 	    		nextStop = nextStop.getNextInRun();
 	    	}
 			tx.success();
@@ -615,7 +603,7 @@ public class Run {
         }
         return result;
     }        	    
-
+    
     public String getUrl(){
     	return "/runs/" + getId();
     }
