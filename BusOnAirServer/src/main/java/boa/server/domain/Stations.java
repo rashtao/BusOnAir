@@ -3,7 +3,9 @@ package boa.server.domain;
 import java.util.*;
 
 import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -25,11 +27,54 @@ public class Stations {
     }
     
     public void addStation(Station s){
-//        stationSpatialIndex.add(s.getUnderlyingNode(), "", "" );
-        stationIndex.add(s.getUnderlyingNode(), "id", s.getId());
+//      stationSpatialIndex.add(s.getUnderlyingNode(), "", "" );
+      stationIndex.add(s.getUnderlyingNode(), "id", s.getId());
+  }
+  
+    public void addStationToSpatialIndex(Station s){
+      stationSpatialIndex.add(s.getUnderlyingNode(), "", "" );
+  }
+  
+    public void deleteStation(Station staz){
+    	ArrayList<Route> routes = staz.getAllRoutes();
+    	ArrayList<Run> runs = staz.getAllRuns();
+    	
+    	for(Run r : runs){
+    		Runs.getRuns().deleteRun(r);
+    	}
+
+    	for(Route r : routes){
+    		Routes.getRoutes().deleteRoute(r);    		    		
+    	}
+    	
+    	for(Relationship rel : staz.getUnderlyingNode().getRelationships(RelTypes.ROUTEFROM, Direction.INCOMING)){
+    		Route r = new Route(rel.getStartNode());
+    		Routes.getRoutes().deleteRoute(r);
+    	}
+
+    	for(Relationship rel : staz.getUnderlyingNode().getRelationships(RelTypes.ROUTETOWARDS, Direction.INCOMING)){
+    		Route r = new Route(rel.getStartNode());
+    		Routes.getRoutes().deleteRoute(r);    		
+    	}
+    	
+    	stationSpatialIndex.delete();
+    	stationIndex.remove(staz.getUnderlyingNode());
+    	for(Relationship rel : staz.getUnderlyingNode().getRelationships()){
+    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
+    	}
+    	
+    	staz.getUnderlyingNode().delete();    	
+    	
+    	createSpatialIndex();
     }
         
-    public Station getStationById(int id){
+    public void createSpatialIndex() {
+    	for(Station s : getAll()){
+    		addStationToSpatialIndex(s);
+    	}
+	}
+
+	public Station getStationById(int id){
         IndexHits<Node> result = stationIndex.get("id", id);
         Node n = result.getSingle();
         result.close();

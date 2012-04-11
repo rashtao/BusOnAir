@@ -63,6 +63,8 @@ public class ImportTest {
         System.out.println(stopsCount);
         
     	System.out.print("\n\n ---- end IMPORT TEST ---");
+
+		DbConnection.turnoff();
 	}		
 	
 }

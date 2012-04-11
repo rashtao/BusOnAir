@@ -43,6 +43,31 @@ public class Run {
     	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
     }  
 
+	public void deleteAllCheckPoints() {
+		setFirstCheckPoint(null);
+		setLastCheckPoint(null);
+		for(CheckPoint cp : getAllCheckPoints()){
+			deleteCheckPoint(cp);
+		}						
+	}
+	
+	public void deleteCheckPointsSpatialIndex(){
+		if(checkPointsSpatialIndex == null)
+			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
+		checkPointsSpatialIndex.delete();
+	}
+	
+	public void deleteCpIndex(){
+		cpIndex.delete();
+	}
+	   
+	public void deleteCheckPoint( CheckPoint cp ) {
+		cp.setFrom(null);
+		cp.setTowards(null);
+		cp.setNextCheckPoint(null);
+		cp.getUnderlyingNode().delete();
+	}
+    
 	public void setType() {
         underlyingNode.setProperty(Run.TYPE, "Run");		
     }
@@ -87,7 +112,9 @@ public class Run {
     	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_LASTCHECKPOINT, Direction.OUTGOING);
     	if(rel != null)
     		rel.delete();
-        underlyingNode.createRelationshipTo(last.getUnderlyingNode(), RelTypes.RUN_LASTCHECKPOINT);		
+    	
+    	if(last != null)
+    		underlyingNode.createRelationshipTo(last.getUnderlyingNode(), RelTypes.RUN_LASTCHECKPOINT);		
     }
     
     public CheckPoint getLastGPSCheckPoint(){
@@ -126,9 +153,11 @@ public class Run {
 
     public void setRoute(Route route){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_ROUTE, Direction.OUTGOING);
-        if(rel == null){
+        if(rel != null)
+        	rel.delete();
+        	
+    	if(route != null)
             underlyingNode.createRelationshipTo(route.getUnderlyingNode(), RelTypes.RUN_ROUTE);		
-        }
     }
 
     public Route getRoute(){
@@ -590,4 +619,5 @@ public class Run {
     public String getUrl(){
     	return "/runs/" + getId();
     }
+
 }

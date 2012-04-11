@@ -26,6 +26,38 @@ public class Runs {
         runsIndex.add(r.getUnderlyingNode(), "id", r.getId());
     }
     
+	public void deleteRun(Run run) {
+		run.deleteAllCheckPoints();
+		run.deleteCpIndex();
+		run.deleteCheckPointsSpatialIndex();		
+
+		run.setFirstStop(null);
+		
+		for(Stop s : run.getAllStops()){
+			Stop prev = s.getPrevInStation();
+			Stop next = s.getNextInStation();
+			Station staz = s.getStation();
+			
+			if(prev != null){
+				prev.setNextInStation(next);
+			} 
+
+			staz.removeStop(s);
+			s.setRun(null);
+			s.setStation(null);
+			s.setNextInRun(null);
+			s.setNextInStation(null);
+			s.getUnderlyingNode().delete();			
+		}	
+
+		runsIndex.remove(run.getUnderlyingNode());
+		runningBuses.remove(run.getUnderlyingNode());
+		run.getRoute().removeRun(run);
+
+		run.setRoute(null);	
+		run.getUnderlyingNode().delete();		
+	}
+    
     public void addRunningBus(Run r){
     	runningBuses.add(r.getUnderlyingNode(), "id", r.getId());    		
     }

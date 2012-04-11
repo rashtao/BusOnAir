@@ -25,8 +25,15 @@ public class Route {
     	underlyingNode = node;
         runIndex = DbConnection.getDb().index().forNodes("runIndex" + getId());
     }  
+    
+    public void removeRun(Run r){
+    	runIndex.remove(r.getUnderlyingNode());
+    }
 
-
+    public void deleteRunIndex(){
+    	runIndex.delete();
+    }
+    
     public Integer getId(){
         return (Integer) underlyingNode.getProperty(ID);
     }
@@ -43,8 +50,9 @@ public class Route {
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.ROUTEFROM, Direction.OUTGOING);
     	if(rel != null)
     		rel.delete();
-    	
-    	underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTEFROM);		
+
+    	if(s != null)
+    		underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTEFROM);		
     }
 
     public Station getFrom(){
@@ -57,7 +65,8 @@ public class Route {
     	if(rel != null)
     		rel.delete();
     	
-		underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTETOWARDS);		
+    	if(s != null)
+    		underlyingNode.createRelationshipTo(s.getUnderlyingNode(), RelTypes.ROUTETOWARDS);		
     }
 
     public Station getTowards(){

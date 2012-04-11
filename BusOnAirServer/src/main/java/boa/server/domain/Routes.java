@@ -1,7 +1,11 @@
 package boa.server.domain;
 
 import java.util.ArrayList;
+
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -24,6 +28,28 @@ public class Routes {
     	routesIndex.remove(r.getUnderlyingNode());
     	routesIndex.add(r.getUnderlyingNode(), "id", r.getId());
     	routesIndex.add(r.getUnderlyingNode(), "line", r.getLine());
+    }
+    
+    public void deleteRoute(Route r){
+	    for(Run run : r.getAllRuns()){
+			Runs.getRuns().deleteRun(run);
+		}
+
+    	for(Relationship rel : r.getUnderlyingNode().getRelationships(RelTypes.RUN_ROUTE, Direction.INCOMING)){
+    		Run run = new Run(rel.getStartNode());
+    		Runs.getRuns().deleteRun(run);
+    	}
+	    
+	    r.deleteRunIndex();	
+		routesIndex.remove(r.getUnderlyingNode());
+		r.setFrom(null);
+		r.setTowards(null);
+
+//    	for(Relationship rel : r.getUnderlyingNode().getRelationships()){
+//    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
+//    	}
+		
+		r.getUnderlyingNode().delete();
     }
     
     public Route getRouteById(int id){

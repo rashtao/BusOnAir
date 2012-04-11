@@ -39,6 +39,13 @@ public class Stop {
     	underlyingNode = node;
     }  
 
+    public void deleteAllRels(){
+    	setNextInRun(null);
+    	setNextInStation(null);
+    	setRun(null);
+    	setStation(null);
+    }
+    
 
     public Node getUnderlyingNode(){
         return underlyingNode;
@@ -96,7 +103,12 @@ public class Stop {
     }
 
     public void setRun(Run r){
-        underlyingNode.createRelationshipTo(r.getUnderlyingNode(), RelTypes.STOP_RUN);
+		Relationship rel = underlyingNode.getSingleRelationship(RelTypes.STOP_RUN, Direction.OUTGOING);
+		if(rel != null)
+			rel.delete();
+		
+		if(r != null)
+			underlyingNode.createRelationshipTo(r.getUnderlyingNode(), RelTypes.STOP_RUN);		
     }
 
     public Stop getNextInStation(){

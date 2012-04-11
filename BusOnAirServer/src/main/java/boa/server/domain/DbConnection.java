@@ -6,7 +6,7 @@ import org.neo4j.server.database.Database;
 
 public class DbConnection {
 	private static final String dbpath = "/tmp/neo4j/busonairserver/data/graph.db";  
-//	private static final String dbpath = "/home/rashta/neo4j/busonairserver/data/graph.db";  
+//	private static final String dbpath = "/home/rashta/neo4j/neo4j/busonairserver/data/graph.db";  
     private static DbConnection instance = null;
     private AbstractGraphDatabase db;
     

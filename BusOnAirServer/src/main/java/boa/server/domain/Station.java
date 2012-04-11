@@ -34,9 +34,13 @@ public class Station {
     	underlyingNode = node;
         stopIndex = DbConnection.getDb().index().forNodes("stopIndex" + getId());
     }  
- 
+
+    public void removeStop(Stop s){
+    	stopIndex.remove(s.getUnderlyingNode());
+    }
+    
     public void setType() {
-            underlyingNode.setProperty(Station.TYPE, "Station");		
+        underlyingNode.setProperty(Station.TYPE, "Station");		
     }
 
     public Node getUnderlyingNode(){
@@ -180,6 +184,17 @@ public class Station {
 		}
 
 		ArrayList<Route> result = new ArrayList<Route>(set);
+		return result;
+	}
+
+	public ArrayList<Run> getAllRuns() {
+		Set<Run> set = new HashSet<Run>();
+
+		for(Stop s : getAllStops()){
+			set.add(s.getRun());			
+		}
+
+		ArrayList<Run> result = new ArrayList<Run>(set);
 		return result;
 	}
 

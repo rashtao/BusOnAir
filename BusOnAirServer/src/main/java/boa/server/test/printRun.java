@@ -21,15 +21,22 @@ import boa.server.domain.utils.AlphanumComparator;
  * @author rashta
  */
 public class printRun {
-	
- 
-    
+	   
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
 		
 		
-
-		Run r = Runs.getRuns().getRunById(11);
+		Route route = Routes.getRoutes().getRouteById(211);
+		for(Run r : route.getAllRuns()){
+			System.out.print(r);
+		}
+		
+		for(Station s : route.getAllStations()){
+			System.out.print(s);
+		}
+		
+		
+		Run r = Runs.getRuns().getRunById(208);
 //		r.restoreRun();
 		
 //		CheckPoint cp = new CheckPoint(DbConnection.getDb().getNodeById(7803));
