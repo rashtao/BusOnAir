@@ -26,6 +26,12 @@ public class Runs {
         runsIndex.add(r.getUnderlyingNode(), "id", r.getId());
     }
     
+	public void deleteAllRuns() {
+		for(Run r : getAll()){
+			deleteRun(r);
+		}
+	}
+	
 	public void deleteRun(Run run) {
 		run.deleteAllCheckPoints();
 		run.deleteCpIndex();
@@ -47,6 +53,7 @@ public class Runs {
 			s.setStation(null);
 			s.setNextInRun(null);
 			s.setNextInStation(null);
+			Stops.getStops().removeStop(s);
 			s.getUnderlyingNode().delete();			
 		}	
 

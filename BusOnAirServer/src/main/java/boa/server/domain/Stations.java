@@ -6,6 +6,7 @@ import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -35,26 +36,38 @@ public class Stations {
       stationSpatialIndex.add(s.getUnderlyingNode(), "", "" );
   }
   
+	public void deleteAllStations() {
+		for(Station s : getAll()){
+			Transaction tx = DbConnection.getDb().beginTx();
+			try{
+				deleteStation(s);
+				tx.success();
+			}finally{
+				tx.finish();			
+			}   
+		}		
+	}        
+
     public void deleteStation(Station staz){
     	ArrayList<Route> routes = staz.getAllRoutes();
-    	ArrayList<Run> runs = staz.getAllRuns();
-    	
-    	for(Run r : runs){
-    		Runs.getRuns().deleteRun(r);
-    	}
 
-    	for(Route r : routes){
-    		Routes.getRoutes().deleteRoute(r);    		    		
+    	for(Route route : routes){
+    		Routes.getRoutes().deleteRoute(route);    		    		
     	}
     	
     	for(Relationship rel : staz.getUnderlyingNode().getRelationships(RelTypes.ROUTEFROM, Direction.INCOMING)){
-    		Route r = new Route(rel.getStartNode());
-    		Routes.getRoutes().deleteRoute(r);
+    		Route route = new Route(rel.getStartNode());
+    		Routes.getRoutes().deleteRoute(route);
     	}
 
     	for(Relationship rel : staz.getUnderlyingNode().getRelationships(RelTypes.ROUTETOWARDS, Direction.INCOMING)){
-    		Route r = new Route(rel.getStartNode());
-    		Routes.getRoutes().deleteRoute(r);    		
+    		Route route = new Route(rel.getStartNode());
+    		Routes.getRoutes().deleteRoute(route);    		
+    	}
+
+    	ArrayList<Run> runs = staz.getAllRuns();
+    	for(Run run : runs){
+    		Runs.getRuns().deleteRun(run);
     	}
     	
     	stationSpatialIndex.delete();
@@ -65,6 +78,7 @@ public class Stations {
     	
     	staz.getUnderlyingNode().delete();    	
     	
+    	stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", DbConnection.getDb(), new HashMap<String, String>() );
     	createSpatialIndex();
     }
         
@@ -163,6 +177,6 @@ public class Stations {
             result.put( (Node) entry.getKey(), (Double) entry.getValue() );
         }
         return result;
-    }        
+    }
     
 }

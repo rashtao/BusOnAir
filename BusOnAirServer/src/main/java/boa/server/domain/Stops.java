@@ -24,6 +24,10 @@ public class Stops {
         stopsIndex.add(s.getUnderlyingNode(), "id", s.getId());
     }
     
+    public void removeStop(Stop s){
+    	stopsIndex.remove(s.getUnderlyingNode());
+    }
+    
     public Stop getStopById(int id){
         IndexHits<Node> result = stopsIndex.get("id", id);
         Node n = result.getSingle();

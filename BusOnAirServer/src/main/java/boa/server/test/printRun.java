@@ -25,10 +25,22 @@ public class printRun {
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
 		
+
+		ArrayList<Route> routes = Routes.getRoutes().getAll();
+		for(Route r : routes){
+			System.out.print(r);
+		}
+		
+	
+		
+		Run r = Runs.getRuns().getRunById(208);
+
+		
+		
 		
 		Route route = Routes.getRoutes().getRouteById(211);
-		for(Run r : route.getAllRuns()){
-			System.out.print(r);
+		for(Run run : route.getAllRuns()){
+			System.out.print(run);
 		}
 		
 		for(Station s : route.getAllStations()){
@@ -36,7 +48,6 @@ public class printRun {
 		}
 		
 		
-		Run r = Runs.getRuns().getRunById(208);
 //		r.restoreRun();
 		
 //		CheckPoint cp = new CheckPoint(DbConnection.getDb().getNodeById(7803));

@@ -30,6 +30,12 @@ public class Routes {
     	routesIndex.add(r.getUnderlyingNode(), "line", r.getLine());
     }
     
+    public void deleteAllRoutes(){
+        for(Route route : getAll()){
+        	deleteRoute(route);	
+        }
+    }
+    
     public void deleteRoute(Route r){
 	    for(Run run : r.getAllRuns()){
 			Runs.getRuns().deleteRun(run);

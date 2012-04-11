@@ -107,15 +107,57 @@ public class BackEndResource{
 
         if(route == null)
         	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
-        
+        	
+		Routes.getRoutes().deleteRoute(route);
+		
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/routes/deleteall" )
+    public Response deleteAllRoutes() throws IOException{        
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			Routes.getRoutes().deleteRoute(route);
+			Routes.getRoutes().deleteAllRoutes();
 			tx.success();
 		}finally{
 			tx.finish();			
 		}    	
-		
+
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/runs/deleteall" )
+    public Response deleteAllRuns() throws IOException{        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Runs.getRuns().deleteAllRuns();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/stations/deleteall" )
+    public Response deleteAllStations() throws IOException{        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stations.getStations().deleteAllStations();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
     }

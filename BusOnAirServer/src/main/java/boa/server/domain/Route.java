@@ -129,6 +129,8 @@ public class Route {
 
 	public ArrayList<Station> getAllStations() {
 		ArrayList<Station> result = new ArrayList<Station>();
+		if(getAllRuns().size() == 0)
+			return result;
 		
 		Run fr = getAllRuns().iterator().next();
 		
