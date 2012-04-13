@@ -19,7 +19,7 @@ public class Geotest {
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
 
-		int range = 400;
+		int range = 4;
 		
 /*
 Station: 
@@ -30,8 +30,8 @@ Station:
 	longitude: 13.34921
  */
 
-		double lat = 42.352;
-		double lon = 13.349;
+		double lat = 88.352;
+		double lon = 14.349;
 		
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
@@ -53,6 +53,9 @@ Station:
 //		}
 		
 		
+		for(Station s : stations)
+			System.out.print("\n" + s);
+			
 
 		System.out.print("\n" + stations.size());
 		

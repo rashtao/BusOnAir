@@ -9,6 +9,9 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import boa.server.importer.domain.RouteImporter;
+import boa.server.importer.domain.StationImporter;
+
 public class Routes {
     protected Index<Node> routesIndex;
 
@@ -58,7 +61,7 @@ public class Routes {
 		r.getUnderlyingNode().delete();
     }
     
-    public Route getRouteById(int id){
+    public Route getRouteById(long id){
         IndexHits<Node> result = routesIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
@@ -89,5 +92,47 @@ public class Routes {
         result.close();
         return output;
     }
+    
+
+    public Route createRoute(boa.server.domain.importer.Route jr){
+		// creates a new Route
+    	// jr id is ignored
+    	
+    	Node node = DbConnection.getDb().createNode();
+    	RouteImporter r = new RouteImporter(
+	  			  node, 
+	  			  node.getId(),
+	  			  jr.getline(),
+	  			  jr.getFrom(),
+				  jr.getTowards());
+
+		  addRoute(r);
+		  
+		  return r;
+	}	
+
+    public Route createOrUpdateRoute(boa.server.domain.importer.Route jr){
+		// creates a new Route having the specified id
+    	// if the id already exists then updates the corresponding db record
+
+    	Route r = Routes.getRoutes().getRouteById(jr.getId());
+	  	if(r != null){
+	  		r.updateLine(jr.getline());
+	  		r.updateTowards(Stations.getStations().getStationById(jr.getTowards()));
+	  		r.updateFrom(Stations.getStations().getStationById(jr.getFrom()));
+	  	} else {
+	    	Node node = DbConnection.getDb().createNode();
+	    	r = new RouteImporter(
+		  			  node, 
+		  			  jr.getId(),
+		  			  jr.getline(),
+		  			  jr.getFrom(),
+					  jr.getTowards());
+
+			  addRoute(r);
+	  	}
+
+	  	return r;
+	}	    
     
 }

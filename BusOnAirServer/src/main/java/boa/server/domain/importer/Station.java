@@ -1,4 +1,4 @@
-package boa.server.json;
+package boa.server.domain.importer;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -9,7 +9,6 @@ public class Station
     private long id;
     private String name;
     private Coordinate latLon;
-    private String url;
 
     public Station()
     {
@@ -26,7 +25,6 @@ public class Station
     public Station( boa.server.domain.Station s )
     {
    		this(s.getId(), s.getName(), new Coordinate(s.getLatitude(), s.getLongitude()));
-   		setUrl(s.getUrl());
     }
     
     public long getId(){
@@ -53,13 +51,7 @@ public class Station
         this.latLon = latLon;
     }
 
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}   
     
+
     
 }

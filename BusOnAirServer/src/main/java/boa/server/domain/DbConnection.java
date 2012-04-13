@@ -1,5 +1,7 @@
 package boa.server.domain;
 
+import java.io.File;
+
 import org.neo4j.kernel.AbstractGraphDatabase;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.server.database.Database;
@@ -55,4 +57,45 @@ public class DbConnection {
         db.shutdown();
     }
     
+    
+    public void clear(){
+    	shutdown();
+        deleteRecursively( new File( dbpath ) );
+        //inner = new EmbeddedGraphDatabase( storeDir, params );
+    }
+    
+    
+    
+    private static void deleteRecursively( File file )
+         {
+             if ( !file.exists() )
+             {
+                 return;
+             }
+     
+             if ( file.isDirectory() )
+             {
+                 for ( File child : file.listFiles() )
+                 {
+                     deleteRecursively( child );
+                 }
+             }
+             if ( !file.delete() )
+            {
+                throw new RuntimeException( "Couldn't empty database. Offending file:" + file );
+            }
+        }
+    
+//    private void deleteFileOrDirectory( final File file ) {
+//        if ( file.exists() ) {
+//            if ( file.isDirectory() ) {
+//                for ( File child : file.listFiles() ) {
+//                    deleteFileOrDirectory( child );
+//                }
+//            }
+//            file.delete();
+//        }
+//    }
+    
+
 }

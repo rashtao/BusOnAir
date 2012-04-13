@@ -26,7 +26,7 @@ public class DirectionWalk
     	this.arrival = arrival;
     }
 
-    public DirectionWalk( boolean isChange, int duration, int distance, Coordinate departure, Coordinate arrival, int stazId){
+    public DirectionWalk( boolean isChange, int duration, int distance, Coordinate departure, Coordinate arrival, long stazId){
     	this(isChange, duration, distance, departure, arrival);
 //    	this.stazId = stazId;
     }

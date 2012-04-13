@@ -6,7 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -54,6 +56,17 @@ public class BackEndResource{
         DbConnection.createDbConnection(database);
     }
 
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/cleardb" )
+    public Response clearDb() throws IOException{        
+    	DbConnection.getDbConnection().clear();
+    	DbConnection.createDbConnection(database);
+    	
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/{id}/delete" )
@@ -388,5 +401,14 @@ public class BackEndResource{
 
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();          
+    }
+    
+    
+    @POST @Consumes("application/json")
+    @Path("/stations/create")
+    public void create(final boa.server.domain.importer.Station  input) throws IOException {
+        log.write("param1 = " + input.getId());
+        log.write("param2 = " + input.getName());
+        log.flush(); 
     }
 }

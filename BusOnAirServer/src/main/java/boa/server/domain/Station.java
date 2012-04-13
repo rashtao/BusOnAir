@@ -48,8 +48,8 @@ public class Station {
         return underlyingNode;
     }
 
-    public Integer getId(){
-            return (Integer) underlyingNode.getProperty(ID);
+    public Long getId(){
+            return (Long) underlyingNode.getProperty(ID);
     }
 
     public String getName(){
@@ -72,7 +72,7 @@ public class Station {
             return (Boolean) underlyingNode.getProperty(IS_TERMINAL);
     }
 
-    public void setId(int id){
+    public void setId(long id){
             underlyingNode.setProperty(Station.ID, id);
     }
 

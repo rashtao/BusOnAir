@@ -10,6 +10,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import boa.server.importer.domain.StationImporter;
+
 public class Stations {
     protected LayerNodeIndex stationSpatialIndex;
     protected Index<Node> stationIndex;
@@ -79,7 +81,7 @@ public class Stations {
     	}
 	}
 
-	public Station getStationById(int id){
+	public Station getStationById(long id){
         IndexHits<Node> result = stationIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
@@ -176,4 +178,46 @@ public class Stations {
 //    	addStationToSpatialIndex(station);
 //	}
     
+
+    public Station createStation(boa.server.domain.importer.Station js){
+		// creates a new station
+    	// js id is ignored
+    	
+    	Node node = DbConnection.getDb().createNode();
+	  	  StationImporter s = new StationImporter(
+	  			  node, 
+	  			  node.getId(),
+	  			  js.getName(),
+				  js.getLatLon().getLat(),
+				  js.getLatLon().getLon());
+		  addStation(s);
+		  addStationToSpatialIndex(s);
+		  
+		  return s;
+	}	
+
+    public Station createOrUpdateStation(boa.server.domain.importer.Station js){
+		// creates a new station having the specified id
+    	// if the id already exists then updates the corresponding db record
+
+    	Station staz = getStationById(js.getId());
+	  	if(staz != null){
+	  		staz.updateName(js.getName());
+	  		staz.updatePosition(js.getLatLon().getLat(), 
+	  				js.getLatLon().getLon());
+	  	} else {
+		  	  staz = new StationImporter(
+		  			  DbConnection.getDb().createNode(), 
+		  			  js.getId(),
+		  			  js.getName(),
+					  js.getLatLon().getLat(),
+					  js.getLatLon().getLon());
+			  addStation(staz);
+			  addStationToSpatialIndex(staz);
+	  	}
+
+	  	return staz;
+	}	
+
+
 }
