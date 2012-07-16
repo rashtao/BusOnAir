@@ -134,7 +134,7 @@ public class DBInserter
 		    			  stationSql.lng,
 		    			  stationSql.is_school,
 		    			  stationSql.is_terminal);
-		    	  Stations.getStations().addStation(station);
+		    	  Stations.getStations().addStationToIndex(station);
 		    	  //System.out.println( "\nAs: " + station);		    	  
 		      }
 
@@ -236,11 +236,16 @@ public class DBInserter
     }
 
     void addSpatialIndex() {
-        LayerNodeIndex stationSpatialIndex = new LayerNodeIndex( "stationSpatialIndex", db, new HashMap<String, String>() );
-        
-        for(Station s : Stations.getStations().getAll()){
-            stationSpatialIndex.add( s.getUnderlyingNode(), "", "" );        
-        }
+        Transaction tx = db.beginTx();
+		try {       
+	        for(Station s : Stations.getStations().getAll()){
+	        	Stations.getStations().addStationToSpatialIndex(s);        
+	        }
+	        tx.success();
+		} finally {
+			tx.finish();
+		}
+	        
     }
 
 	public void duplicateRoutes() {
@@ -272,7 +277,7 @@ public class DBInserter
 				System.out.print("\nRoute Anomala!");
 			
 			if(partenze.size() > 1 && arrivi.size() > 1){	// Route A/R
-				System.out.print("\nA/R Route founded... " + route.getLine() + ": " + route.getId() + ", ");
+				System.out.print("\nA/R Route found... " + route.getLine() + ": " + route.getId() + ", ");
 				RouteImporter twinRoute = new RouteImporter(db.createNode(), route.getLine());
 				Routes.getRoutes().addRoute(twinRoute);
 				System.out.print(twinRoute.getId());
@@ -425,6 +430,8 @@ public class DBInserter
 						prev = s;
 						s = s.getNextInRun();
 					}
+					
+					r.createCpSpatialIndex();
 					tx.success();
 				}finally{
 					tx.finish();
@@ -432,19 +439,7 @@ public class DBInserter
 			}	
 	}
 
-	public void createCheckPointsSpatialIndices() {
-			for(Run r : Runs.getRuns().getAll()){
-				RunImporter run = new RunImporter(r);
-				Transaction tx = db.beginTx();
-				try{
-					run.createCheckPointsSpatialIndex();
-					tx.success();
-				}finally{
-					tx.finish();
-				}			
-			}
-	}
-
+	
 	public void restoreAllRuns() {
 
 		Transaction tx = db.beginTx();

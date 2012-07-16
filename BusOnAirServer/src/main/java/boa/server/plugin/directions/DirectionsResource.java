@@ -25,12 +25,13 @@ import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import boa.server.domain.DbConnection;
 import boa.server.domain.Station;
 import boa.server.domain.Stations;
 import boa.server.domain.Stop;
 import boa.server.domain.Stops;
-import boa.server.domain.utils.Coordinate;
 import boa.server.domain.utils.GeoUtil;
 import boa.server.json.DirectionRoute;
 import boa.server.json.DirectionWalk;
@@ -111,7 +112,7 @@ public class DirectionsResource
         
     	ShortestPathGeo mysp = new ShortestPathGeo(departuretime, 1440, lat1, lon1, lat2, lon2, maxwalkdistance, crit);
         mysp.shortestPath(); 
-        boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lat1, lon1), mysp.getArrivalList());   
+        boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lon1, lat1), mysp.getArrivalList());   
 //        if(directs == null || directs.getDirectionsList() == null || directs.getDirectionsList().size() == 0)
 //        	return Response.ok().entity(new json.Response(204, "No path found")).build();
     	

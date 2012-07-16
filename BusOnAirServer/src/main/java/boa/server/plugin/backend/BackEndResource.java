@@ -221,7 +221,7 @@ public class BackEndResource{
 
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			staz.updateName(name);
+			staz.setName(name);
 			tx.success();
 		}finally{
 			tx.finish();			
@@ -242,7 +242,9 @@ public class BackEndResource{
 
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			staz.updatePosition(lat, lon);
+			staz.setLatitude(lat);
+			staz.setLongitude(lon);
+			staz.updatePosition();
 			tx.success();
 		}finally{
 			tx.finish();			
@@ -380,7 +382,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/runs/{id}/checkpoints/{idcp}/updateposition")
-    public Response updateCheckPointDt(@PathParam("id") Integer id, @PathParam("idcp") Long idcp,  @QueryParam( "lat" ) Double lat, @QueryParam( "lon" ) Double lon) throws IOException{
+    public Response updateCheckPointPosition(@PathParam("id") Integer id, @PathParam("idcp") Long idcp,  @QueryParam( "lat" ) Double lat, @QueryParam( "lon" ) Double lon) throws IOException{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
@@ -393,7 +395,9 @@ public class BackEndResource{
 
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			cp.updatePosition(lat, lon);
+			cp.setLatitude(lat);
+			cp.setLongitude(lon);
+			run.updateCpSpatialIndex(cp);
 			tx.success();
 		}finally{
 			tx.finish();			

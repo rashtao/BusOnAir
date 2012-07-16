@@ -81,11 +81,17 @@ public class Station {
     }
 
     public void setLatitude(double lat){
-            underlyingNode.setProperty(Station.LATITUDE, lat);
+    	// after changing lat/lon call updatePosition() to update stationSpatialIndex
+        underlyingNode.setProperty(Station.LATITUDE, lat);
     }
 
     public void setLongitude(double lng){
-            underlyingNode.setProperty(Station.LONGITUDE, lng);
+    	// after changing lat/lon call updatePosition() to update stationSpatialIndex
+        underlyingNode.setProperty(Station.LONGITUDE, lng);
+    }
+
+    public void updatePosition(){
+        Stations.getStations().updateSpatialIndex(this);
     }
 
     public void setIsSchool(boolean isSchool){
@@ -198,21 +204,6 @@ public class Station {
 		ArrayList<Run> result = new ArrayList<Run>(set);
 		return result;
 	}
-
-	public void updateName(String name){
-		setName(name);
-	}
-	
-	public void updatePosition(double lat, double lon){
-		setLatitude(lat);
-		setLongitude(lon);
-		
-		Stations.getStations().updateSpatialIndex();
-		
-//		Stations.getStations().updateSpatialIndex(this);
-		
-	}
-	
 	
     public String getUrl(){
     	return "/stations/" + getId();

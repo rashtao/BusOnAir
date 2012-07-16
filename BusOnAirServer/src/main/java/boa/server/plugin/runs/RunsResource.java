@@ -75,6 +75,29 @@ public class RunsResource{
             return Response.ok().entity(runList).build();              	
         }
     }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/getallrunningbuses" )
+    public Response getAllRunningBuses(@QueryParam( "objects" ) Boolean obj) throws IOException{        
+        Iterable<Run> runs = boa.server.domain.Runs.getRuns().getAllRunningBuses();
+
+        if(obj != null && obj){
+        	boa.server.json.RunsObjects runList = new boa.server.json.RunsObjects();        	
+            for(Run r : runs){
+            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	runList.add(jr);        	
+            }
+            return Response.ok().entity(runList).build();   
+        } else {
+            boa.server.json.Runs runList = new boa.server.json.Runs();
+            for(Run r : runs){
+            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	runList.add(jr);        	
+            }
+            return Response.ok().entity(runList).build();              	
+        }
+    }
         
     @GET
     @Produces( MediaType.APPLICATION_JSON )    

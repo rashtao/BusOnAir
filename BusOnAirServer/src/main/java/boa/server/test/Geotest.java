@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import boa.server.domain.*;
 import boa.server.domain.utils.GeoUtil;
 
@@ -19,7 +21,7 @@ public class Geotest {
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
 
-		int range = 4;
+		int range = 829;
 		
 /*
 Station: 
@@ -30,12 +32,16 @@ Station:
 	longitude: 13.34921
  */
 
-		double lat = 88.352;
-		double lon = 14.349;
+		double lat = 42.353;
+		double lon = 13.35;
+		Coordinate query = new Coordinate(lon,lat);
 		
+		Station staz = Stations.getStations().getStationById(32);
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			Stations.getStations().getStationById(32).updatePosition(43.352, 14.349);
+			staz.setLatitude(43.352);
+			staz.setLongitude(14.349);
+			Stations.getStations().updateSpatialIndex(staz);
 			tx.success();
 		}finally{
 			tx.finish();			
@@ -54,7 +60,7 @@ Station:
 		
 		
 		for(Station s : stations)
-			System.out.print("\n" + s);
+			System.out.print("\n-------\nDIST: " + GeoUtil.getDistance2(query, new Coordinate(s.getLongitude(), s.getLatitude())) + "\n" + s);
 			
 
 		System.out.print("\n" + stations.size());

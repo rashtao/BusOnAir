@@ -11,13 +11,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.neo4j.collections.rtree.Listener;
+import org.neo4j.gis.spatial.EditableLayer;
+import org.neo4j.gis.spatial.SpatialDatabaseRecord;
 import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
+import org.neo4j.gis.spatial.pipes.GeoPipeline;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 import boa.server.domain.utils.*;
 
@@ -30,7 +35,7 @@ public class Run {
 
     protected static final int SERVER_TIMEOUT = 30;
     
-    protected LayerNodeIndex checkPointsSpatialIndex;
+    protected EditableLayer cpSpatialIndex;
     protected Index<Node> cpIndex;
     
     protected Node underlyingNode;
@@ -41,23 +46,50 @@ public class Run {
     public Run(Node node){
     	underlyingNode = node;
     	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
+    	cpSpatialIndex = DbConnection.getSpatialDb().getOrCreatePointLayer("cpSpatialIndex" + getId(), "lon", "lat");;
     }  
 
-	public void deleteAllCheckPoints() {
-		setFirstCheckPoint(null);
-		setLastCheckPoint(null);
+	public void deleteAllIntermediateCheckPoints() {
+		// cancella tutti i checkpoints non associati agli stops
+		
 		for(CheckPoint cp : getAllCheckPoints()){
-			cp.setFrom(null);
-			cp.setTowards(null);
-			cp.setNextCheckPoint(null);
-			cp.getUnderlyingNode().delete();
+			Stop from = cp.getFrom();
+			Stop towards = cp.getTowards();
+			if(from.equals(towards))
+				continue;
+
+			deleteCheckPoint(cp);
 		}						
 	}
 	
-	public void deleteCheckPointsSpatialIndex(){
-		if(checkPointsSpatialIndex == null)
-			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-		checkPointsSpatialIndex.delete();
+	public void deleteAllCheckPoints() {
+		// cancella tutti i checkpoints
+		
+		for(CheckPoint cp : getAllCheckPoints()){
+			deleteCheckPoint(cp);
+		}						
+	}	
+	
+	public void deleteCpSpatialIndex(){
+		List<SpatialDatabaseRecord> results = GeoPipeline.start(cpSpatialIndex).toSpatialDatabaseRecordList();
+		for(SpatialDatabaseRecord ris : results){
+			cpSpatialIndex.removeFromIndex(ris.getNodeId());
+		}	
+        
+		cpSpatialIndex.delete(new Listener() {			
+			@Override
+			public void worked(int arg0) {
+				// TODO Auto-generated method stub			
+			}			
+			@Override
+			public void done() {
+				// TODO Auto-generated method stub				
+			}			
+			@Override
+			public void begin(int arg0) {
+				// TODO Auto-generated method stub				
+			}
+		});		
 	}
 	
 	public void deleteCpIndex(){
@@ -65,35 +97,37 @@ public class Run {
 	}
 	   
 	public void deleteCheckPoint( CheckPoint cp ) {
-		// se il CheckPoint corrisponde ad uno Stop non viene rimosso
-		if(cp.getFrom().equals(cp.getTowards()))
-			return;
-
+	
+		// evito che il lastcheckpoint della run sia quello da cancellare
+		restore();
+		setLastCheckPoint(null);
+				
+		cpSpatialIndex.removeFromIndex(cp.getUnderlyingNode().getId());
 		cpIndex.remove(cp.getUnderlyingNode());
 		
 		CheckPoint prev = cp.getPrevCheckPoint();
 		CheckPoint next = cp.getNextCheckPoint();
-
-		prev.setNextCheckPoint(next);
 		
+		Relationship rel;
+		
+		rel = cp.getUnderlyingNode().getSingleRelationship(RelTypes.RUN_FIRSTCHECKPOINT, Direction.INCOMING);
+		if(rel != null){
+			rel.delete();
+			setFirstCheckPoint(next);
+		}
+	
 		cp.setFrom(null);
 		cp.setTowards(null);
 		cp.setNextCheckPoint(null);
+				
+		if(prev != null)
+			prev.setNextCheckPoint(next);
+		
 		cp.getUnderlyingNode().delete();
 		
-		updateSpatialIndex();
+		restore();
 	}
-    
-    public void updateSpatialIndex() {
-		checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-		checkPointsSpatialIndex.delete();
-
-		checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-    	for(CheckPoint cp : getAllCheckPoints()){
-    		addCheckPointToSpatialIndex(cp);
-    	}
-	}
-    
+	
 	public void setType() {
         underlyingNode.setProperty(Run.TYPE, "Run");		
     }
@@ -313,8 +347,6 @@ public class Run {
     	while(cp.getNextCheckPoint() != null)
     		cp = cp.getNextCheckPoint();		
     	
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
 			Runs.getRuns().removeRunningBus(this);
 	    	setLastCheckPoint(cp);
 	    	setLatitude(cp.getLatitude());
@@ -328,10 +360,6 @@ public class Run {
 	    		s.updateStopPosition();
 	    		s = s.getNextInRun();
 	    	}
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   
     }
     
     
@@ -345,24 +373,18 @@ public class Run {
     	if(lastCP.getNextCheckPoint() == null){		// fine RUN
     		restore();    		
     	} else {    	
-			Transaction tx = DbConnection.getDb().beginTx();
-			try{	
-				Runs.getRuns().addRunningBus(this);
-		    	setLastCheckPoint(lastCP);
-		    	setLastUpdateTime(time);
-		    	setLatitude(lastCP.getLatitude());
-		    	setLongitude(lastCP.getLongitude());
-	    	
-	    		Stop nextStop = lastCP.getTowards();
-		    	while(nextStop != null){
-		    		nextStop.setTime(nextStop.getTime() + ritardo);
-		    		nextStop.updateStopPosition();
-		    		nextStop = nextStop.getNextInRun();
-		    	}
-				tx.success();
-			}finally{
-				tx.finish();			
-			}    	
+			Runs.getRuns().addRunningBus(this);
+	    	setLastCheckPoint(lastCP);
+	    	setLastUpdateTime(time);
+	    	setLatitude(lastCP.getLatitude());
+	    	setLongitude(lastCP.getLongitude());
+    	
+    		Stop nextStop = lastCP.getTowards();
+	    	while(nextStop != null){
+	    		nextStop.setTime(nextStop.getTime() + ritardo);
+	    		nextStop.updateStopPosition();
+	    		nextStop = nextStop.getNextInRun();
+	    	}
     	}
     }
 
@@ -378,36 +400,35 @@ public class Run {
 		if(dt < 0)
 			return;
 		
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			Node n = DbConnection.getDb().createNode();
-			CheckPoint newCP = new CheckPoint(n, getLastGPSLatitude(), getLastGPSLongitude(), dt);
-			
-			newCP.setTowards(nextCP.getTowards());	
-			newCP.setFrom(lastCP.getFrom());
-			
-			lastCP.setNextCheckPoint(newCP);
-			newCP.setNextCheckPoint(nextCP);			
+		Node n = DbConnection.getDb().createNode();
+		CheckPoint newCP = new CheckPoint(n, getLastGPSLatitude(), getLastGPSLongitude(), dt);
+		
+		newCP.setTowards(nextCP.getTowards());	
+		newCP.setFrom(lastCP.getFrom());
+		
+		lastCP.setNextCheckPoint(newCP);
+		newCP.setNextCheckPoint(nextCP);			
 
-			cpIndex.add(newCP.getUnderlyingNode(), "id", newCP.getId());
-			
-			if(checkPointsSpatialIndex == null)
-				checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-
-			addCheckPointToSpatialIndex(newCP);
-			
+		cpIndex.add(newCP.getUnderlyingNode(), "id", newCP.getId());
+		
+		addCpToSpatialIndex(newCP);
+		
 //			System.out.print("\n\n********\n" + newCP + "\n**********\n");
-			
-			setLastCheckPoint(newCP);
-			tx.success();
-
-		}finally{
-			tx.finish();			
-		} 
+		
+		setLastCheckPoint(newCP);
     }
 	
-	public void addCheckPointToSpatialIndex(CheckPoint cp){
-		checkPointsSpatialIndex.add(cp.getUnderlyingNode(), "", "" );
+    public void updateCpSpatialIndex(CheckPoint cp){
+  		cpSpatialIndex.update(
+  				cp.getUnderlyingNode().getId(), 
+  				cpSpatialIndex.getGeometryFactory().createPoint(
+  						new Coordinate(
+  								cp.getLongitude(),
+  								cp.getLatitude())));
+    }
+	
+	public void addCpToSpatialIndex(CheckPoint cp){
+		cpSpatialIndex.add(cp.getUnderlyingNode());
 	}
 	
     public ArrayList<CheckPoint> getAllCheckPoints() {
@@ -419,6 +440,18 @@ public class Run {
         result.close();
         return output;
     }
+    
+    public ArrayList<CheckPoint> getAllCheckPointsInSpatialIndex() {
+        ArrayList<CheckPoint> output = new ArrayList<CheckPoint>();
+        List<SpatialDatabaseRecord> results = GeoPipeline.start(cpSpatialIndex).toSpatialDatabaseRecordList();
+		for(SpatialDatabaseRecord ris : results){
+			Node node = DbConnection.getDb().getNodeById(ris.getNodeId());
+			CheckPoint cp = new CheckPoint(node);
+			output.add(cp);
+		}	
+
+		return output;
+    }    
 
 	public CheckPoint getCheckPointById(long id) {
 	        IndexHits<Node> result = cpIndex.get("id", id);
@@ -439,20 +472,13 @@ public class Run {
 		// propaga il ritardo ai nodi successivi
     	// aggiunge la run dall'indice Runs.runningBuses
 		
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			Runs.getRuns().addRunningBus(this);
-			setLatitude(lat);
-			setLongitude(lon);
-			setLastUpdateTime(time);
-			
-			calculateAndSetLastCP();
-			
-			tx.success();
-		}finally{
-			tx.finish();			
-		} 
+		Runs.getRuns().addRunningBus(this);
+		setLatitude(lat);
+		setLongitude(lon);
+		setLastUpdateTime(time);
 		
+		calculateAndSetLastCP();
+					
 //		System.out.print("\n\n------ DEBUG --------");
 //		System.out.print("\n\nLASTCP: " + getLastCheckPoint());		
 //		System.out.print("\n------ DEBUG --------\n\n");
@@ -500,8 +526,8 @@ public class Run {
     	
     	Coordinate p = GeomUtil.proiezione(c1, c2, c3);
     	
-    	double dist1 = GeoUtil.getDistance2(c3.lat, c3.lon, getLastGPSLatitude(), getLastGPSLongitude());
-    	double dist2 = GeoUtil.getDistance2(p.lat,p.lon,getLastGPSLatitude(), getLastGPSLongitude());
+    	double dist1 = GeoUtil.getDistance2(c3.y, c3.x, getLastGPSLatitude(), getLastGPSLongitude());
+    	double dist2 = GeoUtil.getDistance2(p.y,p.x,getLastGPSLatitude(), getLastGPSLongitude());
     	
     	if(dist1 < dist2){
     		System.out.print("\n----- CP tra: " + nearestCP.getId() + ", " + nextCP.getId());
@@ -517,95 +543,49 @@ public class Run {
     	
     	int ritardo = (int) (Math.round(time/60.0) - nextCP.getTimeInMinutes());
     	
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{	
-    		Stop nextStop = nextCP.getTowards();
-	    	while(nextStop != null){
-	    		nextStop.setTime(nextStop.getTime() + ritardo);
-	    		nextStop.updateStopPosition();
-	    		nextStop = nextStop.getNextInRun();
-	    	}
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
+		Stop nextStop = nextCP.getTowards();
+    	while(nextStop != null){
+    		nextStop.setTime(nextStop.getTime() + ritardo);
+    		nextStop.updateStopPosition();
+    		nextStop = nextStop.getNextInRun();
+    	}
     }	
-
+    
     public Collection<CheckPoint> getNearestCheckPoints( double lat1, double lon1){
 		return getNearestCheckPoints(lat1, lon1, 100000);
     }
-    	
+
     public Collection<CheckPoint> getNearestCheckPoints( double lat1, double lon1, int range){    
     	//range in meters
-
-    	double kmrange = (double) range / 1000.0;
-    	    	
-    	Collection<CheckPoint> result = new ArrayList<CheckPoint>(); 
-        Map<Node, Double> hits = queryWithinDistance( lat1, lon1, (double) kmrange);
-
-        Iterator it = hits.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)it.next();
-            
-            if(entry != null && entry.getKey() != null && entry.getValue() < (double) range){
-            	result.add(new CheckPoint(entry.getKey()));            	
-            }
-        }
-
+    	
+    	double distance = range / 1000.0; 
+    	
+    	Collection<CheckPoint> result = new ArrayList<CheckPoint>();
+    	
+		List<SpatialDatabaseRecord> results = GeoPipeline.startNearestNeighborLatLonSearch(cpSpatialIndex, new Coordinate(lon1, lat1), distance).sort("OrthodromicDistance").toSpatialDatabaseRecordList();		
+		for(SpatialDatabaseRecord ris : results){
+			Node n = DbConnection.getDb().getNodeById(ris.getNodeId());
+			result.add(new CheckPoint(n));
+		}
+    	
 		return result;
     }
     
     public CheckPoint getNearestCheckPoint( double lat1, double lon1){
-        Map<Node, Double> hits = queryWithinDistance( lat1, lon1 );
-        Map.Entry<Node, Double> entry = hits.entrySet().iterator().next();
-        
-        if(entry != null && entry.getKey() != null){
-        	CheckPoint out = new CheckPoint(entry.getKey());
+		List<SpatialDatabaseRecord> results = GeoPipeline.startNearestNeighborLatLonSearch(cpSpatialIndex, new Coordinate(lon1, lat1), 1).toSpatialDatabaseRecordList();
+		
+		Node node = DbConnection.getDb().getNodeById(results.iterator().next().getNodeId());
+		        
+        if(node != null){
+            CheckPoint out = new CheckPoint(node);
             return out;
         } else {
             return null;
         }
-    }    
+    }    	
 
-    protected Map<Node, Double> queryWithinDistance( Double lat, Double lon){
-    	return queryWithinDistance(lat, lon, 10000.0);
-    }
-	    
-	protected Map<Node, Double> queryWithinDistance( Double lat, Double lon, Double distance){       
-		if(checkPointsSpatialIndex == null)
-			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put( LayerNodeIndex.DISTANCE_IN_KM_PARAMETER, distance);
-        params.put( LayerNodeIndex.POINT_PARAMETER, new Double[] { lat, lon } );              
-        Map<Node, Double> results = new HashMap<Node, Double>();
-        for ( Node spatialRecord : checkPointsSpatialIndex.query( LayerNodeIndex.WITHIN_DISTANCE_QUERY, params ) )
-          results.put( DbConnection.getDb().getNodeById( (Long) spatialRecord.getProperty( "id" )), (Double) spatialRecord.getProperty( "distanceInKm" ) );               
-        return sortByValue( results );    
-	}
-	
-    @SuppressWarnings( "unchecked" )
-    protected static Map<Node, Double> sortByValue( Map<Node, Double> map )
-    {
-        List<Map.Entry<Node, Double>> list = new LinkedList<Map.Entry<Node, Double>>( map.entrySet() );
-        Collections.sort( list, new Comparator()
-        {
-            public int compare( Object o1, Object o2 )
-            {
-                return ( (Comparable) ( (Map.Entry) ( o1 ) ).getValue() ).compareTo( ( (Map.Entry) ( o2 ) ).getValue() );
-            }
-        } );
-        Map<Node, Double> result = new LinkedHashMap();
-        for ( Iterator it = list.iterator(); it.hasNext(); )
-        {
-            Map.Entry entry = (Map.Entry) it.next();
-            result.put( (Node) entry.getKey(), (Double) entry.getValue() );
-        }
-        return result;
-    }        	    
-    
     public String getUrl(){
     	return "/runs/" + getId();
     }
-
+    
 }

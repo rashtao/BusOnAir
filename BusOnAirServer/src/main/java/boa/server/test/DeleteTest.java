@@ -17,7 +17,7 @@ public class DeleteTest {
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
 
-		Station s = Stations.getStations().getStationById(15);
+		Station s = Stations.getStations().getStationById(16);
 //		Route route = Routes.getRoutes().getRouteById(7);
 //		for(Run r : route.getAllRuns()){
 		System.out.println(s);	

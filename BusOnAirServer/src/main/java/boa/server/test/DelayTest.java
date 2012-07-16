@@ -2,6 +2,7 @@ package boa.server.test;
 
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import boa.server.domain.*;
 
@@ -17,8 +18,15 @@ public class DelayTest {
 		db = DbConnection.getDb();
 
 		Run r = Runs.getRuns().getRunById(11);
-		r.restore();
-		
+
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			r.restore();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+
 		CheckPoint cp = r.getFirstCheckPoint().getNextCheckPoint();
 		Stop s = cp.getTowards();
 		Station staz = s.getStation();
@@ -38,7 +46,13 @@ public class DelayTest {
 			fsStaz = fsStaz.getNextInStation();
 		}
 
-		r.checkPointPass(cp, 445);
+		tx = DbConnection.getDb().beginTx();
+		try{
+			r.checkPointPass(cp, 1160*60);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
 
 		System.out.print("\nDopo:\n");
 		System.out.print("\nRun:\n");
@@ -52,6 +66,33 @@ public class DelayTest {
 		}
 		
 		
+		
+		System.out.print("\n\n\ngetAllCheckPointsInSpatialIndex: ");
+		for(CheckPoint c : r.getAllCheckPointsInSpatialIndex()){
+			System.out.print("\n" + c  + " NODEID:" + c.getUnderlyingNode().getId());			
+		}		
+		
+		System.out.print("\nFirst CheckPoint: " + r.getFirstCheckPoint());
+
+		
+		System.out.print("\nRemoving CheckPoint: " + cp + " NODEID:" + cp.getUnderlyingNode().getId());
+
+		
+		tx = DbConnection.getDb().beginTx();
+		try{
+			r.deleteCheckPoint(cp);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   
+		
+//		tx = DbConnection.getDb().beginTx();
+//		try{
+//			
+//			tx.success();
+//		}finally{
+//			tx.finish();			
+//		}  		
 		DbConnection.turnoff();
 	}
 

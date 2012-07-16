@@ -12,6 +12,7 @@ import boa.server.domain.Stop;
 import boa.server.domain.utils.GeoUtil;
 import boa.server.routing.*;
 
+
 @XmlRootElement( name = "List" )
 public class Directions
 {
@@ -26,9 +27,9 @@ public class Directions
     {
     }
 
-    public Directions(boa.server.domain.utils.Coordinate startPoint, LinkedList<boa.server.routing.Direction> arrivalList){
-		lat1 = startPoint.lat;
-		lon1 = startPoint.lon;
+    public Directions(com.vividsolutions.jts.geom.Coordinate startPoint, LinkedList<boa.server.routing.Direction> arrivalList){
+		lat1 = startPoint.y;
+		lon1 = startPoint.x;
 		for(boa.server.routing.Direction dir : arrivalList)
 			add(dir);
     }

@@ -2,6 +2,8 @@ package boa.server.domain.utils;
 
 import org.geotools.referencing.datum.DefaultEllipsoid;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 /**
  * The DateUtil is used as a Utility Class for Dates.
  * 
@@ -19,12 +21,14 @@ public class GeoUtil {
 
 
     public static double getDistance(double lat1, double lon1, double lat2, double lon2){
+    	// credo che non funziona bene, utilizzare getDistance2 per calcoli più accurati
+    	
         return DefaultEllipsoid.WGS84.orthodromicDistance(lon1, lat1, lon2, lat2);
     }
 
     
     public static double getDistance2(Coordinate c1, Coordinate c2) {
-    	return getDistance2(c1.lat, c1.lon, c2.lat, c2.lon);
+    	return getDistance2(c1.y, c1.x, c2.y, c2.x);
     }
     
   public static double getDistance2(double lat1, double lon1, double lat2, double lon2) {

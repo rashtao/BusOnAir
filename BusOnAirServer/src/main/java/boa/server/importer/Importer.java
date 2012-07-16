@@ -38,7 +38,8 @@ public class Importer {
         return readData;
     }
     
-    public static void main(String[] args) {        
+    public static void main(String[] args) {     
+    	DbConnection.clear();
 		DbConnection.createEmbeddedDbConnection();
 		 		
         dbInserter = new DBInserter();
@@ -54,8 +55,6 @@ public class Importer {
 		dbInserter.linkCheckPoints();
 		dbInserter.setLastVisitedCheckPoints();     
 		dbInserter.restoreAllRuns();
-		dbInserter.createCheckPointsSpatialIndices();
-
         
         ImportTest.importTest();
         DbConnection.turnoff();

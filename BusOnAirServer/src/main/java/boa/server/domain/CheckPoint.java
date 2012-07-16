@@ -4,7 +4,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import boa.server.domain.utils.Coordinate;
+import com.vividsolutions.jts.geom.Coordinate;
 
 
 public class CheckPoint {
@@ -52,11 +52,13 @@ public class CheckPoint {
     }
 
     public void setLatitude(double lat){
-            underlyingNode.setProperty(CheckPoint.LATITUDE, lat);
+    	// after changing lat/lon call run.updatePosition() to update cpSpatialIndex
+        underlyingNode.setProperty(CheckPoint.LATITUDE, lat);
     }
 
     public void setLongitude(double lng){
-            underlyingNode.setProperty(CheckPoint.LONGITUDE, lng);
+    	// after changing lat/lon call run.updatePosition() to update cpSpatialIndex
+    	underlyingNode.setProperty(CheckPoint.LONGITUDE, lng);
     }
 
     public void setDt(long dt) {
@@ -140,21 +142,14 @@ public class CheckPoint {
 	}
 	
 	public Coordinate getCoordinate(){
-		return new Coordinate(getLatitude(), getLongitude());
+		return new Coordinate(getLongitude(), getLatitude());
 	}    
 
 	
 	public void updateDt(long dt){
 		setDt(dt);
 	}
-	
-	public void updatePosition(double lat, double lon){
-		setLatitude(lat);
-		setLongitude(lon);
 		
-		getFrom().getRun().updateSpatialIndex();
-	}
-	
 	public String getUrl(){
 		return "/runs/" + getFrom().getRun().getId() + "/checkpoints/" + getId();
 	}

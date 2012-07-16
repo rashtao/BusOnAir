@@ -20,8 +20,13 @@ public class RunUpdateTest {
 		
 		Run r = Runs.getRuns().getRunById(11);
 
-		
-		r.restore();
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{		
+			r.restore();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
 
 		System.out.print("\n\n\nRunning Buses:\n");
 		for(Run rr : Runs.getRuns().getAllRunningBuses())
@@ -56,8 +61,16 @@ public class RunUpdateTest {
 	
 		Double lati = (cp4.getLatitude()*.8 + cp6.getLatitude()*.2);
 		Double longi = (cp4.getLongitude()*.8 + cp6.getLongitude()*.2);
-	
-		r.checkPointPass(cp2, 547*60);
+
+		tx = DbConnection.getDb().beginTx();
+		try{		
+			r.checkPointPass(cp2, 547*60);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+		
+
 //		r.updatePosition(lati,longi,500);
 //		r.addCheckPoint(lati,longi,500*60);
 

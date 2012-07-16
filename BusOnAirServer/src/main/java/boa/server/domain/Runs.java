@@ -34,9 +34,9 @@ public class Runs {
 	
 	public void deleteRun(Run run) {
 		run.deleteAllCheckPoints();
+		run.deleteCpSpatialIndex();		
 		run.deleteCpIndex();
-		run.deleteCheckPointsSpatialIndex();		
-
+		
 		run.setFirstStop(null);
 		
 		for(Stop s : run.getAllStops()){

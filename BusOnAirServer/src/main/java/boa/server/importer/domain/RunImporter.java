@@ -31,12 +31,9 @@ public class RunImporter extends Run {
         cpIndex.add(cp.getUnderlyingNode(), "id", cp.getId());
     }
     
-	public void createCheckPointsSpatialIndex() {
-		if(checkPointsSpatialIndex == null)
-			checkPointsSpatialIndex = new LayerNodeIndex( "checkPointsSpatialIndex" + getId(), DbConnection.getDb(), new HashMap<String, String>() );
-
+	public void createCpSpatialIndex() {
 		for(CheckPoint cp : getAllCheckPoints()){
-			checkPointsSpatialIndex.add(cp.getUnderlyingNode(), "", "" );
+			addCpToSpatialIndex(cp);
 		}
 	}
 	
