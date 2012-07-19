@@ -21,16 +21,6 @@ public class RouteImporter extends Route {
 		super(r.getUnderlyingNode());
 	}
 
-	public void addRun(Run r){
-        runIndex.add(r.getUnderlyingNode(), "id", runCount++);
-    }
-
-    public void clearIndex(){
-    	for(Run r : getAllRuns()){
-    		runIndex.remove(r.getUnderlyingNode());
-    	}    	
-    }
-
 	public RouteImporter(Node node, long id, String line, Long from, Long towards){
 		super();
         underlyingNode = node;

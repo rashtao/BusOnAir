@@ -159,6 +159,17 @@ public class Route {
 		setTowards(towards);
 	}
 	
+	public void addRun(Run r){
+		runIndex.remove(r.getUnderlyingNode());
+        runIndex.add(r.getUnderlyingNode(), "id", r.getId());
+    }
+
+    public void clearIndex(){
+    	for(Run r : getAllRuns()){
+    		runIndex.remove(r.getUnderlyingNode());
+    	}    	
+    }
+    
     public String getUrl(){
     	return "/routes/" + getId();
     }

@@ -6,7 +6,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
 import boa.server.domain.*;
-import boa.server.domain.importer.Coordinate;
+import boa.server.importer.json.Coordinate;
 
 
 
@@ -40,7 +40,7 @@ public class ImportTest {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			long id = 1051;
-			boa.server.domain.importer.Route jr = new boa.server.domain.importer.Route(id, "199BIS", 15, 22);
+			boa.server.importer.json.Route jr = new boa.server.importer.json.Route(id, "199BIS", 15, 22);
 			addded = Routes.getRoutes().createOrUpdateRoute(jr);
 			tx.success();
 		}finally{

@@ -1,4 +1,4 @@
-package boa.server.domain.importer;
+package boa.server.importer.json;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "checkpoint" )

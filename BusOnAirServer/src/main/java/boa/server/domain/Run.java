@@ -216,8 +216,10 @@ public class Run {
         if(rel != null)
         	rel.delete();
         	
-    	if(route != null)
-            underlyingNode.createRelationshipTo(route.getUnderlyingNode(), RelTypes.RUN_ROUTE);		
+    	if(route != null){
+            underlyingNode.createRelationshipTo(route.getUnderlyingNode(), RelTypes.RUN_ROUTE);
+            route.addRun(this);
+    	}
     }
 
     public Route getRoute(){
@@ -584,6 +586,8 @@ public class Run {
         }
     }    	
 
+
+    
     public String getUrl(){
     	return "/runs/" + getId();
     }

@@ -5,6 +5,9 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import boa.server.importer.domain.RouteImporter;
+import boa.server.importer.domain.RunImporter;
+
 public class Runs {
     protected Index<Node> runsIndex;
     protected Index<Node> runningBuses;
@@ -119,4 +122,26 @@ public class Runs {
     	runsIndex.remove(r.getUnderlyingNode());
     	addRun(r);
     }
+    
+    public Run createOrUpdateRun(boa.server.importer.json.Run jr){
+		// creates a new Run having the specified id
+    	// if the id already exists then updates the corresponding db record
+
+    	Run r = Runs.getRuns().getRunById(jr.getId());
+	  	if(r != null){	// update
+	  		Route oldRoute = r.getRoute();
+	  		oldRoute.removeRun(r);
+	  	} else {	// create
+	    	r = new RunImporter(
+	    			  DbConnection.getDb().createNode(), 
+		  			  jr.getId());
+	    	addRun(r);
+	  	}
+	  		  	
+  		r.setRoute(Routes.getRoutes().getRouteById(jr.getRoute()));
+  		r.setFirstStop(Stops.getStops().getStopById(jr.getFirstStop()));
+  		r.setFirstCheckPoint(r.getCheckPointById(jr.getFirstCheckPoint()));
+	  	return r;
+	}	    
+        
 }

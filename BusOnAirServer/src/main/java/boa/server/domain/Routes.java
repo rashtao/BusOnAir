@@ -94,7 +94,7 @@ public class Routes {
     }
     
 
-    public Route createRoute(boa.server.domain.importer.Route jr){
+    public Route createRoute(boa.server.importer.json.Route jr){
 		// creates a new Route
     	// jr id is ignored
     	
@@ -111,7 +111,7 @@ public class Routes {
 		  return r;
 	}	
 
-    public Route createOrUpdateRoute(boa.server.domain.importer.Route jr){
+    public Route createOrUpdateRoute(boa.server.importer.json.Route jr){
 		// creates a new Route having the specified id
     	// if the id already exists then updates the corresponding db record
 
@@ -121,9 +121,8 @@ public class Routes {
 	  		r.updateTowards(Stations.getStations().getStationById(jr.getTowards()));
 	  		r.updateFrom(Stations.getStations().getStationById(jr.getFrom()));
 	  	} else {
-	    	Node node = DbConnection.getDb().createNode();
 	    	r = new RouteImporter(
-		  			  node, 
+	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId(),
 		  			  jr.getline(),
 		  			  jr.getFrom(),

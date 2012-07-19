@@ -37,7 +37,7 @@ public class Stations {
         stationIndex = DbConnection.getDb().index().forNodes("stationsIndex");
         stationSpatialIndex = DbConnection.getSpatialDb().getOrCreatePointLayer("stationSpatialIndex", "lon", "lat");
     }
-    
+        
     public void addStationToIndex(Station s){
       stationIndex.add(s.getUnderlyingNode(), "id", s.getId());
     }
@@ -141,15 +141,13 @@ public class Stations {
         }
     }    
 
-    public Station createOrUpdateStation(boa.server.domain.importer.Station js){
+    public Station createOrUpdateStation(boa.server.importer.json.Station js){
 		// creates a new station having the specified id
     	// if the id already exists then updates the corresponding db record
 
     	Station s = getStationById(js.getId());
 	  	if(s != null){
-	  		s.setName(js.getName());
-	  		s.setLatitude(js.getLatLon().getLat());
-	  		s.setLongitude(js.getLatLon().getLon());
+	  		s.update(js);
 	  		updateSpatialIndex(s);
 	  	} else {
 	  		s = new StationImporter(
@@ -169,6 +167,7 @@ public class Stations {
         ArrayList<Station> output = new ArrayList<Station>();
         List<SpatialDatabaseRecord> results = GeoPipeline.start(stationSpatialIndex).toSpatialDatabaseRecordList();
 		for(SpatialDatabaseRecord ris : results){
+			//System.out.print("\n" + ris.getGeometry());
 			Node node = DbConnection.getDb().getNodeById(ris.getNodeId());
 			Station s = new Station(node);
 			output.add(s);

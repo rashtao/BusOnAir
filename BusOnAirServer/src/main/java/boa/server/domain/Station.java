@@ -75,11 +75,11 @@ public class Station {
     public void setId(long id){
             underlyingNode.setProperty(Station.ID, id);
     }
-
+    
     public void setName(String name){
-            underlyingNode.setProperty(Station.NAME, name);
+        underlyingNode.setProperty(Station.NAME, name);
     }
-
+    
     public void setLatitude(double lat){
     	// after changing lat/lon call updatePosition() to update stationSpatialIndex
         underlyingNode.setProperty(Station.LATITUDE, lat);
@@ -102,6 +102,12 @@ public class Station {
             underlyingNode.setProperty(Station.IS_TERMINAL, isTerminal);
     }
 
+    public void update(boa.server.importer.json.Station s){
+		setName(s.getName());
+		setLatitude(s.getLatLon().getLat());
+		setLongitude(s.getLatLon().getLon());    	
+    }
+    
     public void addStop(Stop s){
         stopIndex.add(s.getUnderlyingNode(), "time", new ValueContext(s.getTime()).indexNumeric());
     }

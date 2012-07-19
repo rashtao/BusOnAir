@@ -1,4 +1,4 @@
-package boa.server.domain.importer;
+package boa.server.importer.json;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -50,8 +50,4 @@ public class Station
     public void setLatLon( Coordinate latLon ){
         this.latLon = latLon;
     }
-
-    
-
-    
 }

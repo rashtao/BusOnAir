@@ -23,6 +23,7 @@ import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 import boa.server.domain.*;
+import boa.server.importer.domain.StationImporter;
 
 
 
@@ -209,125 +210,26 @@ public class BackEndResource{
         return Response.ok().entity(jr).build();          
     }
     
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("/stations/{id}/updatename")
-    public Response updateStationName(@PathParam("id") Integer id, @QueryParam( "name" ) String name) throws IOException{
-        Station staz = Stations.getStations().getStationById(id);
-
-        if(staz == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id value.")).build();
-
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			staz.setName(name);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
-		
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();   
-    }
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("/stations/{id}/updateposition")
-    public Response updateStationPosition(@PathParam("id") Integer id, @QueryParam( "lat" ) Double lat, @QueryParam( "lon" ) Double lon) throws IOException{
-        Station staz = Stations.getStations().getStationById(id);
-
-        if(staz == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id value.")).build();
-
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			staz.setLatitude(lat);
-			staz.setLongitude(lon);
-			staz.updatePosition();
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
-		
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();   
-    }
-    
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/routes/{id}/updateline" )
-    public Response updateRouteLine(@PathParam("id") Integer id, @QueryParam( "line" ) String line) throws IOException{        
-        Route route = Routes.getRoutes().getRouteById(id);
-
-        if(route == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
-        	
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			route.updateLine(line);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
-		
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();   
-    }
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/routes/{id}/updatefrom" )
-    public Response updateRouteFrom(@PathParam("id") Integer id, @QueryParam( "from" ) Integer from) throws IOException{        
-        Route route = Routes.getRoutes().getRouteById(id);
-
-        if(route == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
-
-        Station sfrom = Stations.getStations().getStationById(from);
-
-        if(sfrom == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id value.")).build();
-
+    @Path( "/runs/{id}/checkpoints/deleteall" )
+    public Response deleteAllCheckPoints(@PathParam("id") Integer id) throws IOException{ 
+        boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
+        if(run == null)
+        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			route.updateFrom(sfrom);
+			run.deleteAllIntermediateCheckPoints();
 			tx.success();
 		}finally{
 			tx.finish();			
 		}    	
-		
+
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
-    }
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/routes/{id}/updatetowards" )
-    public Response updateRouteTowards(@PathParam("id") Integer id, @QueryParam( "towards" ) Integer towards) throws IOException{        
-        Route route = Routes.getRoutes().getRouteById(id);
-
-        if(route == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
-
-        Station stowards = Stations.getStations().getStationById(towards);
-
-        if(towards == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id value.")).build();
-
-        
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			route.updateFrom(stowards);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
-		
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();   
-    }
+    }    
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )
@@ -409,10 +311,51 @@ public class BackEndResource{
     
     
     @POST @Consumes("application/json")
-    @Path("/stations/create")
-    public void create(final boa.server.domain.importer.Station  input) throws IOException {
-        log.write("param1 = " + input.getId());
-        log.write("param2 = " + input.getName());
-        log.flush(); 
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/stations/createorupdate")
+    public Response createOrUpdateStation(final boa.server.importer.json.Station  input) throws IOException {        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stations.getStations().createOrUpdateStation(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
     }
+    
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )   
+    @Path( "/routes/createorupdate" )
+    public Response createOrUpdateRoute(final boa.server.importer.json.Route  input) throws IOException{        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Routes.getRoutes().createOrUpdateRoute(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();  
+    }    
+
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )   
+    @Path( "/runs/createorupdate" )
+    public Response createOrUpdateRun(final boa.server.importer.json.Run  input) throws IOException{        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Runs.getRuns().createOrUpdateRun(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();  
+    }    
+    
 }
