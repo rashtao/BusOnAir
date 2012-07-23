@@ -66,11 +66,7 @@ public class Stops {
   		if(staz == null || run == null)
   			return null;
 
-    	if(s != null){	// update
-	  		s.setStaticTime(js.getStaticTime());
-	  		s.updateStopPosition();
-	  		s.setRun(Runs.getRuns().getRunById(js.getRun()));	  		
-	  	} else {		// create	  		
+    	if(s == null){		// create	  		
 	  		s = new StopImporter(
 		  			  DbConnection.getDb().createNode(), 
 		  			  js.getId(),
@@ -79,16 +75,24 @@ public class Stops {
 		  			  run);
 	  		addStop(s);
 	  	}
+    	
+  		s.updateStaticTime(js.getStaticTime());
+  		s.setRun(run);	  		
+  		s.setStation(staz);
 
-    	s.setNextInStation(staz.getFirstStopFromTime(0));	//insert in 1st position
+  		s.setNextInStation(staz.getFirstStopFromTime(0));	//insert in 1st position
     	s.updateStopPosition();		// place the stop in the correct position
     	staz.updateStopIndex(s);
     	
+    	Stop pir = Stops.getStops().getStopById(js.getPrevInRun());
+    	Stop nir = Stops.getStops().getStopById(js.getNextInRun());
     	
-    	//TODO:
-    	//gestire next/prev in RUN e next/prev in STATION 
+    	if(pir != null){
+    		pir.setNextInRun(s);
+    	}
     	
-    	
+		s.setNextInRun(nir);
+
 	  	return s;
 	}	
     

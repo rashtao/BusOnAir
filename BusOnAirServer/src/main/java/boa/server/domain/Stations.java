@@ -150,7 +150,9 @@ public class Stations {
 
     	Station s = getStationById(js.getId());
 	  	if(s != null){	// update
-	  		s.update(js);
+			s.setName(s.getName());
+			s.setLatitude(js.getLatLon().getLat());
+			s.setLongitude(js.getLatLon().getLon());    	
 	  		updateSpatialIndex(s);
 	  	} else {		// create
 	  		s = new StationImporter(

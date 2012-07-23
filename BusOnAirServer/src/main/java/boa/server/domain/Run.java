@@ -25,6 +25,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import boa.server.domain.utils.*;
+import boa.server.importer.domain.StationImporter;
 
 public class Run {
 	protected static final String ID = "id";
@@ -400,12 +401,9 @@ public class Run {
 		lastCP.setNextCheckPoint(newCP);
 		newCP.setNextCheckPoint(nextCP);			
 
-		cpIndex.add(newCP.getUnderlyingNode(), "id", newCP.getId());
-		
+		addCpToIndex(newCP);		
 		addCpToSpatialIndex(newCP);
-		
-//			System.out.print("\n\n********\n" + newCP + "\n**********\n");
-		
+
 		setLastCheckPoint(newCP);
     }
 	
@@ -417,10 +415,15 @@ public class Run {
   								cp.getLongitude(),
   								cp.getLatitude())));
     }
-	
+	    
 	public void addCpToSpatialIndex(CheckPoint cp){
 		cpSpatialIndex.add(cp.getUnderlyingNode());
 	}
+	
+	public void addCpToIndex(CheckPoint cp){
+		cpIndex.add(cp.getUnderlyingNode(), "id", cp.getId());
+	}
+	
 	
     public ArrayList<CheckPoint> getAllCheckPoints() {
         ArrayList<CheckPoint> output = new ArrayList<CheckPoint>();
@@ -580,5 +583,41 @@ public class Run {
     public String getUrl(){
     	return "/runs/" + getId();
     }
+
+	public CheckPoint createOrUpdateCheckPoint(boa.server.importer.json.CheckPoint js) {
+		// creates a new checkPoint having the specified id
+    	// if the id already exists then updates the corresponding db record
+
+		Stop from = Stops.getStops().getStopById(js.getFrom());
+		Stop towards = Stops.getStops().getStopById(js.getTowards());
+		CheckPoint prev = getCheckPointById(js.getPrev());
+		CheckPoint next = getCheckPointById(js.getNext());
+				
+    	CheckPoint cp = getCheckPointById(js.getId());
+	  	if(cp != null){	// update
+	  		cp.setDt(js.getDt());
+	  		cp.setLatitude(js.getLatLon().getLat());
+	  		cp.setLongitude(js.getLatLon().getLon());
+	  		updateCpSpatialIndex(cp);
+	  	} else {		// create
+	  		cp = new CheckPoint(
+		  			  DbConnection.getDb().createNode(), 
+					  js.getLatLon().getLat(),
+					  js.getLatLon().getLon(),
+					  js.getDt());
+	  		addCpToIndex(cp);
+	  		addCpToSpatialIndex(cp);	  		
+	  	}
+	  	
+  		cp.setFrom(from);
+  		cp.setTowards(towards);
+
+  		if(prev != null)
+  			prev.setNextCheckPoint(cp);
+  		
+  		cp.setNextCheckPoint(next);
+
+	  	return cp;
+	}	
     
 }

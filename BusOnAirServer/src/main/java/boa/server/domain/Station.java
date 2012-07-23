@@ -101,12 +101,6 @@ public class Station {
     public void setIsTerminal(boolean isTerminal){
             underlyingNode.setProperty(Station.IS_TERMINAL, isTerminal);
     }
-
-    public void update(boa.server.importer.json.Station s){
-		setName(s.getName());
-		setLatitude(s.getLatLon().getLat());
-		setLongitude(s.getLatLon().getLon());    	
-    }
     
     public void addStop(Stop s){
         stopIndex.add(s.getUnderlyingNode(), "time", new ValueContext(s.getTime()).indexNumeric());

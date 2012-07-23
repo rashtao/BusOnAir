@@ -94,13 +94,13 @@ public class CheckPoint {
             return new Stop(rel.getEndNode());						
     }
 
-    public void setFrom(Stop towards){
+    public void setFrom(Stop from){
     	Relationship rel = underlyingNode.getSingleRelationship(RelTypes.CHECKPOINTFROM, Direction.OUTGOING);
     	if(rel != null)
     		rel.delete();    	
     	
-    	if(towards != null)
-    		underlyingNode.createRelationshipTo(towards.getUnderlyingNode(), RelTypes.CHECKPOINTFROM);
+    	if(from != null)
+    		underlyingNode.createRelationshipTo(from.getUnderlyingNode(), RelTypes.CHECKPOINTFROM);
     }
 	
     public Stop getTowards(){

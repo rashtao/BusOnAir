@@ -230,30 +230,7 @@ public class BackEndResource{
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
     }    
-    
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/stops/{id}/updatestatictime" )
-    public Response updateStopStaticTime(@PathParam("id") Integer id, @QueryParam( "time" ) Integer time) throws IOException{        
-        Stop stop = Stops.getStops().getStopById(id);
-
-        if(stop == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No stop having the specified id value.")).build();
-        
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			stop.updateStaticTime(time);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
-		
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();   
-    }
-  
-
-    
+      
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/runs/{id}/checkpoints/{idcp}/updatedt")
@@ -365,6 +342,27 @@ public class BackEndResource{
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stops.getStops().createOrUpdateStop(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();  
+    }    
+    
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )   
+    @Path( "/runs/{id}/checkpoints/createorupdate" )
+    public Response createOrUpdateCheckPoint(@PathParam("id") Integer id, final boa.server.importer.json.CheckPoint  input) throws IOException{        
+	
+        Run run = Runs.getRuns().getRunById(id);
+        if(run == null)
+        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+
+    	Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			run.createOrUpdateCheckPoint(input);
 			tx.success();
 		}finally{
 			tx.finish();			
