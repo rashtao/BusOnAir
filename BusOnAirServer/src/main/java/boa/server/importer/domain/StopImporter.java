@@ -32,6 +32,16 @@ public class StopImporter extends Stop {
         s.addStop(this);
     }   	
 	
+    public StopImporter(Node node, int id, int time, Station s, Run r){
+        this(node, id);
+        setTime(time);	    
+        setType();
+        setStation(s);        
+        setRun(r);          
+        Stops.getStops().addStop(this);
+        s.addStop(this);
+    }   	
+    
     protected void setRun(int idRun, String line) {
     	Route r = Routes.getRoutes().getRouteByLine(line);
     	RouteImporter route;

@@ -112,6 +112,11 @@ public class Station {
         stopIndex.add(s.getUnderlyingNode(), "time", new ValueContext(s.getTime()).indexNumeric());
     }
 
+    public void updateStop(Stop s){
+        stopIndex.remove(s.getUnderlyingNode());
+        addStop(s);
+    }
+
     public Iterable<Stop> getStopsFromTime(int startTime, int endTime){
         List<Stop> stops = new ArrayList<Stop>();
         IndexHits<Node> result = stopIndex.query(QueryContext.numericRange("time", startTime, endTime));
