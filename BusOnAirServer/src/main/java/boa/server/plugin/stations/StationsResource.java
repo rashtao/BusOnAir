@@ -212,4 +212,36 @@ public class StationsResource
             return Response.ok().entity(jroutes).build();        	
         }
     }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("{id}/getallstops")
+    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+
+        boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
+        
+        if(s == null)
+        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id.")).build();
+        
+        Collection<Stop> stops = (Collection<Stop>) s.getAllStops();
+        
+        if(stops.size() == 0)
+        	return Response.ok().entity("").build();
+        	
+        if(obj != null && obj){
+        	boa.server.json.StopsObjects jstops = new boa.server.json.StopsObjects();
+            for(boa.server.domain.Stop stop : stops)
+            	jstops.add(stop);
+            	   
+            return Response.ok().entity(jstops).build();
+        } else {
+        	boa.server.json.Stops jstops = new boa.server.json.Stops();
+            for(boa.server.domain.Stop stop : stops)
+            	jstops.add(stop);
+            	   
+            return Response.ok().entity(jstops).build();        	
+        }
+    }
+    
+    
 }

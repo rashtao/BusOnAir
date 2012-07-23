@@ -139,4 +139,9 @@ public class Stops {
 		s.getUnderlyingNode().delete();			
     }
     
+    public void deleteAllStops(){
+    	for(Stop s : getAll()){
+    		deleteStop(s);
+    	}
+    }
 }

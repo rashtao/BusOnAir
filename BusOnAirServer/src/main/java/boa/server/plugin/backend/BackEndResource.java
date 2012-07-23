@@ -152,11 +152,49 @@ public class BackEndResource{
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/stops/{id}/delete" )
+    public Response deleteStop(@PathParam("id") Integer id) throws IOException{        
+
+        Stop stop = Stops.getStops().getStopById(id);
+
+        if(stop == null)
+        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id value.")).build();
+
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stops.getStops().deleteStop(stop);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+		
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/deleteall" )
     public Response deleteAllRuns() throws IOException{        
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Runs.getRuns().deleteAllRuns();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/stops/deleteall" )
+    public Response deleteAllStops() throws IOException{        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stops.getStops().deleteAllStops();
 			tx.success();
 		}finally{
 			tx.finish();			
@@ -230,62 +268,6 @@ public class BackEndResource{
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
     }    
-      
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("/runs/{id}/checkpoints/{idcp}/updatedt")
-    public Response updateCheckPointDt(@PathParam("id") Integer id, @PathParam("idcp") Long idcp, @QueryParam( "dt" ) Long dt) throws IOException{
-        boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
-        
-        if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
-    	
-        CheckPoint cp = run.getCheckPointById(idcp);
-        
-        if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No CheckPoint having the specified id.")).build();
-
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			cp.updateDt(dt);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}                   
-
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();          
-    }
-    
-
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )    
-    @Path("/runs/{id}/checkpoints/{idcp}/updateposition")
-    public Response updateCheckPointPosition(@PathParam("id") Integer id, @PathParam("idcp") Long idcp,  @QueryParam( "lat" ) Double lat, @QueryParam( "lon" ) Double lon) throws IOException{
-        boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
-        
-        if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
-    	
-        CheckPoint cp = run.getCheckPointById(idcp);
-        
-        if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No CheckPoint having the specified id.")).build();
-
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			cp.setLatitude(lat);
-			cp.setLongitude(lon);
-			run.updateCpSpatialIndex(cp);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}                   
-
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();          
-    }
-    
     
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    

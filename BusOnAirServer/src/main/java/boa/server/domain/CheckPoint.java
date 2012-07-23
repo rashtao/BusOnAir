@@ -144,11 +144,6 @@ public class CheckPoint {
 	public Coordinate getCoordinate(){
 		return new Coordinate(getLongitude(), getLatitude());
 	}    
-
-	
-	public void updateDt(long dt){
-		setDt(dt);
-	}
 		
 	public String getUrl(){
 		return "/runs/" + getFrom().getRun().getId() + "/checkpoints/" + getId();

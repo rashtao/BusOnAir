@@ -211,7 +211,7 @@ public class DBInserter
     private void linkStopsInStations() {
           ArrayList<Station> stazioni = Stations.getStations().getAll();
           for(Station staz : stazioni){
-            ArrayList<Stop> stops = staz.getAllStops();
+            ArrayList<Stop> stops = (ArrayList<Stop>) staz.getAllStops();
             Collections.sort(stops, new TimeComparator());  
             Stop prevStop = null;
             for(Stop s : stops){

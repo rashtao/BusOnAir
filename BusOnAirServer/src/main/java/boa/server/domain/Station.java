@@ -113,7 +113,7 @@ public class Station {
 
     public Iterable<Stop> getStopsFromTime(int startTime, int endTime){
         List<Stop> stops = new ArrayList<Stop>();
-        IndexHits<Node> result = stopIndex.query(QueryContext.numericRange("time", startTime, endTime));
+        IndexHits<Node> result = stopIndex.query(QueryContext.numericRange("time", startTime, endTime).sortNumeric("time", false));
         for(Node n : result){
             stops.add(new Stop(n));
         }            
@@ -151,16 +151,16 @@ public class Station {
         return getStopsFromTime(startTime, 1440);
     }        
         
-    public ArrayList<Stop> getAllStops(){
-        ArrayList<Stop> output = new ArrayList<Stop>();
-        
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.STOP_STATION, Direction.INCOMING);
-        for(Relationship r : rels){
-            output.add(new Stop(r.getStartNode()));   
-        }
-        
-        return output;  
-        
+    public Iterable<Stop> getAllStops(){
+//        ArrayList<Stop> output = new ArrayList<Stop>();
+//        
+//        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.STOP_STATION, Direction.INCOMING);
+//        for(Relationship r : rels){
+//            output.add(new Stop(r.getStartNode()));   
+//        }
+//        
+//        return output;  
+        return getStopsFromTime(0, 1440);
     }
         
     @Override

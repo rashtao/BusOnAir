@@ -318,14 +318,23 @@ public class Run {
     }
 
     public ArrayList<Stop> getAllStops() {
+//        ArrayList<Stop> output = new ArrayList<Stop>();
+//        
+//        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.STOP_RUN, Direction.INCOMING);
+//        for(Relationship r : rels){
+//            output.add(new Stop(r.getStartNode()));   
+//        }
+//        
+//        return output;
+
         ArrayList<Stop> output = new ArrayList<Stop>();
-        
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.STOP_RUN, Direction.INCOMING);
-        for(Relationship r : rels){
-            output.add(new Stop(r.getStartNode()));   
+        Stop s = getFirstStop();
+        while(s != null){
+        	output.add(s);
+        	s = s.getNextInRun();
         }
-        
-        return output;  
+                
+        return output; 
         
     }
     
