@@ -279,7 +279,7 @@ public class DBInserter
 			if(partenze.size() > 1 && arrivi.size() > 1){	// Route A/R
 				System.out.print("\nA/R Route found... " + route.getLine() + ": " + route.getId() + ", ");
 				RouteImporter twinRoute = new RouteImporter(db.createNode(), route.getLine());
-				Routes.getRoutes().addRoute(twinRoute);
+				Routes.getRoutes().addRouteToIndices(twinRoute);
 				System.out.print(twinRoute.getId());
 				
 				twinRoute.setFrom((Station) arrpartenze[1]);

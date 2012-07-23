@@ -62,14 +62,6 @@ public class Run {
 		}						
 	}
 	
-	public void deleteAllCheckPoints() {
-		// cancella tutti i checkpoints
-		
-		for(CheckPoint cp : getAllCheckPoints()){
-			deleteCheckPoint(cp);
-		}						
-	}	
-	
 	public void deleteCpSpatialIndex(){
 		List<SpatialDatabaseRecord> results = GeoPipeline.start(cpSpatialIndex).toSpatialDatabaseRecordList();
 		for(SpatialDatabaseRecord ris : results){
@@ -108,20 +100,17 @@ public class Run {
 		CheckPoint prev = cp.getPrevCheckPoint();
 		CheckPoint next = cp.getNextCheckPoint();
 		
-		Relationship rel;
-		
-		rel = cp.getUnderlyingNode().getSingleRelationship(RelTypes.RUN_FIRSTCHECKPOINT, Direction.INCOMING);
+		if(prev != null)
+			prev.setNextCheckPoint(next);
+
+		Relationship rel = cp.getUnderlyingNode().getSingleRelationship(RelTypes.RUN_FIRSTCHECKPOINT, Direction.INCOMING);
 		if(rel != null){
-			rel.delete();
 			setFirstCheckPoint(next);
 		}
 	
 		cp.setFrom(null);
 		cp.setTowards(null);
 		cp.setNextCheckPoint(null);
-				
-		if(prev != null)
-			prev.setNextCheckPoint(next);
 		
 		cp.getUnderlyingNode().delete();
 		

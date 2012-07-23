@@ -8,7 +8,6 @@ public class Stop
     private int id;
     private int staticTime;
     private long nextInRun;
-    private long prevInRun;
     private long station;
     private int run;
     
@@ -16,13 +15,11 @@ public class Stop
     {
     }
 
-	public Stop(int id, int staticTime, long nextInRun, long prevInRun,
-			long station, int run) {
+	public Stop(int id, int staticTime, long nextInRun, long station, int run) {
 		super();
 		this.id = id;
 		this.staticTime = staticTime;
 		this.nextInRun = nextInRun;
-		this.prevInRun = prevInRun;
 		this.station = station;
 		this.run = run;
 	}
@@ -51,14 +48,6 @@ public class Stop
 		this.nextInRun = nextInRun;
 	}
 
-	public long getPrevInRun() {
-		return prevInRun;
-	}
-
-	public void setPrevInRun(long prevInRun) {
-		this.prevInRun = prevInRun;
-	}
-
 	public long getStation() {
 		return station;
 	}
@@ -74,5 +63,6 @@ public class Stop
 	public void setRun(int run) {
 		this.run = run;
 	}
-
+	
+	
 }

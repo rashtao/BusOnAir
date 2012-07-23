@@ -147,7 +147,7 @@ public class Route {
 	}
 	public void updateLine(String line){
 		setLine(line);
-		Routes.getRoutes().addRoute(this);	//aggiorna gli indici
+		Routes.getRoutes().addRouteToIndices(this);	//aggiorna gli indici
 		
 	}
 	

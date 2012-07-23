@@ -50,7 +50,7 @@ public class StopImporter extends Stop {
         } else {
         	route = new RouteImporter(r);        
         }
-        Routes.getRoutes().addRoute(route);
+        Routes.getRoutes().addRouteToIndices(route);
         
         Run rr = Runs.getRuns().getRunById(idRun);
 

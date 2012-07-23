@@ -27,7 +27,7 @@ public class Routes {
         routesIndex = DbConnection.getDb().index().forNodes("routesIndex");
     }
     
-    public void addRoute(Route r){
+    public void addRouteToIndices(Route r){
     	routesIndex.remove(r.getUnderlyingNode());
     	routesIndex.add(r.getUnderlyingNode(), "id", r.getId());
     	routesIndex.add(r.getUnderlyingNode(), "line", r.getLine());
@@ -93,43 +93,25 @@ public class Routes {
         return output;
     }
     
-
-    public Route createRoute(boa.server.importer.json.Route jr){
-		// creates a new Route
-    	// jr id is ignored
-    	
-    	Node node = DbConnection.getDb().createNode();
-    	RouteImporter r = new RouteImporter(
-	  			  node, 
-	  			  node.getId(),
-	  			  jr.getline(),
-	  			  jr.getFrom(),
-				  jr.getTowards());
-
-		  addRoute(r);
-		  
-		  return r;
-	}	
-
     public Route createOrUpdateRoute(boa.server.importer.json.Route jr){
 		// creates a new Route having the specified id
     	// if the id already exists then updates the corresponding db record
 
     	Route r = Routes.getRoutes().getRouteById(jr.getId());
-	  	if(r != null){
+	  	if(r != null){	// update
 	  		r.updateLine(jr.getline());
 	  		r.updateTowards(Stations.getStations().getStationById(jr.getTowards()));
 	  		r.updateFrom(Stations.getStations().getStationById(jr.getFrom()));
-	  	} else {
+	  	} else {		// create			
 	    	r = new RouteImporter(
 	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId(),
 		  			  jr.getline(),
 		  			  jr.getFrom(),
 					  jr.getTowards());
-
-			  addRoute(r);
 	  	}
+	  	
+  		addRouteToIndices(r);
 
 	  	return r;
 	}	    

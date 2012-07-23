@@ -39,7 +39,8 @@ public class Stations {
     }
         
     public void addStationToIndex(Station s){
-      stationIndex.add(s.getUnderlyingNode(), "id", s.getId());
+    	stationIndex.remove(s.getUnderlyingNode());
+    	stationIndex.add(s.getUnderlyingNode(), "id", s.getId());
     }
   
     public void updateSpatialIndex(Station s){
@@ -52,6 +53,7 @@ public class Stations {
     }
     
     public void addStationToSpatialIndex(Station s){
+    	stationSpatialIndex.removeFromIndex(s.getUnderlyingNode().getId());
         stationSpatialIndex.add(s.getUnderlyingNode());
       }
     
@@ -80,10 +82,11 @@ public class Stations {
     	stationSpatialIndex.removeFromIndex(s.getUnderlyingNode().getId());
     	stationIndex.remove(s.getUnderlyingNode());
     	
-    	for(Relationship rel : s.getUnderlyingNode().getRelationships()){
-    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
-    	}
+//    	for(Relationship rel : s.getUnderlyingNode().getRelationships()){
+//    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
+//    	}
     	
+    	s.deleteStopIndex();
     	s.getUnderlyingNode().delete();    	
     }
            
@@ -146,10 +149,10 @@ public class Stations {
     	// if the id already exists then updates the corresponding db record
 
     	Station s = getStationById(js.getId());
-	  	if(s != null){
+	  	if(s != null){	// update
 	  		s.update(js);
 	  		updateSpatialIndex(s);
-	  	} else {
+	  	} else {		// create
 	  		s = new StationImporter(
 		  			  DbConnection.getDb().createNode(), 
 		  			  js.getId(),

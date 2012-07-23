@@ -1,7 +1,10 @@
 package boa.server.domain;
 
 import java.util.ArrayList;
+
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -58,26 +61,29 @@ public class Stops {
 
     	Stop s = getStopById(js.getId());
   		Station staz = Stations.getStations().getStationById(js.getStation());
-  		Run r = Runs.getRuns().getRunById(js.getRun());
+  		Run run = Runs.getRuns().getRunById(js.getRun());
   		
-  		if(staz == null || r == null)
+  		if(staz == null || run == null)
   			return null;
 
-    	if(s != null){
+    	if(s != null){	// update
 	  		s.setStaticTime(js.getStaticTime());
 	  		s.updateStopPosition();
 	  		s.setRun(Runs.getRuns().getRunById(js.getRun()));	  		
-	  	} else {	  		
+	  	} else {		// create	  		
 	  		s = new StopImporter(
 		  			  DbConnection.getDb().createNode(), 
 		  			  js.getId(),
 		  			  js.getStaticTime(),
 		  			  staz,
-		  			  r);
+		  			  run);
+	  		addStop(s);
 	  	}
 
-    	s.updateStopPosition();
-    	staz.updateStop(s);
+    	s.setNextInStation(staz.getFirstStopFromTime(0));	//insert in 1st position
+    	s.updateStopPosition();		// place the stop in the correct position
+    	staz.updateStopIndex(s);
+    	
     	
     	//TODO:
     	//gestire next/prev in RUN e next/prev in STATION 
@@ -86,5 +92,47 @@ public class Stops {
 	  	return s;
 	}	
     
+    public void deleteStop(Stop s){
+    	Run run = s.getRun();
+
+    	Stop fsrun = run.getFirstStop();
+    	
+    	if(s.equals(fsrun))
+    		run.setFirstStop(s.getNextInRun());
+		
+    	Stop pis = s.getPrevInStation();
+		Stop nis = s.getNextInStation();
+		
+		Stop pir = s.getPrevInRun();
+		Stop nir = s.getNextInRun();
+		
+		Station staz = s.getStation();
+		
+		if(pis != null){
+			pis.setNextInStation(nis);
+		} 
+
+		if(pir != null){
+			pir.setNextInRun(nir);
+		} 
+
+        Iterable<Relationship> rels = s.getUnderlyingNode().getRelationships(RelTypes.CHECKPOINTFROM, Direction.INCOMING);
+        for(Relationship r : rels){
+            run.deleteCheckPoint(new CheckPoint(r.getStartNode()));
+        }
+		
+        rels = s.getUnderlyingNode().getRelationships(RelTypes.CHECKPOINTTOWARDS, Direction.INCOMING);
+        for(Relationship r : rels){
+            run.deleteCheckPoint(new CheckPoint(r.getStartNode()));
+        }
+				
+		staz.removeStop(s);
+		s.setRun(null);
+		s.setStation(null);
+		s.setNextInRun(null);
+		s.setNextInStation(null);
+		removeStop(s);
+		s.getUnderlyingNode().delete();			
+    }
     
 }

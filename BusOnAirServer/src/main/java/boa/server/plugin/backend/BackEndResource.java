@@ -358,4 +358,20 @@ public class BackEndResource{
         return Response.ok().entity(jr).build();  
     }    
     
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )   
+    @Path( "/stops/createorupdate" )
+    public Response createOrUpdateStop(final boa.server.importer.json.Stop  input) throws IOException{        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stops.getStops().createOrUpdateStop(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();  
+    }    
+    
 }

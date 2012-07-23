@@ -112,7 +112,7 @@ public class Station {
         stopIndex.add(s.getUnderlyingNode(), "time", new ValueContext(s.getTime()).indexNumeric());
     }
 
-    public void updateStop(Stop s){
+    public void updateStopIndex(Stop s){
         stopIndex.remove(s.getUnderlyingNode());
         addStop(s);
     }
@@ -219,4 +219,8 @@ public class Station {
     public String getUrl(){
     	return "/stations/" + getId();
     }
+
+	public void deleteStopIndex() {
+		stopIndex.delete();		
+	}
 }

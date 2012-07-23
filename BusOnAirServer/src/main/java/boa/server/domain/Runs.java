@@ -36,28 +36,17 @@ public class Runs {
 	}
 	
 	public void deleteRun(Run run) {
-		run.deleteAllCheckPoints();
+		for(CheckPoint cp : run.getAllCheckPoints()){
+			run.deleteCheckPoint(cp);
+		}	
+		
 		run.deleteCpSpatialIndex();		
 		run.deleteCpIndex();
 		
 		run.setFirstStop(null);
 		
 		for(Stop s : run.getAllStops()){
-			Stop prev = s.getPrevInStation();
-			Stop next = s.getNextInStation();
-			Station staz = s.getStation();
-			
-			if(prev != null){
-				prev.setNextInStation(next);
-			} 
-
-			staz.removeStop(s);
-			s.setRun(null);
-			s.setStation(null);
-			s.setNextInRun(null);
-			s.setNextInStation(null);
-			Stops.getStops().removeStop(s);
-			s.getUnderlyingNode().delete();			
+			Stops.getStops().deleteStop(s);
 		}	
 
 		runsIndex.remove(run.getUnderlyingNode());
@@ -131,7 +120,7 @@ public class Runs {
 	  	if(r != null){	// update
 	  		Route oldRoute = r.getRoute();
 	  		oldRoute.removeRun(r);
-	  	} else {	// create
+	  	} else {		// create
 	    	r = new RunImporter(
 	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId());
