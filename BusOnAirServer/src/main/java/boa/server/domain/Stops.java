@@ -79,10 +79,9 @@ public class Stops {
   		s.updateStaticTime(js.getStaticTime());
   		s.setRun(run);	  		
   		s.setStation(staz);
-
-  		s.setNextInStation(staz.getFirstStopFromTime(0));	//insert in 1st position
-    	s.updateStopPosition();		// place the stop in the correct position
+  		
     	staz.updateStopIndex(s);
+    	staz.linkStopsInStation();
     	
     	Stop pir = Stops.getStops().getStopById(js.getPrevInRun());
     	Stop nir = Stops.getStops().getStopById(js.getNextInRun());

@@ -4,6 +4,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
 import boa.server.domain.RelTypes;
+import boa.server.domain.utils.TimeComparator;
 import boa.server.json.Coordinate;
 
 public class Station {
@@ -227,4 +229,16 @@ public class Station {
 	public void deleteStopIndex() {
 		stopIndex.delete();		
 	}
+	
+    public void linkStopsInStation() {
+		Iterable<Stop> stops = getStopsFromTime(0, 1440);
+	    Stop prevStop = null;
+	    for(Stop s : stops){
+	    	s.setNextInStation(null);
+	    	if(prevStop != null){
+		        prevStop.setNextInStation(s);
+		    }
+		    prevStop = s;
+		}            
+    }
 }
