@@ -93,7 +93,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stations/{id}/delete" )
-    public Response deleteStation(@PathParam("id") Integer id) throws IOException{        
+    public Response deleteStation(@PathParam("id") Long id) throws IOException{        
 
         Station staz = Stations.getStations().getStationById(id);
 
@@ -115,7 +115,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/routes/{id}/delete" )
-    public Response deleteRoute(@PathParam("id") Integer id) throws IOException{        
+    public Response deleteRoute(@PathParam("id") Long id) throws IOException{        
 
         Route route = Routes.getRoutes().getRouteById(id);
 

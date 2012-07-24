@@ -160,7 +160,17 @@ public class Station {
 //        }
 //        
 //        return output;  
-        return getStopsFromTime(0, 1440);
+    	
+        //return getStopsFromTime(0, 1440);
+    	
+    	ArrayList<Stop> output = new ArrayList<Stop>();
+    	Stop s = getFirstStopFromTime(0);
+    	while(s != null){
+    		output.add(s);
+    		s = s.getNextInStation();    		
+    	}
+    	
+    	return output;
     }
         
     @Override

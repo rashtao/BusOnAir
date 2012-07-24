@@ -154,6 +154,18 @@ public class Stations {
 			s.setLatitude(js.getLatLon().getLat());
 			s.setLongitude(js.getLatLon().getLon());    	
 	  		updateSpatialIndex(s);
+	  		
+	  		// update CheckPoints associati
+	  		for(Stop stop : s.getAllStops()){
+		  		for(Relationship rel : stop.getUnderlyingNode().getRelationships(RelTypes.CHECKPOINTFROM, Direction.INCOMING)){
+		  			CheckPoint cp = new CheckPoint(rel.getStartNode());
+		  			if(cp.getTowards().equals(stop)){	// checkpoint in the station position
+		  				cp.setLatitude(s.getLatitude());
+		  				cp.setLongitude(s.getLongitude());
+		  				stop.getRun().updateCpSpatialIndex(cp);		  				
+		  			}
+		  		}
+	  		}
 	  	} else {		// create
 	  		s = new StationImporter(
 		  			  DbConnection.getDb().createNode(), 
