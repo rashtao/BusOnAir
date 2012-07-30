@@ -243,6 +243,9 @@ public class Run {
 
     public CheckPoint getFirstCheckPoint(){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_FIRSTCHECKPOINT, Direction.OUTGOING);
+        if(rel == null)
+        	return null;
+        
         return new CheckPoint(rel.getEndNode());		
     }
     
@@ -345,6 +348,9 @@ public class Run {
     	
     	CheckPoint cp = getFirstCheckPoint();
     	
+    	if(cp == null)	// no checkpoints in the run
+    		return;
+    	
     	while(cp.getNextCheckPoint() != null)
     		cp = cp.getNextCheckPoint();		
     	
@@ -436,11 +442,13 @@ public class Run {
 	
     public ArrayList<CheckPoint> getAllCheckPoints() {
         ArrayList<CheckPoint> output = new ArrayList<CheckPoint>();
-        IndexHits<Node> result = cpIndex.query("id", "*");
-        for(Node n : result){
-            output.add(new CheckPoint(n));           
-        }        
-        result.close();
+        CheckPoint cp = getFirstCheckPoint();
+        
+        while(cp != null){
+        	output.add(cp);
+        	cp = cp.getNextCheckPoint();
+        }
+        
         return output;
     }
     
@@ -628,5 +636,40 @@ public class Run {
 
 	  	return cp;
 	}	
-    
+	
+	public void createAllCheckPoints(){
+		// delete all checkpoints and
+		// creates CheckPoints corresponding to Stops positions
+		
+		for(CheckPoint cp : getAllCheckPoints()){
+			deleteCheckPoint(cp);
+		}	
+		
+		CheckPoint prev = null;
+		CheckPoint cp = null;
+		Stop s = getFirstStop();
+		while(s != null){
+	  		cp = new CheckPoint(
+		  			  DbConnection.getDb().createNode(), 
+		  			  s.getStation().getLatitude(),					  
+		  			  s.getStation().getLongitude(),					  
+					  0);
+	  		addCpToIndex(cp);
+	  		addCpToSpatialIndex(cp);	  		
+		  	
+	  		cp.setFrom(s);
+	  		cp.setTowards(s);
+
+	  		if(prev != null)
+	  			prev.setNextCheckPoint(cp);
+	  		else 
+	  			setFirstCheckPoint(cp);
+	  			  		
+	  		prev = cp;
+			s = s.getNextInRun();
+		}
+		
+		restore();
+		
+	}    
 }

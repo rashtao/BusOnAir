@@ -321,7 +321,16 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/stops/createorupdate" )
     public Response createOrUpdateStop(final boa.server.importer.json.Stop  input) throws IOException{        
-		Transaction tx = DbConnection.getDb().beginTx();
+		// staticTime check 
+    	int st = input.getStaticTime();
+    	Stop prev = Stops.getStops().getStopById(input.getPrevInRun());
+    	Stop next = Stops.getStops().getStopById(input.getNextInRun());
+    	if(st < prev.getStaticTime() || st > next.getStaticTime()){
+            boa.server.json.Response jr = new boa.server.json.Response(422, "staticTime must be between prevInRun.staticTime and nextInRun.staticTime");
+            return Response.ok().entity(jr).build();  
+    	}    		
+    	
+    	Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stops.getStops().createOrUpdateStop(input);
 			tx.success();
@@ -353,5 +362,28 @@ public class BackEndResource{
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();  
     }    
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/runs/{id}/createallcheckpoints" )
+    public Response createAllCheckPoints(@PathParam("id") Integer id) throws IOException{        
+
+        Run run = Runs.getRuns().getRunById(id);
+
+        if(run == null)
+        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id value.")).build();
+
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+	        run.createAllCheckPoints();	        
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
     
 }
