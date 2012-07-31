@@ -228,7 +228,10 @@ public class Run {
 
     public Stop getFirstStop(){
         Relationship rel = underlyingNode.getSingleRelationship(RelTypes.RUN_FIRSTSTOP, Direction.OUTGOING);
-        return new Stop(rel.getEndNode());		
+        if(rel == null)
+        	return null;
+        else
+        	return new Stop(rel.getEndNode());		
     }
 
 

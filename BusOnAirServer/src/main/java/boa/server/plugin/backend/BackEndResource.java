@@ -64,6 +64,13 @@ public class BackEndResource{
     	DbConnection.getDbConnection().clear();
     	DbConnection.createDbConnection(database);
     	
+    	Stops.getStops().deleteAllStops();
+    	Runs.getRuns().deleteAllRuns();
+    	Routes.getRoutes().deleteAllRoutes();
+//    	Stations.getStations().deleteStation
+    	
+    	
+    	
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
     }
@@ -208,15 +215,13 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stations/deleteall" )
     public Response deleteAllStations() throws IOException{        
-		for(Station s : Stations.getStations().getAll()){
-			Transaction tx = DbConnection.getDb().beginTx();
-			try{
-				Stations.getStations().deleteStation(s);
-				tx.success();
-			}finally{
-				tx.finish();			
-			}   
-		}    	
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stations.getStations().deleteAllStations();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   
 
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
@@ -276,6 +281,22 @@ public class BackEndResource{
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stations.getStations().createOrUpdateStation(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/stations/bulkimport")
+    public Response bulkImportStations(final boa.server.importer.json.Station  input) throws IOException {        
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			//Stations.getStations().createOrUpdateStations(input);
 			tx.success();
 		}finally{
 			tx.finish();			

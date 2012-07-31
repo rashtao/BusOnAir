@@ -180,6 +180,21 @@ public class Stations {
 	  	return s;
 	}	
 
+    public void createOrUpdateStations(boa.server.importer.json.Stations stations){
+		// creates new stations having the specified id
+    	// if the id already exists then updates the corresponding db record
+
+    	for(boa.server.importer.json.Station s : stations.getStationsObjectsList()){
+    		createOrUpdateStation(s);
+    	}
+	}	
+    
+    public void deleteAllStations(){
+    	for(Station s : getAll()){
+    		deleteStation(s);    		
+    	}
+    }
+    
     public ArrayList<Station> getAllStationsInSpatialIndex() {
         ArrayList<Station> output = new ArrayList<Station>();
         List<SpatialDatabaseRecord> results = GeoPipeline.start(stationSpatialIndex).toSpatialDatabaseRecordList();
