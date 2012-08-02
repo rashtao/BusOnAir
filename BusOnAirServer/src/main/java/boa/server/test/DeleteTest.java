@@ -16,7 +16,19 @@ public class DeleteTest {
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
 		db = DbConnection.getDb();
-
+		//Stations.getStations().deleteAllStations();
+		
+//		Transaction tx = DbConnection.getDb().beginTx();
+//		try{
+//			//	Runs.getRuns().deleteRun(run);
+//			Runs.getRuns().deleteRun(Runs.getRuns().getRunById(137));
+//
+//			tx.success();
+//		}finally{
+//			tx.finish();			
+//		}    	
+		
+		
 		Station s = Stations.getStations().getStationById(16);
 //		Route route = Routes.getRoutes().getRouteById(7);
 //		for(Run r : route.getAllRuns()){
@@ -37,7 +49,7 @@ public class DeleteTest {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			//	Runs.getRuns().deleteRun(run);
-			Stations.getStations().deleteStation(s);
+			Stations.getStations().deleteAllStations();
 			tx.success();
 		}finally{
 			tx.finish();			

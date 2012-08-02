@@ -33,6 +33,10 @@ public class Stations {
         return instance;
     }    
     
+    public static void destroy() {
+    	instance = null;
+    }    
+    
     protected Stations(){
         stationIndex = DbConnection.getDb().index().forNodes("stationsIndex");
         stationSpatialIndex = DbConnection.getSpatialDb().getOrCreatePointLayer("stationSpatialIndex", "lon", "lat");
@@ -53,16 +57,23 @@ public class Stations {
     }
     
     public void addStationToSpatialIndex(Station s){
-    	stationSpatialIndex.removeFromIndex(s.getUnderlyingNode().getId());
+    	//stationSpatialIndex.removeFromIndex(s.getUnderlyingNode().getId());
         stationSpatialIndex.add(s.getUnderlyingNode());
       }
     
     public void deleteStation(Station s){
-    	ArrayList<Route> routes = s.getAllRoutes();
 
-    	for(Route route : routes){
-    		Routes.getRoutes().deleteRoute(route);    		    		
+    	for(Stop stop : s.getAllStops()){
+    		Stops.getStops().deleteStop(stop);
     	}
+    	
+//    	for(Run run : s.getAllRuns()){
+//    		Runs.getRuns().deleteRun(run);
+//    	}
+    	
+//    	for(Route route : s.getAllRoutes()){
+//    		Routes.getRoutes().deleteRoute(route);    		    		
+//    	}
     	
     	for(Relationship rel : s.getUnderlyingNode().getRelationships(RelTypes.ROUTEFROM, Direction.INCOMING)){
     		Route route = new Route(rel.getStartNode());
@@ -73,15 +84,11 @@ public class Stations {
     		Route route = new Route(rel.getStartNode());
     		Routes.getRoutes().deleteRoute(route);    		
     	}
-
-    	ArrayList<Run> runs = s.getAllRuns();
-    	for(Run run : runs){
-    		Runs.getRuns().deleteRun(run);
-    	}
     	
     	stationSpatialIndex.removeFromIndex(s.getUnderlyingNode().getId());
     	stationIndex.remove(s.getUnderlyingNode());
     	
+//		System.out.println("\n\nDELETING Station " + s.getId());
 //    	for(Relationship rel : s.getUnderlyingNode().getRelationships()){
 //    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
 //    	}
@@ -181,17 +188,17 @@ public class Stations {
 	}	
 
     public void createOrUpdateStations(boa.server.importer.json.Stations stations){
-		// creates new stations having the specified id
-    	// if the id already exists then updates the corresponding db record
+		// creates new stations having the specified ids
+    	// if an id already exists then updates the corresponding db record
 
-    	for(boa.server.importer.json.Station s : stations.getStationsObjectsList()){
+    	for(boa.server.importer.json.Station s : stations.stationsObjectsList){
     		createOrUpdateStation(s);
     	}
 	}	
     
     public void deleteAllStations(){
     	for(Station s : getAll()){
-    		deleteStation(s);    		
+			deleteStation(s);	    			
     	}
     }
     

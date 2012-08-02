@@ -58,13 +58,5 @@ public class Route
 
 	public void setTowards(long towards) {
 		this.towards = towards;
-	}
-
-	@Override
-	public String toString() {
-		return "Route [id=" + id + ", line=" + line + ", from=" + from
-				+ ", towards=" + towards + "]";
-	}    
-	
-	
+	}	
 }

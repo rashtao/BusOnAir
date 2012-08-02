@@ -1,29 +1,21 @@
 package boa.server.importer.json;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "List" )
 public class Stations{
-    @XmlElement( name = "stationsObjectsList" )
-    ArrayList<Station> stationsObjectsList = new ArrayList<Station>();
+//    @XmlElement( name = "stationsObjectsList" )
+    public List<Station> stationsObjectsList;
 
-	public Stations(){
-	}
+	public Stations() {};
 
-	public Stations(ArrayList<Station> stationsObjectsList) {
+	public Stations(List<Station> stationsObjectsList) {
 		super();
-		this.stationsObjectsList = stationsObjectsList;
+		this.stationsObjectsList = (stationsObjectsList != null) ? new LinkedList<Station>(stationsObjectsList) : null;
 	}
-
-	public ArrayList<Station> getStationsObjectsList() {
-		return stationsObjectsList;
-	}
-
-	public void setStationsObjectsList(ArrayList<Station> stationsObjectsList) {
-		this.stationsObjectsList = stationsObjectsList;
-	}
-
 }

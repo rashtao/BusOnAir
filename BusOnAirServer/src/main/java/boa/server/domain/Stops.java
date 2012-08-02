@@ -22,6 +22,10 @@ public class Stops {
         return instance;
     }    
     
+    public static void destroy() {
+    	instance = null;
+    } 
+    
     protected Stops(){
         stopsIndex = DbConnection.getDb().index().forNodes("stopsIndex");
     }
@@ -94,7 +98,16 @@ public class Stops {
 
 	  	return s;
 	}	
-    
+
+    public void createOrUpdateStops(boa.server.importer.json.Stops stops){
+		// creates new stops having the specified ids
+    	// if an id already exists then updates the corresponding db record
+
+    	for(boa.server.importer.json.Stop s : stops.stopsObjectsList){
+    		createOrUpdateStop(s);
+    	}
+	}	
+        
     public void deleteStop(Stop s){
     	Run run = s.getRun();
 

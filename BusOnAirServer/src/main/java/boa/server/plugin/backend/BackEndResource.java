@@ -5,6 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,15 +19,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.server.database.Database;
+import org.neo4j.server.rest.domain.JsonHelper;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 import boa.server.domain.*;
 import boa.server.importer.domain.StationImporter;
 
+import org.neo4j.server.rest.domain.JsonHelper;
 
 
 @Path( "/backend" )
@@ -61,18 +67,36 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/cleardb" )
     public Response clearDb() throws IOException{        
-    	DbConnection.getDbConnection().clear();
+//		DbConnection.getDbConnection().shutdown();
+//		DbConnection.clear();
+//		DbConnection.createEmbeddedDbConnection();
+
+    	Map<String, Object> result;
+    	
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			result = DbConnection.getDbConnection().cleanDb();
+			tx.success();
+		}finally{
+			tx.finish();			
+		}    	
+    	
+    	Stations.destroy();
+    	Routes.destroy();
+    	Stops.destroy();
+    	Runs.destroy();
+    	DbConnection.destroy();
+
     	DbConnection.createDbConnection(database);
     	
-    	Stops.getStops().deleteAllStops();
-    	Runs.getRuns().deleteAllRuns();
-    	Routes.getRoutes().deleteAllRoutes();
-//    	Stations.getStations().deleteStation
-    	
-    	
-    	
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-        return Response.ok().entity(jr).build();   
+		int i = 0;
+    	for(String str : DbConnection.getSpatialDb().getLayerNames()){
+    		result.put("lay" + i, str);
+    		i++;
+    	}
+		return Response.status(Status.OK).entity(JsonHelper.createJsonFrom(result)).build();
+//        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+//        return Response.ok().entity(jr).build();   
     }
     
     @GET
@@ -221,9 +245,9 @@ public class BackEndResource{
 			tx.success();
 		}finally{
 			tx.finish();			
-		}   
-
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+		}       	
+    	
+    	boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
     }
     
@@ -290,13 +314,14 @@ public class BackEndResource{
         return Response.ok().entity(jr).build();   
     }
     
+
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
-    @Path("/stations/bulkimport")
-    public Response bulkImportStations(final boa.server.importer.json.Station  input) throws IOException {        
+    @Path("/stations/bulkimport")            
+    public Response bulkImportStations(final boa.server.importer.json.Stations  input) throws IOException {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			//Stations.getStations().createOrUpdateStations(input);
+			Stations.getStations().createOrUpdateStations(input);
 			tx.success();
 		}finally{
 			tx.finish();			
@@ -323,6 +348,22 @@ public class BackEndResource{
     }    
 
     @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/routes/bulkimport")            
+    public Response bulkImportRoutes(final boa.server.importer.json.Routes input) throws IOException {
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Routes.getRoutes().createOrUpdateRoutes(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
+    
+    @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/runs/createorupdate" )
     public Response createOrUpdateRun(final boa.server.importer.json.Run  input) throws IOException{        
@@ -336,6 +377,23 @@ public class BackEndResource{
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();  
+    }    
+    
+
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/runs/bulkimport")            
+    public Response bulkImportRuns(final boa.server.importer.json.Runs  input) throws IOException {
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Runs.getRuns().createOrUpdateRuns(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
     }    
     
     @POST @Consumes("application/json")
@@ -362,6 +420,22 @@ public class BackEndResource{
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();  
     }    
+    
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/stops/bulkimport")            
+    public Response bulkImportStops(final boa.server.importer.json.Stops  input) throws IOException {
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			Stops.getStops().createOrUpdateStops(input);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   			        
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }   
     
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   

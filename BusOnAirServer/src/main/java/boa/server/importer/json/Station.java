@@ -10,8 +10,7 @@ public class Station
     private String name;
     private Coordinate latLon;
 
-    public Station()
-    {
+    public Station(){
     }
 
     public Station( long id, String name, Coordinate latLon )

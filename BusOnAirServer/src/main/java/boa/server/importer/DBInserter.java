@@ -260,6 +260,10 @@ public class DBInserter
 			
 			for(Run run : route.getAllRuns()){
 				Stop stop = run.getFirstStop();
+//				if(stop == null){
+//					System.out.print("\n<< run.getFirstStop() == null >>");
+//					continue;
+//				}
 				Station s = stop.getStation();
 				partenze.add(s);
 				while(stop.getNextInRun() != null)
@@ -452,7 +456,6 @@ public class DBInserter
 		}			
 	}
     
-    
-    
+    	
 
 }

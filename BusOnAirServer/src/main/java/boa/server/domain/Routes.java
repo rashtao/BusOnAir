@@ -23,6 +23,10 @@ public class Routes {
         return instance;
     }    
     
+    public static void destroy() {
+    	instance = null;
+    } 
+    
     protected Routes(){
         routesIndex = DbConnection.getDb().index().forNodes("routesIndex");
     }
@@ -116,4 +120,12 @@ public class Routes {
 	  	return r;
 	}	    
     
+    public void createOrUpdateRoutes(boa.server.importer.json.Routes routes){
+		// creates new routes having the specified ids
+    	// if an id already exists then updates the corresponding db record
+
+    	for(boa.server.importer.json.Route r : routes.routesObjectsList){
+    		createOrUpdateRoute(r);
+    	}
+	}	    
 }

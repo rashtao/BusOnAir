@@ -2,6 +2,7 @@ package boa.server.domain;
 
 import java.util.ArrayList;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -19,6 +20,10 @@ public class Runs {
             instance = new Runs();
         return instance;
     }    
+    
+    public static void destroy() {
+    	instance = null;
+    } 
     
     protected Runs(){
         runsIndex = DbConnection.getDb().index().forNodes("runsIndex");
@@ -42,17 +47,22 @@ public class Runs {
 		
 		run.deleteCpSpatialIndex();		
 		run.deleteCpIndex();
-		
-		run.setFirstStop(null);
-		
+
 		for(Stop s : run.getAllStops()){
 			Stops.getStops().deleteStop(s);
 		}	
+		
+		run.setFirstStop(null);
 
 		runsIndex.remove(run.getUnderlyingNode());
 		runningBuses.remove(run.getUnderlyingNode());
 		run.getRoute().removeRun(run);
 
+//		System.out.println("\n\nDELETING Run " + run.getId());
+//		for(Relationship rel : run.getUnderlyingNode().getRelationships()){
+//    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
+//    	}
+    	
 		run.setRoute(null);	
 		run.getUnderlyingNode().delete();		
 	}
@@ -132,5 +142,14 @@ public class Runs {
   		r.setFirstCheckPoint(r.getCheckPointById(jr.getFirstCheckPoint()));
 	  	return r;
 	}	    
+        
+    public void createOrUpdateRuns(boa.server.importer.json.Runs runs){
+		// creates new runs having the specified ids
+    	// if an id already exists then updates the corresponding db record
+
+    	for(boa.server.importer.json.Run r : runs.runsObjectsList){
+    		createOrUpdateRun(r);
+    	}
+	}	
         
 }

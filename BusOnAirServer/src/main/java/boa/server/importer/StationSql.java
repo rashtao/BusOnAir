@@ -1,4 +1,6 @@
 package boa.server.importer;
+import boa.server.importer.json.Station;
+import boa.server.importer.json.Coordinate;
 
 public class StationSql {
     public int Id_Station;
@@ -8,6 +10,11 @@ public class StationSql {
     public boolean is_school;
     public boolean is_terminal;
         
+    
+    public Station toJSON(){
+    	return new Station(Id_Station, name, new Coordinate(lat, lng));  
+    }
+    
     @Override
     public String toString() {
 		return ("StationSql: " +
