@@ -16,6 +16,8 @@ public class StopSql {
     public boolean is_weekday;
     public String importedFrom;
     public String runcode;
+    public String route;
+
     
     public int getMinutesFromMidn(){
     	return DateUtil.minutesDiff(MIDNIGHT, time_stop);
@@ -26,14 +28,14 @@ public class StopSql {
 		int diff = DateUtil.minutesDiff(MIDNIGHT, time_stop);
 	
 		return ("StopSql: " +
-				"\n\tId_Stop: " + Id_Stop + 
+				"\n\tId_Stop: " + Id_Stop + 	
 				"\n\ttime_stop: " + time_stop + 
 				"\n\tminFromMidn: " + diff + 
 				"\n\tsrc: " + src + 
 				"\n\tdst: " + dst + 
 				"\n\trun: " + run + 
 				"\n\tline: " + line + 
-				"\n\tnote: " + note + 
+				"\n\tnote: " + note + 			
 				"\n\tis_weekday: " + is_weekday + 
 				"\n\timportedFrom: " + importedFrom + 
 				"\n\truncode: " + runcode);	
