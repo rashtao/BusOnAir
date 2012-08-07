@@ -136,10 +136,24 @@ public class Importer2 {
 			}	
 		}	
 
-		// check corrispondenza run --> route (verifico se tutte le run di una route hanno le stesse fermate)
-		// in caso trovo run aventi la sequenza di stazioni diverse associate alla stessa route allora devo creare una nuova route associata!
+//		// check corrispondenza run --> route (verifico se tutte le run di una route hanno le stesse fermate)
+//		// in caso trovo run aventi la sequenza di stazioni diverse associate alla stessa route allora devo creare una nuova route associata!		
+//		Map<String, List<Station>> routesStationsList = new LinkedHashMap<String, List<Station>>();
+//		for(Route route : routesById.values()){
+//			List<Station> stationsList = new LinkedList<Station>(); 
+//			for(Run run : runs.values()){
+//				if(run.getRoute() != route.getId())
+//					continue;
+//				
+//				Stop stop = stopsById.get(run.getFirstStop());
+//				Station station = stationsById.get(stop.getStation());
+//				
+//				
+//			}
+//		}
 		
 		
+		//route.from e route.tw
 		
 //		Stations ss = new Stations((List<Station>) stationsById.values());
 //		Transaction tx = DbConnection.getDb().beginTx();
@@ -155,8 +169,5 @@ public class Importer2 {
 		
 
 	}
-    
-    
-
 
 }

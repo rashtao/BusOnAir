@@ -49,4 +49,20 @@ public class Station
     public void setLatLon( Coordinate latLon ){
         this.latLon = latLon;
     }
+    
+    @Override
+    public boolean equals(Object other){
+        if (this == other)
+        	return true;
+        
+        if (!(other instanceof Station)) 
+        	return false;
+        
+        Station otherStation = (Station) other;
+        
+        if(getId() != otherStation.getId())
+        	return false;
+        
+        return true;
+    }
 }
