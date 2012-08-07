@@ -39,7 +39,7 @@ public class Importer {
     }
     
     public static void main(String[] args) {     
-    	DbConnection.clear();
+    	DbConnection.deleteDbFiles();
 		DbConnection.createEmbeddedDbConnection();
 		 		
         dbInserter = new DBInserter();

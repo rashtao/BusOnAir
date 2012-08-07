@@ -55,7 +55,7 @@ public class Neo4jTest{
     	//testSimplePointLayer();
     	//simpleTest();
     	
-    	DbConnection.clear();
+    	DbConnection.deleteDbFiles();
 		DbConnection.createEmbeddedDbConnection();
 		graph = DbConnection.getDb();
 		nodesIndex = DbConnection.getDb().index().forNodes("nodesIndex");

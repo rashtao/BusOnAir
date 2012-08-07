@@ -86,7 +86,7 @@ public class DbConnection {
         db.shutdown();
     }    
     
-    public static void clear(){
+    public static void deleteDbFiles(){
         deleteRecursively( new File( dbpath ) );
         //inner = new EmbeddedGraphDatabase( storeDir, params );
     }
@@ -125,7 +125,7 @@ public class DbConnection {
 
     
 
-	  public Map<String, Object> cleanDb() {
+	  public Map<String, Object> deleteAllNodes() {
 		  Map<String, Object> result = new HashMap<String, Object>();
 		  clearIndex(result);
           removeNodes(result);

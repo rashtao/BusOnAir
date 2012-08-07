@@ -34,27 +34,17 @@ public class Importer2 {
     private static DBInserter dbInserter;  
 
     public static void main(String[] args) {     
-    	DbConnection.clear();
+    	DbConnection.deleteDbFiles();
 		DbConnection.createEmbeddedDbConnection();
 		
-		
 		// STATIONS IMPORT
-		List<Station> list = new LinkedList<Station>();
+		Map<Long, Station> stationsById = new LinkedHashMap<Long, Station>();
 		readData = XMLReader.readStations();
 		for (StationSql station : readData.getStationList()){
-			System.out.print("\n" + station);			
-			list.add(station.toJSON());
+			System.out.print("\n" + station);
+			Station jsStation = station.toJSON();
+			stationsById.put(jsStation.getId(), jsStation);
 		}
-
-		Stations ss = new Stations(list);
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			boa.server.domain.Stations.getStations().createOrUpdateStations(ss);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    
-
 		
 		// STOPS, RUNS, ROUTES IMPORT
 		readData = XMLReader.readStops();
@@ -89,50 +79,77 @@ public class Importer2 {
 			j++;
 		}	
 		
-
 		//IMPORT STOPS
-		Map<Integer, Stop> stops = new LinkedHashMap<Integer, Stop>();
+		Map<Integer, Stop> stopsById = new LinkedHashMap<Integer, Stop>();
 		for (StopSql current : readData.getStopList()){
 			Stop stop = new Stop();
 			stop.setId(Integer.parseInt(current.Id_Stop));
 			stop.setRun(runs.get(current.runcode).getId());
 			stop.setStaticTime(current.getMinutesFromMidn());
 			stop.setStation(current.src);
-			stops.put(stop.getId(), stop);
+			stopsById.put(stop.getId(), stop);
 		}
 		
 		//LINK STOPS prevInRun and nextInRun
 		Stop prev = null;
-		int ctrl = 0;
-		for (Stop current : stops.values()){		
+		for (Stop current : stopsById.values()){		
 			if(prev != null){
 				if(prev.getRun() == current.getRun()){
 					prev.setNextInRun(current.getId());
 					current.setPrevInRun(prev.getId());
-				} else {
-					ctrl++;	// conta una run
 				}
 			}			
 			prev = current;
 		}			
+			
+		// routesById LinkedHashMap creation
+		Map<Long, Route> routesById = new LinkedHashMap<Long, Route>();
+		for (Route route : routes.values()){
+			routesById.put(route.getId(), route);			
+		}
 		
-		System.out.print("\nCTRL: " + ctrl);		
-		System.out.print("\t-\t" + runs.size());		
+		// runsById LinkedHashMap creation
+		Map<Integer, Run> runsById = new LinkedHashMap<Integer, Run>();
+		for (Run run : runs.values()){
+			runsById.put(run.getId(), run);			
+		}
 		
+//		for (Stop current : stopsById.values()){		
+//			System.out.print("\njsSTOP:" 
+//					+ "\n\tid:\t" + current.getId() 
+//					+ "\n\trun:\t" + current.getRun() 
+//					+ "\n\tstation:\t" + current.getStation() 
+//					+ "\n\tpir:\t" + current.getPrevInRun());
+//		}
 		
-//// TEST LETTURA FILEs XML
-//		readData = XMLReader.readRoutes();
-//		for (RouteSql route : readData.getRouteList()){
-//			System.out.print("\n" + route);			
-//		}	
-//	
-//	
-//
-//		readData = XMLReader.readStops();
-//		for (StopSql stop : readData.getStopList()){
-//			System.out.print("\n" + stop);			
-//		}	
+		// SET RUN.FIRSTSTOP 
+		for (Stop current : stopsById.values()){		
+//			System.out.print("\njsSTOP:" 
+//					+ "\n\tid:\t" + current.getId() 
+//					+ "\n\trun:\t" + current.getRun() 
+//					+ "\n\tstation:\t" + current.getStation() 
+//					+ "\n\tpir:\t" + current.getPrevInRun());
+			
+			if(current.getPrevInRun() == 0){
+				Run run = runsById.get(current.getRun());
+				run.setFirstStop(current.getId());
+			}	
+		}	
 
+		// check corrispondenza run --> route (verifico se tutte le run di una route hanno le stesse fermate)
+		// in caso trovo run aventi la sequenza di stazioni diverse associate alla stessa route allora devo creare una nuova route associata!
+		
+		
+		
+//		Stations ss = new Stations((List<Station>) stationsById.values());
+//		Transaction tx = DbConnection.getDb().beginTx();
+//		try{
+//			boa.server.domain.Stations.getStations().createOrUpdateStations(ss);
+//			tx.success();
+//		}finally{
+//			tx.finish();			
+//		}   
+		
         ImportTest.importTest();
         DbConnection.turnoff();
 		

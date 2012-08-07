@@ -75,7 +75,7 @@ public class BackEndResource{
     	
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
-			result = DbConnection.getDbConnection().cleanDb();
+			result = DbConnection.getDbConnection().deleteAllNodes();
 			tx.success();
 		}finally{
 			tx.finish();			
