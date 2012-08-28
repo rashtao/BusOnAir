@@ -37,19 +37,22 @@ public class Importer2 {
     	DbConnection.deleteDbFiles();
 		DbConnection.createEmbeddedDbConnection();
 		
-		// STATIONS IMPORT
-		Map<Long, Station> stationsById = new LinkedHashMap<Long, Station>();
+		// read Stations from XML
 		readData = XMLReader.readStations();
+		
+		// --- STATIONS CREATION ---
+		Map<Long, Station> stationsById = new LinkedHashMap<Long, Station>();
 		for (StationSql station : readData.getStationList()){
-			System.out.print("\n" + station);
+			//System.out.print("\n" + station);
 			Station jsStation = station.toJSON();
 			stationsById.put(jsStation.getId(), jsStation);
 		}
+		// --- END STATIONS CREATION ---
 		
-		// STOPS, RUNS, ROUTES IMPORT
+		// read Stops from XML
 		readData = XMLReader.readStops();
 		
-		//ROUTES CREATION
+		// --- ROUTES CREATION ---
 		Map<String, Route> routes = new HashMap<String, Route>();
 		for (StopSql current : readData.getStopList()){
 			Route route = new Route();
@@ -57,29 +60,35 @@ public class Importer2 {
 			routes.put(current.line + current.note, route);			
 		}	
 		
-		//Routes id
+		// routesById LinkedHashMap creation
 		int i = 0;
+		Map<Long, Route> routesById = new LinkedHashMap<Long, Route>();
 		for (Route route : routes.values()){
 			route.setId(i);
+			routesById.put(route.getId(), route);
 			i++;
-		}	
+		}
+		// --- END ROUTES CREATION ---
 		
-		//RUNS CREATION
+		// --- RUNS CREATION ---
 		Map<String, Run> runs = new HashMap<String, Run>();
 		for (StopSql current : readData.getStopList()){
 			Run run = new Run();
 			run.setRoute(routes.get(current.line + current.note).getId());
 			runs.put(current.runcode, run);
 		}			
-		
-		//Runs id
+			
+		// runsById LinkedHashMap creation
 		int j = 0;
+		Map<Integer, Run> runsById = new LinkedHashMap<Integer, Run>();
 		for (Run run : runs.values()){
-			run.setId(j);
+			run.setId(j);			
+			runsById.put(run.getId(), run);
 			j++;
-		}	
+		}		
+		// --- END RUNS CREATION ---
 		
-		//IMPORT STOPS
+		// --- STOPS CREATION ---
 		Map<Integer, Stop> stopsById = new LinkedHashMap<Integer, Stop>();
 		for (StopSql current : readData.getStopList()){
 			Stop stop = new Stop();
@@ -101,18 +110,10 @@ public class Importer2 {
 			}			
 			prev = current;
 		}			
-			
-		// routesById LinkedHashMap creation
-		Map<Long, Route> routesById = new LinkedHashMap<Long, Route>();
-		for (Route route : routes.values()){
-			routesById.put(route.getId(), route);			
-		}
+		// --- STOPS CREATION ---			
+
 		
-		// runsById LinkedHashMap creation
-		Map<Integer, Run> runsById = new LinkedHashMap<Integer, Run>();
-		for (Run run : runs.values()){
-			runsById.put(run.getId(), run);			
-		}
+
 		
 //		for (Stop current : stopsById.values()){		
 //			System.out.print("\njsSTOP:" 
