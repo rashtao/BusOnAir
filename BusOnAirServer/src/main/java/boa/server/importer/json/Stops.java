@@ -1,6 +1,7 @@
 package boa.server.importer.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class Stops{
 
 	public Stops() {};
 
-	public Stops(List<Stop> stopsObjectsList) {
+	public Stops(Collection<Stop> stopsObjectsList) {
 		super();
 		this.stopsObjectsList = (stopsObjectsList != null) ? new LinkedList<Stop>(stopsObjectsList) : null;
 	}

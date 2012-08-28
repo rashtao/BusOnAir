@@ -5,16 +5,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "run" )
 public class Run
 {
-    private int id;
-    private long route;
-    private int firstStop;
-    private long firstCheckPoint;    
-    
-    public Run()
-    {
-    }
+    private Integer id;
+    private Long route;
+    private Integer firstStop;
+    private Long firstCheckPoint;
+        
+	public Run() {
+	}
 
-	public Run(int id, long route, int firstStop, long firstCheckPoint) {
+	public Run(Integer id, Long route, Integer firstStop, Long firstCheckPoint) {
 		super();
 		this.id = id;
 		this.route = route;
@@ -22,36 +21,58 @@ public class Run
 		this.firstCheckPoint = firstCheckPoint;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public long getRoute() {
+	public Long getRoute() {
 		return route;
 	}
 
-	public void setRoute(long route) {
+	public void setRoute(Long route) {
 		this.route = route;
 	}
 
-	public int getFirstStop() {
+	public Integer getFirstStop() {
 		return firstStop;
 	}
 
-	public void setFirstStop(int firstStop) {
+	public void setFirstStop(Integer firstStop) {
 		this.firstStop = firstStop;
 	}
 
-	public long getFirstCheckPoint() {
+	public Long getFirstCheckPoint() {
 		return firstCheckPoint;
 	}
 
-	public void setFirstCheckPoint(long firstCheckPoint) {
+	public void setFirstCheckPoint(Long firstCheckPoint) {
 		this.firstCheckPoint = firstCheckPoint;
+	}    
+	
+    @Override
+    public boolean equals(Object other){
+        if (this == other)
+        	return true;
+        
+        if (!(other instanceof Run)) 
+        	return false;
+        
+        Run otherRun = (Run) other;
+        
+        if(getId() != otherRun.getId())
+        	return false;
+        
+        return true;
+    }
+
+	@Override
+	public String toString() {
+		return "Run [id=" + id + ", route=" + route + ", firstStop="
+				+ firstStop + ", firstCheckPoint=" + firstCheckPoint + "]";
 	}
 
 }

@@ -36,16 +36,20 @@ public class ImportTest {
 //			tx.finish();			
 //		}   
 		
-		Route addded = null;
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			long id = 1051;
-			boa.server.importer.json.Route jr = new boa.server.importer.json.Route(id, "199BIS", 15, 22);
-			addded = Routes.getRoutes().createOrUpdateRoute(jr);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   
+		
+		
+//		Route addded = null;
+//		Transaction tx = DbConnection.getDb().beginTx();
+//		try{
+//			Long id = (long) 1051;
+//			Long from = (long) 15;
+//			Long towards = (long) 22;
+//			boa.server.importer.json.Route jr = new boa.server.importer.json.Route(id, "199BIS", from, towards);
+//			addded = Routes.getRoutes().createOrUpdateRoute(jr);
+//			tx.success();
+//		}finally{
+//			tx.finish();			
+//		}   
 		
 		
 
@@ -89,8 +93,6 @@ public class ImportTest {
         System.out.println(runsCount);
         System.out.println(stopsCount);
 
-        
-        System.out.println(addded);
         
     	System.out.print("\n\n ---- end IMPORT TEST ---");
 

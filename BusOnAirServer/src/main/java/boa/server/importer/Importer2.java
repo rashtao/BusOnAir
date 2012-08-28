@@ -56,16 +56,16 @@ public class Importer2 {
 		Map<String, Route> routes = new HashMap<String, Route>();
 		for (StopSql current : readData.getStopList()){
 			Route route = new Route();
-			route.setline(current.line + current.note);
+			route.setLine(current.line + current.note);
 			routes.put(current.line + current.note, route);			
 		}	
 		
 		// routesById LinkedHashMap creation
-		int i = 0;
+		long i = 0;
 		Map<Long, Route> routesById = new LinkedHashMap<Long, Route>();
 		for (Route route : routes.values()){
 			route.setId(i);
-			routesById.put(route.getId(), route);
+			routesById.put(i, route);
 			i++;
 		}
 		// --- END ROUTES CREATION ---
@@ -95,7 +95,7 @@ public class Importer2 {
 			stop.setId(Integer.parseInt(current.Id_Stop));
 			stop.setRun(runs.get(current.runcode).getId());
 			stop.setStaticTime(current.getMinutesFromMidn());
-			stop.setStation(current.src);
+			stop.setStation((long) current.src);
 			stopsById.put(stop.getId(), stop);
 		}
 		
@@ -111,32 +111,52 @@ public class Importer2 {
 			prev = current;
 		}			
 		// --- STOPS CREATION ---			
-
-		
-
-		
-//		for (Stop current : stopsById.values()){		
-//			System.out.print("\njsSTOP:" 
-//					+ "\n\tid:\t" + current.getId() 
-//					+ "\n\trun:\t" + current.getRun() 
-//					+ "\n\tstation:\t" + current.getStation() 
-//					+ "\n\tpir:\t" + current.getPrevInRun());
-//		}
 		
 		// SET RUN.FIRSTSTOP 
-		for (Stop current : stopsById.values()){		
-//			System.out.print("\njsSTOP:" 
-//					+ "\n\tid:\t" + current.getId() 
-//					+ "\n\trun:\t" + current.getRun() 
-//					+ "\n\tstation:\t" + current.getStation() 
-//					+ "\n\tpir:\t" + current.getPrevInRun());
-			
-			if(current.getPrevInRun() == 0){
+		for (Stop current : stopsById.values()){				 
+			if(current.getPrevInRun() == null){
+				System.out.print("\njsSTOP: " + current);
 				Run run = runsById.get(current.getRun());
 				run.setFirstStop(current.getId());
 			}	
-		}	
+		}
+		
 
+		// SET ROUTE.FROM e ROUTE.TOWARDS
+		for (Run run : runsById.values()){
+			Route route = routesById.get(run.getRoute());
+			Stop firstStop = stopsById.get(run.getFirstStop());
+			Stop lastStop = firstStop;
+			while(lastStop.getNextInRun() != null){
+				lastStop = stopsById.get(lastStop.getNextInRun());
+			}
+			
+			route.setFrom(firstStop.getStation());
+			route.setTowards(lastStop.getStation());
+			
+		}
+		
+		
+		// IMPORT DATA INTO BOA SERVER DB
+		Stations stationsDb = new Stations(stationsById.values());
+		Routes routesDb = new Routes(routesById.values());
+		Runs runsDb = new Runs(runsById.values());
+		Stops stopsDb = new Stops(stopsById.values());
+		
+		Transaction tx = DbConnection.getDb().beginTx();
+		try{
+			boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
+			boa.server.domain.Routes.getRoutes().createOrUpdateRoutes(routesDb);
+//			boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
+//			boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
+			tx.success();
+		}finally{
+			tx.finish();			
+		}   
+		
+		
+		
+		
 //		// check corrispondenza run --> route (verifico se tutte le run di una route hanno le stesse fermate)
 //		// in caso trovo run aventi la sequenza di stazioni diverse associate alla stessa route allora devo creare una nuova route associata!		
 //		Map<String, List<Station>> routesStationsList = new LinkedHashMap<String, List<Station>>();
@@ -154,17 +174,7 @@ public class Importer2 {
 //		}
 		
 		
-		//route.from e route.tw
-		
-//		Stations ss = new Stations((List<Station>) stationsById.values());
-//		Transaction tx = DbConnection.getDb().beginTx();
-//		try{
-//			boa.server.domain.Stations.getStations().createOrUpdateStations(ss);
-//			tx.success();
-//		}finally{
-//			tx.finish();			
-//		}   
-		
+
         ImportTest.importTest();
         DbConnection.turnoff();
 		

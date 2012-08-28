@@ -5,17 +5,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "route" )
 public class Route
 {
-    private long id;
+    private Long id;
     private String line;
-    private long from;
-    private long towards;
+    private Long from;
+    private Long towards;
 
     
-    public Route()
-    {
+    public Route(){
     }
 
-    public Route(long id, String line, long from, long towards) {
+    
+	public Route(Long id, String line, Long from, Long towards) {
 		super();
 		this.id = id;
 		this.line = line;
@@ -23,40 +23,68 @@ public class Route
 		this.towards = towards;
 	}
 
-	public Route( boa.server.domain.Route r )
-    {
-    	this(r.getId(),r.getLine(),r.getFrom().getId(),r.getTowards().getId());
-    }
-    
-    public long getId(){
-    	return id;
-    }
-    
-    public void setId(long id){
-    	this.id = id;
-    }
-    
-    public String getline(){
-    	return line;
-    }
-    
-    public void setline(String line){
-    	this.line = line;
-    }
+	
+	public Long getId() {
+		return id;
+	}
 
-	public long getFrom() {
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+	public String getLine() {
+		return line;
+	}
+
+
+	public void setLine(String line) {
+		this.line = line;
+	}
+
+
+	public Long getFrom() {
 		return from;
 	}
 
-	public void setFrom(long from) {
+
+	public void setFrom(Long from) {
 		this.from = from;
 	}
 
-	public long getTowards() {
+
+	public Long getTowards() {
 		return towards;
 	}
 
-	public void setTowards(long towards) {
+
+	public void setTowards(Long towards) {
 		this.towards = towards;
-	}	
+	}
+    
+    @Override
+    public boolean equals(Object other){
+        if (this == other)
+        	return true;
+        
+        if (!(other instanceof Route)) 
+        	return false;
+        
+        Route otherRoute = (Route) other;
+        
+        if(getId() != otherRoute.getId())
+        	return false;
+        
+        return true;
+    }
+
+
+	@Override
+	public String toString() {
+		return "Route [id=" + id + ", line=" + line + ", from=" + from
+				+ ", towards=" + towards + "]";
+	}
+    
+    
 }

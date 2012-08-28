@@ -3,19 +3,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "checkpoint" )
 public class CheckPoint {
-    private long id;
-    private long dt;
+    private Long id;
+    private Long dt;
     private Coordinate latLon;
-    private int from;
-    private int towards;
-    private long next;
-    private long prev;
+    private Integer from;
+    private Integer towards;
+    private Long next;
+    private Long prev;
 
 	public CheckPoint() {
 	}
 
-	public CheckPoint(long id, long dt, Coordinate latLon, int from,
-			int towards, long next, long prev) {
+	public CheckPoint(Long id, Long dt, Coordinate latLon, Integer from,
+			Integer towards, Long next, Long prev) {
 		super();
 		this.id = id;
 		this.dt = dt;
@@ -26,19 +26,19 @@ public class CheckPoint {
 		this.prev = prev;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public long getDt() {
+	public Long getDt() {
 		return dt;
 	}
 
-	public void setDt(long dt) {
+	public void setDt(Long dt) {
 		this.dt = dt;
 	}
 
@@ -50,36 +50,52 @@ public class CheckPoint {
 		this.latLon = latLon;
 	}
 
-	public int getFrom() {
+	public Integer getFrom() {
 		return from;
 	}
 
-	public void setFrom(int from) {
+	public void setFrom(Integer from) {
 		this.from = from;
 	}
 
-	public int getTowards() {
+	public Integer getTowards() {
 		return towards;
 	}
 
-	public void setTowards(int towards) {
+	public void setTowards(Integer towards) {
 		this.towards = towards;
 	}
 
-	public long getNext() {
+	public Long getNext() {
 		return next;
 	}
 
-	public void setNext(long next) {
+	public void setNext(Long next) {
 		this.next = next;
 	}
 
-	public long getPrev() {
+	public Long getPrev() {
 		return prev;
 	}
 
-	public void setPrev(long prev) {
+	public void setPrev(Long prev) {
 		this.prev = prev;
 	}
 
+    @Override
+    public boolean equals(Object other){
+        if (this == other)
+        	return true;
+        
+        if (!(other instanceof CheckPoint)) 
+        	return false;
+        
+        CheckPoint otherCheckPoint = (CheckPoint) other;
+        
+        if(getId() != otherCheckPoint.getId())
+        	return false;
+        
+        return true;
+    }
+	
 }

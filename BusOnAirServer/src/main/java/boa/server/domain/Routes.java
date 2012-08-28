@@ -103,14 +103,14 @@ public class Routes {
 
     	Route r = Routes.getRoutes().getRouteById(jr.getId());
 	  	if(r != null){	// update
-	  		r.updateLine(jr.getline());
+	  		r.updateLine(jr.getLine());
 	  		r.updateTowards(Stations.getStations().getStationById(jr.getTowards()));
 	  		r.updateFrom(Stations.getStations().getStationById(jr.getFrom()));
 	  	} else {		// create			
 	    	r = new RouteImporter(
 	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId(),
-		  			  jr.getline(),
+		  			  jr.getLine(),
 		  			  jr.getFrom(),
 					  jr.getTowards());
 	  	}

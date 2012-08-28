@@ -1,6 +1,7 @@
 package boa.server.importer.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class Runs{
 
 	public Runs() {};
 
-	public Runs(List<Run> runsObjectsList) {
+	public Runs(Collection<Run> runsObjectsList) {
 		super();
 		this.runsObjectsList = (runsObjectsList != null) ? new LinkedList<Run>(runsObjectsList) : null;
 	}

@@ -5,19 +5,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "stop" )
 public class Stop
 {
-    private int id;
-    private int staticTime;
-    private int nextInRun;
-    private int prevInRun;
-    private long station;
-    private int run;
+    private Integer id;
+    private Integer staticTime;
+    private Integer nextInRun;
+    private Integer prevInRun;
+    private Long station;
+    private Integer run;
     
 	public Stop()
     {
     }
 
-	public Stop(int id, int staticTime, int nextInRun, int prevInRun,
-			long station, int run) {
+	public Stop(Integer id, Integer staticTime, Integer nextInRun, Integer prevInRun,
+			Long station, Integer run) {
 		super();
 		this.id = id;
 		this.staticTime = staticTime;
@@ -27,52 +27,74 @@ public class Stop
 		this.run = run;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public int getStaticTime() {
+	public Integer getStaticTime() {
 		return staticTime;
 	}
 
-	public void setStaticTime(int staticTime) {
+	public void setStaticTime(Integer staticTime) {
 		this.staticTime = staticTime;
 	}
 
-	public int getNextInRun() {
+	public Integer getNextInRun() {
 		return nextInRun;
 	}
 
-	public void setNextInRun(int nextInRun) {
+	public void setNextInRun(Integer nextInRun) {
 		this.nextInRun = nextInRun;
 	}
 
-	public int getPrevInRun() {
+	public Integer getPrevInRun() {
 		return prevInRun;
 	}
 
-	public void setPrevInRun(int prevInRun) {
+	public void setPrevInRun(Integer prevInRun) {
 		this.prevInRun = prevInRun;
 	}
 
-	public long getStation() {
+	public Long getStation() {
 		return station;
 	}
 
-	public void setStation(long station) {
+	public void setStation(Long station) {
 		this.station = station;
 	}
 
-	public int getRun() {
+	public Integer getRun() {
 		return run;
 	}
 
-	public void setRun(int run) {
+	public void setRun(Integer run) {
 		this.run = run;
 	}
-	
+
+    @Override
+    public boolean equals(Object other){
+        if (this == other)
+        	return true;
+        
+        if (!(other instanceof Stop)) 
+        	return false;
+        
+        Stop otherStop = (Stop) other;
+        
+        if(getId() != otherStop.getId())
+        	return false;
+        
+        return true;
+    }
+    
+	@Override
+	public String toString() {
+		return "Stop [id=" + id + ", staticTime=" + staticTime + ", nextInRun="
+				+ nextInRun + ", prevInRun=" + prevInRun + ", station="
+				+ station + ", run=" + run + "]";
+	}
 }

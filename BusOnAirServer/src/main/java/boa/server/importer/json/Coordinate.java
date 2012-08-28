@@ -6,45 +6,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Coordinate
 {
 
-    private double lat;
-    private double lon;
+    private Double lat;
+    private Double lon;
 
-    public Coordinate()
-    {
-        super();
+    public Coordinate(){
     }
 
-    public Coordinate( double lat, double lon )
-    {
-        super();
-        this.lat = lat;
-        this.lon = lon;
-    }
+	public Coordinate(Double lat, Double lon) {
+		super();
+		this.lat = lat;
+		this.lon = lon;
+	}
 
-    public double getLat()
-    {
-        return lat;
-    }
+	public Double getLat() {
+		return lat;
+	}
 
-    public void setLat( double lat )
-    {
-        this.lat = lat;
-    }
+	public void setLat(Double lat) {
+		this.lat = lat;
+	}
 
-    public double getLon()
-    {
-        return lon;
-    }
+	public Double getLon() {
+		return lon;
+	}
 
-    public void setLon( double lon )
-    {
-        this.lon = lon;
-    }
+	public void setLon(Double lon) {
+		this.lon = lon;
+	}
 
-    @Override
-    public String toString()
-    {
-        return "Coordinate [lat=" + lat + ", lon=" + lon + "]";
-    }
+	@Override
+	public String toString() {
+		return "Coordinate [lat=" + lat + ", lon=" + lon + "]";
+	}
 
 }
