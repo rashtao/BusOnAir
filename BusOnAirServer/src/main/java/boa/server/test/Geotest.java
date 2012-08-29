@@ -57,7 +57,7 @@ Station:
 
 		
 		
-		Station staz = Stations.getStations().getStationById(10);
+		Station staz = Stations.getStations().getStationById((long) 10);
 		System.out.print("\n\nSTAZIONE: " + staz);
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{

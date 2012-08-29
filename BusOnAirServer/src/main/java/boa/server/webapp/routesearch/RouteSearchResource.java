@@ -68,7 +68,7 @@ public class RouteSearchResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/" )
-    public Response routeSearch( @QueryParam( "routeId" ) Integer routeId ) throws IOException 
+    public Response routeSearch( @QueryParam( "routeId" ) Long routeId ) throws IOException 
     {        
         log.write("\nROUTESEARCH(" + routeId +")");
         log.flush();

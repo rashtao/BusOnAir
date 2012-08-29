@@ -33,8 +33,8 @@ public class ShortestPath9 {
     		
     		
             int time = 330;     //9h00
-            Station s1 = Stations.getStations().getStationById(70);
-            Station s2 = Stations.getStations().getStationById(1);
+            Station s1 = Stations.getStations().getStationById((long) 70);
+            Station s2 = Stations.getStations().getStationById((long) 1);
                 
             System.out.print("\ns1: " + s1);
             System.out.print("\ns2: " + s2);

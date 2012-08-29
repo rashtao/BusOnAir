@@ -21,7 +21,7 @@ public class StopImporter extends Stop {
     	setId(id);
     }  
     
-    public StopImporter(Node node, int id, int time, int idStation, int idRun, String line){
+    public StopImporter(Node node, int id, int time, long idStation, int idRun, String line){
         this(node, id);
         setTime(time);	    
         setType();
@@ -39,7 +39,8 @@ public class StopImporter extends Stop {
         setStation(s);        
         setRun(r);          
         Stops.getStops().addStop(this);
-        s.addStop(this);
+        if(s != null)
+        	s.addStop(this);
     }   	
     
     protected void setRun(int idRun, String line) {

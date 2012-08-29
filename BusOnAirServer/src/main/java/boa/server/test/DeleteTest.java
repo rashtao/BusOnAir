@@ -29,7 +29,7 @@ public class DeleteTest {
 //		}    	
 		
 		
-		Station s = Stations.getStations().getStationById(16);
+		Station s = Stations.getStations().getStationById((long) 16);
 //		Route route = Routes.getRoutes().getRouteById(7);
 //		for(Run r : route.getAllRuns()){
 		System.out.println(s);	

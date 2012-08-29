@@ -115,7 +115,7 @@ public class Importer2 {
 		// SET RUN.FIRSTSTOP 
 		for (Stop current : stopsById.values()){				 
 			if(current.getPrevInRun() == null){
-				System.out.print("\njsSTOP: " + current);
+				//System.out.print("\njsSTOP: " + current);
 				Run run = runsById.get(current.getRun());
 				run.setFirstStop(current.getId());
 			}	
@@ -142,17 +142,24 @@ public class Importer2 {
 		Routes routesDb = new Routes(routesById.values());
 		Runs runsDb = new Runs(runsById.values());
 		Stops stopsDb = new Stops(stopsById.values());
+
+		boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
+		boa.server.domain.Routes.getRoutes().createOrUpdateRoutes(routesDb);
+		System.out.print("\n ----- 0");
 		
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
-			boa.server.domain.Routes.getRoutes().createOrUpdateRoutes(routesDb);
-//			boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
-//			boa.server.domain.Stations.getStations().createOrUpdateStations(stationsDb);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   
+		boa.server.domain.Runs.getRuns().createOrUpdateRuns(runsDb);
+		System.out.print("\n ----- 1");
+		
+		System.out.print("\n ----- Importing " + stopsDb.stopsObjectsList.size() + "stops");
+		boa.server.domain.Stops.getStops().createOrUpdateStops(stopsDb);
+		System.out.print("\n ----- 2");
+		
+		boa.server.domain.Stops.getStops().createOrUpdateStops(stopsDb);
+		System.out.print("\n ----- 3");
+	
+		boa.server.domain.Runs.getRuns().createOrUpdateRuns(runsDb);
+		System.out.print("\n ----- 4");
+		
 		
 		
 		

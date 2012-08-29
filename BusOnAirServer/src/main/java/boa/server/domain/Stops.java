@@ -1,10 +1,15 @@
 package boa.server.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -38,7 +43,10 @@ public class Stops {
     	stopsIndex.remove(s.getUnderlyingNode());
     }
     
-    public Stop getStopById(int id){
+    public Stop getStopById(Integer id){
+    	if(id == null)
+    		return null;
+    	
         IndexHits<Node> result = stopsIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
@@ -66,9 +74,6 @@ public class Stops {
     	Stop s = getStopById(js.getId());
   		Station staz = Stations.getStations().getStationById(js.getStation());
   		Run run = Runs.getRuns().getRunById(js.getRun());
-  		
-  		if(staz == null || run == null)
-  			return null;
 
     	if(s == null){		// create	  		
 	  		s = new StopImporter(
@@ -84,9 +89,11 @@ public class Stops {
   		s.setRun(run);	  		
   		s.setStation(staz);
   		
-    	staz.updateStopIndex(s);
-    	staz.linkStopsInStation();
-    	
+  		if(staz != null){
+	    	staz.updateStopIndex(s);
+	    	staz.linkStopsInStation();
+  		}
+  		
     	Stop pir = Stops.getStops().getStopById(js.getPrevInRun());
     	Stop nir = Stops.getStops().getStopById(js.getNextInRun());
     	
@@ -104,7 +111,13 @@ public class Stops {
     	// if an id already exists then updates the corresponding db record
 
     	for(boa.server.importer.json.Stop s : stops.stopsObjectsList){
-    		createOrUpdateStop(s);
+    		Transaction tx = DbConnection.getDb().beginTx();
+    		try{
+    			createOrUpdateStop(s);
+    			tx.success();
+    		}finally{
+    			tx.finish();			
+    		}       		
     	}
 	}	
         

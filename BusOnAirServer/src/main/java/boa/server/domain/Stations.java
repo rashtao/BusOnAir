@@ -97,7 +97,10 @@ public class Stations {
     	s.getUnderlyingNode().delete();    	
     }
            
-	public Station getStationById(long id){
+	public Station getStationById(Long id){
+		if(id == null)
+			return null;
+		
         IndexHits<Node> result = stationIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
@@ -156,23 +159,23 @@ public class Stations {
     	// if the id already exists then updates the corresponding db record
 
     	Station s = getStationById(js.getId());
-	  	if(s != null){	// update
+	  	if(s != null){	// update (latLon cannot be updated)
 			s.setName(s.getName());
-			s.setLatitude(js.getLatLon().getLat());
-			s.setLongitude(js.getLatLon().getLon());    	
-	  		updateSpatialIndex(s);
+//			s.setLatitude(js.getLatLon().getLat());
+//			s.setLongitude(js.getLatLon().getLon());    	
+//	  		updateSpatialIndex(s);
 	  		
 	  		// update CheckPoints associati
-	  		for(Stop stop : s.getAllStops()){
-		  		for(Relationship rel : stop.getUnderlyingNode().getRelationships(RelTypes.CHECKPOINTFROM, Direction.INCOMING)){
-		  			CheckPoint cp = new CheckPoint(rel.getStartNode());
-		  			if(cp.getTowards().equals(stop)){	// checkpoint in the station position
-		  				cp.setLatitude(s.getLatitude());
-		  				cp.setLongitude(s.getLongitude());
-		  				stop.getRun().updateCpSpatialIndex(cp);		  				
-		  			}
-		  		}
-	  		}
+//	  		for(Stop stop : s.getAllStops()){
+//		  		for(Relationship rel : stop.getUnderlyingNode().getRelationships(RelTypes.CHECKPOINTFROM, Direction.INCOMING)){
+//		  			CheckPoint cp = new CheckPoint(rel.getStartNode());
+//		  			if(cp.getTowards().equals(stop)){	// checkpoint in the station position
+//		  				cp.setLatitude(s.getLatitude());
+//		  				cp.setLongitude(s.getLongitude());
+//		  				stop.getRun().updateCpSpatialIndex(cp);		  				
+//		  			}
+//		  		}
+//	  		}
 	  	} else {		// create
 	  		s = new StationImporter(
 		  			  DbConnection.getDb().createNode(), 
@@ -192,7 +195,13 @@ public class Stations {
     	// if an id already exists then updates the corresponding db record
 
     	for(boa.server.importer.json.Station s : stations.stationsObjectsList){
-    		createOrUpdateStation(s);
+    		Transaction tx = DbConnection.getDb().beginTx();
+    		try{
+    			createOrUpdateStation(s);
+    			tx.success();
+    		}finally{
+    			tx.finish();			
+    		}  
     	}
 	}	
     

@@ -102,7 +102,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}") 
-    public Response getRoute(@PathParam("id") Integer id) throws IOException{
+    public Response getRoute(@PathParam("id") Long id) throws IOException{
     	
     	log.write("\nroutes/" + id);
         log.flush();
@@ -123,7 +123,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallruns")
-    public Response getAllRuns(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllRuns(@PathParam("id") Long id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         if ( id == null)
         	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
         
@@ -155,7 +155,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallstations")
-    public Response getAllStations(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllStations(@PathParam("id") Long id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         if ( id == null)
         	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
         

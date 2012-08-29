@@ -6,6 +6,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -65,7 +66,10 @@ public class Routes {
 		r.getUnderlyingNode().delete();
     }
     
-    public Route getRouteById(long id){
+    public Route getRouteById(Long id){
+    	if(id == null)
+    		return null;
+    	
         IndexHits<Node> result = routesIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
@@ -125,7 +129,13 @@ public class Routes {
     	// if an id already exists then updates the corresponding db record
 
     	for(boa.server.importer.json.Route r : routes.routesObjectsList){
-    		createOrUpdateRoute(r);
+    		Transaction tx = DbConnection.getDb().beginTx();
+    		try{
+    			createOrUpdateRoute(r);
+    			tx.success();
+    		}finally{
+    			tx.finish();			
+    		}  
     	}
 	}	    
 }

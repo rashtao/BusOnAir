@@ -319,13 +319,7 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stations/bulkimport")            
     public Response bulkImportStations(final boa.server.importer.json.Stations  input) throws IOException {
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			Stations.getStations().createOrUpdateStations(input);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   			        
+		Stations.getStations().createOrUpdateStations(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
@@ -351,13 +345,7 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/routes/bulkimport")            
     public Response bulkImportRoutes(final boa.server.importer.json.Routes input) throws IOException {
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			Routes.getRoutes().createOrUpdateRoutes(input);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   			        
+		Routes.getRoutes().createOrUpdateRoutes(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
@@ -384,13 +372,7 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/runs/bulkimport")            
     public Response bulkImportRuns(final boa.server.importer.json.Runs  input) throws IOException {
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			Runs.getRuns().createOrUpdateRuns(input);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   			        
+		Runs.getRuns().createOrUpdateRuns(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
@@ -425,13 +407,7 @@ public class BackEndResource{
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stops/bulkimport")            
     public Response bulkImportStops(final boa.server.importer.json.Stops  input) throws IOException {
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			Stops.getStops().createOrUpdateStops(input);
-			tx.success();
-		}finally{
-			tx.finish();			
-		}   			        
+		Stops.getStops().createOrUpdateStops(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   

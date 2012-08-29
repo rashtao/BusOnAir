@@ -467,7 +467,10 @@ public class Run {
 		return output;
     }    
 
-	public CheckPoint getCheckPointById(long id) {
+	public CheckPoint getCheckPointById(Long id) {
+			if(id == null)
+				return null;
+			
 	        IndexHits<Node> result = cpIndex.get("id", id);
 	        Node n = result.getSingle();
 	        result.close();

@@ -3,6 +3,7 @@ package boa.server.domain;
 import java.util.ArrayList;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -72,6 +73,9 @@ public class Runs {
     }
     
     public Run getRunById(Integer id){
+    	if(id == null)
+    		return null;
+    	
         IndexHits<Node> result = runsIndex.get("id", id);
         Node n = result.getSingle();
         result.close();
@@ -127,7 +131,7 @@ public class Runs {
     	// if the id already exists then updates the corresponding db record
 
     	Run r = Runs.getRuns().getRunById(jr.getId());
-	  	if(r != null){	// update
+	  	if(r != null){	// update	  		
 	  		Route oldRoute = r.getRoute();
 	  		oldRoute.removeRun(r);
 	  	} else {		// create
@@ -135,9 +139,11 @@ public class Runs {
 	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId());
 	    	addRun(r);
-	  	}
-	  		  	
-  		r.setRoute(Routes.getRoutes().getRouteById(jr.getRoute()));
+    	}
+	  	    	
+	  	Route route = Routes.getRoutes().getRouteById(jr.getRoute());
+	  	route.addRun(r);
+  		r.setRoute(route);
   		r.setFirstStop(Stops.getStops().getStopById(jr.getFirstStop()));
   		r.setFirstCheckPoint(r.getCheckPointById(jr.getFirstCheckPoint()));
 	  	return r;
@@ -148,7 +154,13 @@ public class Runs {
     	// if an id already exists then updates the corresponding db record
 
     	for(boa.server.importer.json.Run r : runs.runsObjectsList){
-    		createOrUpdateRun(r);
+    		Transaction tx = DbConnection.getDb().beginTx();
+    		try{
+    			createOrUpdateRun(r);
+    			tx.success();
+    		}finally{
+    			tx.finish();			
+    		}  
     	}
 	}	
         

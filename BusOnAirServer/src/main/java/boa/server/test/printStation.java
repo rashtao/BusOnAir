@@ -27,7 +27,7 @@ public class printStation {
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
 		
-		Station s = Stations.getStations().getStationById(34);
+		Station s = Stations.getStations().getStationById((long) 34);
 		
 		Stop fs = s.getFirstStopFromTime(0);
 

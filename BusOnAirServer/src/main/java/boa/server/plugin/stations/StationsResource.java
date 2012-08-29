@@ -133,7 +133,7 @@ public class StationsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}")
-    public Response getStation(@PathParam("id") Integer id) throws IOException{
+    public Response getStation(@PathParam("id") Long id) throws IOException{
     	
     	log.write("\nstations/" + id);
         log.flush();
@@ -159,7 +159,7 @@ public class StationsResource
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getfirststopfrom")
     public Response getFirstStopFrom(
-    		@PathParam("id") Integer id,
+    		@PathParam("id") Long id,
     		@QueryParam("time") Integer time) throws IOException{
     	
     	log.write("\ngetfirststopfrom/" + id);
@@ -186,7 +186,7 @@ public class StationsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallroutes")
-    public Response getAllRoutes(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllRoutes(@PathParam("id") Long id, @QueryParam( "objects" ) Boolean obj) throws IOException{
 
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         
@@ -216,7 +216,7 @@ public class StationsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallstops")
-    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllStops(@PathParam("id") Long id, @QueryParam( "objects" ) Boolean obj) throws IOException{
 
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         

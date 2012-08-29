@@ -71,8 +71,8 @@ public class ShortestPath8 {
 //            Station s1 = Stations.getStations().getStationById(70);
 //            Station s2 = Stations.getStations().getStationById(1);
                 
-            Station s1 = Stations.getStations().getStationById(22);
-            Station s2 = Stations.getStations().getStationById(33);
+            Station s1 = Stations.getStations().getStationById((long) 22);
+            Station s2 = Stations.getStations().getStationById((long) 33);
                 
             log.write("\ns1: " + s1);
             log.write("\ns2: " + s2);
