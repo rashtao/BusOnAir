@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "station" )
 public class Station
 {
-    private long id;
+    private int id;
     private String name;
     private Coordinate latLon;
     private String url;
@@ -15,7 +15,7 @@ public class Station
     {
     }
 
-    public Station( long id, String name, Coordinate latLon )
+    public Station( int id, String name, Coordinate latLon )
     {
     	super();
         this.id = id;
@@ -29,11 +29,11 @@ public class Station
    		setUrl(s.getUrl());
     }
     
-    public long getId(){
+    public int getId(){
     	return id;
     }
     
-    public void setId(long id){
+    public void setId(int id){
     	this.id = id;
     }
     

@@ -28,7 +28,7 @@ public class ImportTest {
 		
 //		Transaction tx = DbConnection.getDb().beginTx();
 //		try{
-//			long id = 1051;
+//			int id = 1051;
 //			boa.server.domain.importer.Station js = new boa.server.domain.importer.Station(id, "Piazza Duomo", new Coordinate(88.352, 14.349));
 //			Stations.getStations().createStation(js);
 //			tx.success();
@@ -41,9 +41,9 @@ public class ImportTest {
 //		Route addded = null;
 //		Transaction tx = DbConnection.getDb().beginTx();
 //		try{
-//			Long id = (long) 1051;
-//			Long from = (long) 15;
-//			Long towards = (long) 22;
+//			Integer id = 1051;
+//			Integer from = 15;
+//			Integer towards = 22;
 //			boa.server.importer.json.Route jr = new boa.server.importer.json.Route(id, "199BIS", from, towards);
 //			addded = Routes.getRoutes().createOrUpdateRoute(jr);
 //			tx.success();

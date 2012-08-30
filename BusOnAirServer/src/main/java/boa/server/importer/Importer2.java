@@ -41,7 +41,7 @@ public class Importer2 {
 		readData = XMLReader.readStations();
 		
 		// --- STATIONS CREATION ---
-		Map<Long, Station> stationsById = new LinkedHashMap<Long, Station>();
+		Map<Integer, Station> stationsById = new LinkedHashMap<Integer, Station>();
 		for (StationSql station : readData.getStationList()){
 			//System.out.print("\n" + station);
 			Station jsStation = station.toJSON();
@@ -61,8 +61,8 @@ public class Importer2 {
 		}	
 		
 		// routesById LinkedHashMap creation
-		long i = 0;
-		Map<Long, Route> routesById = new LinkedHashMap<Long, Route>();
+		int i = 0;
+		Map<Integer, Route> routesById = new LinkedHashMap<Integer, Route>();
 		for (Route route : routes.values()){
 			route.setId(i);
 			routesById.put(i, route);
@@ -95,7 +95,7 @@ public class Importer2 {
 			stop.setId(Integer.parseInt(current.Id_Stop));
 			stop.setRun(runs.get(current.runcode).getId());
 			stop.setStaticTime(current.getMinutesFromMidn());
-			stop.setStation((long) current.src);
+			stop.setStation(current.src);
 			stopsById.put(stop.getId(), stop);
 		}
 		

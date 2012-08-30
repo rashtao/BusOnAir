@@ -97,7 +97,7 @@ public class Stations {
     	s.getUnderlyingNode().delete();    	
     }
            
-	public Station getStationById(Long id){
+	public Station getStationById(Integer id){
 		if(id == null)
 			return null;
 		

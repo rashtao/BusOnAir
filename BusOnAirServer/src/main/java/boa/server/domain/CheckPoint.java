@@ -19,7 +19,7 @@ public class CheckPoint {
     	underlyingNode = node;
     }  
 
-	public CheckPoint(Node node, double lat, double lon, long dt) {
+	public CheckPoint(Node node, double lat, double lon, int dt) {
 		underlyingNode = node;
         setLatitude(lat);
         setLongitude(lon);
@@ -27,8 +27,8 @@ public class CheckPoint {
         setType();
     }   
 
-	public Long getId(){
-        return underlyingNode.getId();
+	public Integer getId(){
+        return (int) underlyingNode.getId();
     }
 
     public String getType() {
@@ -61,12 +61,12 @@ public class CheckPoint {
     	underlyingNode.setProperty(CheckPoint.LONGITUDE, lng);
     }
 
-    public void setDt(long dt) {
+    public void setDt(int dt) {
     	 underlyingNode.setProperty(CheckPoint.DT, dt);
 	}
     
-	public Long getDt(){
-		return (Long) underlyingNode.getProperty(CheckPoint.DT);
+	public Integer getDt(){
+		return (Integer) underlyingNode.getProperty(CheckPoint.DT);
     }
 
     public CheckPoint getNextCheckPoint(){
@@ -124,7 +124,7 @@ public class CheckPoint {
     	return (int) (getTowards().getTime() - Math.round(getDt()/60.0));
     }
 
-    public long getTimeInSeconds(){
+    public int getTimeInSeconds(){
     	return getTowards().getTime()*60 - getDt();
     }
 

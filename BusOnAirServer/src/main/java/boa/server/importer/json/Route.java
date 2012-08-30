@@ -5,17 +5,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "route" )
 public class Route
 {
-    private Long id;
+    private Integer id;
     private String line;
-    private Long from;
-    private Long towards;
+    private Integer from;
+    private Integer towards;
 
     
     public Route(){
     }
 
     
-	public Route(Long id, String line, Long from, Long towards) {
+	public Route(Integer id, String line, Integer from, Integer towards) {
 		super();
 		this.id = id;
 		this.line = line;
@@ -24,12 +24,12 @@ public class Route
 	}
 
 	
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -44,22 +44,22 @@ public class Route
 	}
 
 
-	public Long getFrom() {
+	public Integer getFrom() {
 		return from;
 	}
 
 
-	public void setFrom(Long from) {
+	public void setFrom(Integer from) {
 		this.from = from;
 	}
 
 
-	public Long getTowards() {
+	public Integer getTowards() {
 		return towards;
 	}
 
 
-	public void setTowards(Long towards) {
+	public void setTowards(Integer towards) {
 		this.towards = towards;
 	}
     

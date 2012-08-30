@@ -17,7 +17,7 @@ public class StopInStations {
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
 		
-		Station staz = Stations.getStations().getStationById((long) 132);
+		Station staz = Stations.getStations().getStationById(132);
 		
 		System.out.print("\n\nstaz.getAllStops():");
 		for(Stop s : staz.getAllStops()){

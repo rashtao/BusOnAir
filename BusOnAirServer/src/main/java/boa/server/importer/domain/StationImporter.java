@@ -8,7 +8,7 @@ import boa.server.domain.Station;
 public class StationImporter extends Station {
 
 	
-    public StationImporter(Node node, long id, String name, double latitude, double longitude, boolean isSchool, boolean isTerminal){
+    public StationImporter(Node node, int id, String name, double latitude, double longitude, boolean isSchool, boolean isTerminal){
     	super();
     	underlyingNode = node;
         setId(id);
@@ -22,11 +22,11 @@ public class StationImporter extends Station {
     }   
 
 
-    public StationImporter(Node node, long id, String name, double latitude, double longitude){
+    public StationImporter(Node node, int id, String name, double latitude, double longitude){
         this(node, id, name, latitude, longitude, false, false);
     }   
 
-    public StationImporter(Node node, long id, String name){
+    public StationImporter(Node node, int id, String name){
         this(node, id, name, 0, 0, false, false);
     }      
 }

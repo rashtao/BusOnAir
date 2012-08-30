@@ -125,8 +125,8 @@ public class RunsResource{
     @Path("/{id}/rt/checkpointpass")
     public Response checkPointPass(
     		@PathParam("id") Integer id,
-    		@QueryParam( "checkpointid" ) Long checkpointid,
-    		@QueryParam( "time" ) Long time) throws IOException{
+    		@QueryParam( "checkpointid" ) Integer checkpointid,
+    		@QueryParam( "time" ) Integer time) throws IOException{
         
         if ( id == null || checkpointid == null || time == null )
         	return Response.ok().entity(new boa.server.json.Response(400, "id, checkpointid, time cannot be blank")).build();
@@ -202,7 +202,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/checkpoints/{idcp}")
-    public Response getCheckPointById(@PathParam("id") Integer id, @PathParam("idcp") Long idcp) throws IOException{
+    public Response getCheckPointById(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
     	
     	log.write("\ngetCheckPointById/" + id);
         log.flush();
@@ -226,7 +226,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/checkpoints/{idcp}/gettime")
-    public Response getCheckPointTime(@PathParam("id") Integer id, @PathParam("idcp") Long idcp) throws IOException{
+    public Response getCheckPointTime(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -344,7 +344,7 @@ public class RunsResource{
     @Path("/{id}/rt/updateposition")
     public Response updatePosition(
     		@PathParam("id") Integer id,
-    		@QueryParam( "time" ) Long time,
+    		@QueryParam( "time" ) Integer time,
     		@QueryParam( "lat" ) Double lat,
     		@QueryParam( "lon" ) Double lon) throws IOException{
     	
@@ -365,7 +365,7 @@ public class RunsResource{
     @Path("/{id}/rt/addcheckpoint")
     public Response addCheckPoint(
     		@PathParam("id") Integer id,
-    		@QueryParam( "time" ) Long time,
+    		@QueryParam( "time" ) Integer time,
     		@QueryParam( "lat" ) Double lat,
     		@QueryParam( "lon" ) Double lon) throws IOException{
     	

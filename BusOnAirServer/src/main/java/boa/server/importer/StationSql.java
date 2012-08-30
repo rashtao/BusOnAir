@@ -12,7 +12,7 @@ public class StationSql {
         
     
     public Station toJSON(){
-    	return new Station((long) Id_Station, name, new Coordinate(lat, lng));  
+    	return new Station(Id_Station, name, new Coordinate(lat, lng));  
     }
     
     @Override

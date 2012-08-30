@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "route" )
 public class Route
 {
-    private long id;
+    private int id;
     private String line;
     private String from;
     private String towards;
@@ -16,7 +16,7 @@ public class Route
     {
     }
 
-    private Route( long id, String line)
+    private Route( int id, String line)
     {
         this.id = id;
         this.line = line;
@@ -30,11 +30,11 @@ public class Route
     	setUrl(r.getUrl());
     }
     
-    public long getId(){
+    public int getId(){
     	return id;
     }
     
-    public void setId(long id){
+    public void setId(int id){
     	this.id = id;
     }
     

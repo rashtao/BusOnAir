@@ -6,22 +6,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Time
 {
 
-    private long time;
+    private int time;
 
     public Time(){
 		super();
 	}
 
-	public Time(long time) {
+	public Time(int time) {
 		super();
 		this.time = time;
 	}
 
-	public long getTime() {
+	public int getTime() {
 		return time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(int time) {
 		this.time = time;
 	}
 

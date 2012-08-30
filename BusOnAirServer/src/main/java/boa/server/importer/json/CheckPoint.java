@@ -3,19 +3,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "checkpoint" )
 public class CheckPoint {
-    private Long id;
-    private Long dt;
+    private Integer id;
+    private Integer dt;
     private Coordinate latLon;
     private Integer from;
     private Integer towards;
-    private Long next;
-    private Long prev;
+    private Integer next;
+    private Integer prev;
 
 	public CheckPoint() {
 	}
 
-	public CheckPoint(Long id, Long dt, Coordinate latLon, Integer from,
-			Integer towards, Long next, Long prev) {
+	public CheckPoint(Integer id, Integer dt, Coordinate latLon, Integer from,
+			Integer towards, Integer next, Integer prev) {
 		super();
 		this.id = id;
 		this.dt = dt;
@@ -26,19 +26,19 @@ public class CheckPoint {
 		this.prev = prev;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Long getDt() {
+	public Integer getDt() {
 		return dt;
 	}
 
-	public void setDt(Long dt) {
+	public void setDt(Integer dt) {
 		this.dt = dt;
 	}
 
@@ -66,19 +66,19 @@ public class CheckPoint {
 		this.towards = towards;
 	}
 
-	public Long getNext() {
+	public Integer getNext() {
 		return next;
 	}
 
-	public void setNext(Long next) {
+	public void setNext(Integer next) {
 		this.next = next;
 	}
 
-	public Long getPrev() {
+	public Integer getPrev() {
 		return prev;
 	}
 
-	public void setPrev(Long prev) {
+	public void setPrev(Integer prev) {
 		this.prev = prev;
 	}
 

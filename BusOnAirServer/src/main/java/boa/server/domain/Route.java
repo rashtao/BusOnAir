@@ -36,11 +36,11 @@ public class Route {
     	runIndex.delete();
     }
     
-    public Long getId(){
-        return (Long) underlyingNode.getProperty(ID);
+    public Integer getId(){
+        return (Integer) underlyingNode.getProperty(ID);
     }
     
-    public void setId(long id){
+    public void setId(int id){
         underlyingNode.setProperty(Route.ID, id);
     }
         

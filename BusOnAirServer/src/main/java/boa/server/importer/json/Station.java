@@ -6,14 +6,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( name = "station" )
 public class Station
 {
-    private Long id;
+    private Integer id;
     private String name;
     private Coordinate latLon;
 
     public Station(){
     }
 
-    public Station( Long id, String name, Coordinate latLon )
+    public Station( Integer id, String name, Coordinate latLon )
     {
     	super();
         this.id = id;
@@ -26,11 +26,11 @@ public class Station
    		this(s.getId(), s.getName(), new Coordinate(s.getLatitude(), s.getLongitude()));
     }
     
-    public Long getId(){
+    public Integer getId(){
     	return id;
     }
     
-    public void setId(Long id){
+    public void setId(Integer id){
     	this.id = id;
     }
     

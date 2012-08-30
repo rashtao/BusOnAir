@@ -66,7 +66,7 @@ public class Routes {
 		r.getUnderlyingNode().delete();
     }
     
-    public Route getRouteById(Long id){
+    public Route getRouteById(Integer id){
     	if(id == null)
     		return null;
     	

@@ -21,7 +21,7 @@ public class StopImporter extends Stop {
     	setId(id);
     }  
     
-    public StopImporter(Node node, int id, int time, long idStation, int idRun, String line){
+    public StopImporter(Node node, int id, int time, int idStation, int idRun, String line){
         this(node, id);
         setTime(time);	    
         setType();

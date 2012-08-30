@@ -14,14 +14,14 @@ public class RouteImporter extends Route {
     protected static int runCount = 0;
     
 	public RouteImporter(Node node, String line){
-		this(node, node.getId(), line, null, null);
+		this(node, (int) node.getId(), line, null, null);
 	}   
 	
     public RouteImporter(Route r) {
 		super(r.getUnderlyingNode());
 	}
 
-	public RouteImporter(Node node, long id, String line, Long from, Long towards){
+	public RouteImporter(Node node, int id, String line, Integer from, Integer towards){
 		super();
         underlyingNode = node;
         setLine(line);

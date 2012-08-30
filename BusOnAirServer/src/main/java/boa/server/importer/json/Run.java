@@ -6,14 +6,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Run
 {
     private Integer id;
-    private Long route;
+    private Integer route;
     private Integer firstStop;
-    private Long firstCheckPoint;
+    private Integer firstCheckPoint;
         
 	public Run() {
 	}
 
-	public Run(Integer id, Long route, Integer firstStop, Long firstCheckPoint) {
+	public Run(Integer id, Integer route, Integer firstStop, Integer firstCheckPoint) {
 		super();
 		this.id = id;
 		this.route = route;
@@ -29,11 +29,11 @@ public class Run
 		this.id = id;
 	}
 
-	public Long getRoute() {
+	public Integer getRoute() {
 		return route;
 	}
 
-	public void setRoute(Long route) {
+	public void setRoute(Integer route) {
 		this.route = route;
 	}
 
@@ -45,11 +45,11 @@ public class Run
 		this.firstStop = firstStop;
 	}
 
-	public Long getFirstCheckPoint() {
+	public Integer getFirstCheckPoint() {
 		return firstCheckPoint;
 	}
 
-	public void setFirstCheckPoint(Long firstCheckPoint) {
+	public void setFirstCheckPoint(Integer firstCheckPoint) {
 		this.firstCheckPoint = firstCheckPoint;
 	}    
 	
