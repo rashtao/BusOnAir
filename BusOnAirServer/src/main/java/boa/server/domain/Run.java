@@ -646,6 +646,7 @@ public class Run {
 	public void createAllCheckPoints(){
 		// delete all checkpoints and
 		// creates CheckPoints corresponding to Stops positions
+		// no intermediate CheckPoints are created
 		
 		for(CheckPoint cp : getAllCheckPoints()){
 			deleteCheckPoint(cp);

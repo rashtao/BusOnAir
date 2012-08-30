@@ -150,7 +150,7 @@ public class Importer2 {
 		boa.server.domain.Runs.getRuns().createOrUpdateRuns(runsDb);
 		System.out.print("\n ----- 1");
 		
-		System.out.print("\n ----- Importing " + stopsDb.stopsObjectsList.size() + "stops");
+		System.out.print("\n \t\t\t...importing " + stopsDb.stopsObjectsList.size() + " stops...");
 		boa.server.domain.Stops.getStops().createOrUpdateStops(stopsDb);
 		System.out.print("\n ----- 2");
 		
@@ -160,7 +160,16 @@ public class Importer2 {
 		boa.server.domain.Runs.getRuns().createOrUpdateRuns(runsDb);
 		System.out.print("\n ----- 4");
 		
-		
+		// CHECKPOINTS CREATION
+		for(boa.server.domain.Run r : boa.server.domain.Runs.getRuns().getAll()){
+    		Transaction tx = DbConnection.getDb().beginTx();
+    		try{
+    			r.createAllCheckPoints();
+    			tx.success();
+    		}finally{
+    			tx.finish();			
+    		}       		
+		}
 		
 		
 		
