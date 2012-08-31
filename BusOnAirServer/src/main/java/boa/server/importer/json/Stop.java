@@ -27,6 +27,15 @@ public class Stop
 		this.run = run;
 	}
 
+    public Stop( boa.server.domain.Stop s ){
+   		this(	s.getId(), 
+   				s.getStaticTime(), 
+   				s.getNextInRun() != null ? s.getNextInRun().getId() : null, 
+				s.getPrevInRun() != null ? s.getPrevInRun().getId() : null, 
+   				s.getStation().getId(),
+   				s.getRun().getId());
+    }
+    
 	public Integer getId() {
 		return id;
 	}

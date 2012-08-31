@@ -27,13 +27,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import boa.server.domain.*;
+
 import static org.neo4j.server.configuration.Configurator.DATABASE_LOCATION_PROPERTY_KEY;
 
 @Path("/cleandb")
 public class CleanDBResource {
 
     private static final String CONFIG_DELETE_AUTH_KEY = "org.neo4j.server.thirdparty.delete.key";
-    public static final long MAX_NODES_TO_DELETE = 1000;
+    public static final long MAX_NODES_TO_DELETE = 0;
     private final Database database;
     private Configuration config;
     private Logger log = Logger.getLogger(CleanDBResource.class.getName());
@@ -59,7 +61,9 @@ public class CleanDBResource {
                 result.putAll(cleanDbDirectory(database));
             }
             log.warning("Deleted Database: " + result);
-            return Response.status(Status.OK).entity(JsonHelper.createJsonFrom(result)).build();
+//            return Response.status(Status.OK).entity(JsonHelper.createJsonFrom(result)).build();
+            boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+            return Response.ok().entity(jr).build();   
         } catch (Throwable e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonHelper.createJsonFrom(e.getMessage())).build();
         }
@@ -79,11 +83,11 @@ public class CleanDBResource {
         database.graph = new EmbeddedGraphDatabase(storeDir, graph.getKernelData().getConfigParams());
 //        database.startup();
 
-        boa.server.domain.Stations.destroy();
-        boa.server.domain.Routes.destroy();
-        boa.server.domain.Stops.destroy();
-        boa.server.domain.Runs.destroy();
-        boa.server.domain.DbConnection.destroy();
+        Stations.destroy();
+        Routes.destroy();
+        Stops.destroy();
+        Runs.destroy();
+        DbConnection.destroy();
 //        boa.server.domain.DbConnection.createDbConnection(database);   
         
         return result;

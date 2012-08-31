@@ -21,6 +21,10 @@ public class Run
 		this.firstCheckPoint = firstCheckPoint;
 	}
 
+    public Run( boa.server.domain.Run r ){
+   		this(r.getId(), r.getRoute().getId(), r.getFirstStop().getId(), r.getFirstCheckPoint().getId());
+    }
+    
 	public Integer getId() {
 		return id;
 	}

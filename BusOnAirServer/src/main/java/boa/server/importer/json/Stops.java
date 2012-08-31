@@ -1,21 +1,21 @@
 package boa.server.importer.json;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "List" )
 public class Stops{
     public List<Stop> stopsObjectsList;
 
-	public Stops() {};
+	public Stops() {
+		stopsObjectsList = new LinkedList<Stop>();
+	};
 
 	public Stops(Collection<Stop> stopsObjectsList) {
 		super();
-		this.stopsObjectsList = (stopsObjectsList != null) ? new LinkedList<Stop>(stopsObjectsList) : null;
+		this.stopsObjectsList = (stopsObjectsList != null) ? new LinkedList<Stop>(stopsObjectsList) : new LinkedList<Stop>();
 	}
 }

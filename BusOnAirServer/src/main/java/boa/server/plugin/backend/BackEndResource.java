@@ -420,5 +420,133 @@ public class BackEndResource{
         return Response.ok().entity(jr).build();   
     }
     
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/checkpoints/bulkcreation" )
+    public Response bulkCreationCheckPoints() throws IOException{        
+
+    	for(Run run : Runs.getRuns().getAll()){
+			Transaction tx = DbConnection.getDb().beginTx();
+			try{
+		        run.createAllCheckPoints();	        
+				tx.success();
+			}finally{
+				tx.finish();			
+			}    	
+    	}
+    	
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }
     
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/stations/exportall" )
+    public Response exportAllStations() throws IOException{        
+
+    	boa.server.importer.json.Stations output = new boa.server.importer.json.Stations();
+    	for(Station s : Stations.getStations().getAll()){
+    		boa.server.importer.json.Station jsStation = new boa.server.importer.json.Station(s);    		
+    		output.stationsObjectsList.add(jsStation);
+    	}
+    	
+        return Response.ok().entity(output).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/routes/exportall" )
+    public Response exportAllRoutes() throws IOException{        
+
+    	boa.server.importer.json.Routes output = new boa.server.importer.json.Routes();
+    	for(Route r : Routes.getRoutes().getAll()){
+    		boa.server.importer.json.Route jsRoute = new boa.server.importer.json.Route(r);    		
+    		output.routesObjectsList.add(jsRoute);
+    	}
+    	
+        return Response.ok().entity(output).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/runs/exportall" )
+    public Response exportAllRuns() throws IOException{        
+
+    	boa.server.importer.json.Runs output = new boa.server.importer.json.Runs();
+    	for(Run r : Runs.getRuns().getAll()){
+    		boa.server.importer.json.Run jsRun = new boa.server.importer.json.Run(r);    		
+    		output.runsObjectsList.add(jsRun);
+    	}
+    	
+        return Response.ok().entity(output).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/stops/exportall" )
+    public Response exportAllStops() throws IOException{        
+
+    	boa.server.importer.json.Stops output = new boa.server.importer.json.Stops();
+    	for(Stop s : Stops.getStops().getAll()){
+    		boa.server.importer.json.Stop jsStop = new boa.server.importer.json.Stop(s);    		
+    		output.stopsObjectsList.add(jsStop);
+    	}
+    	
+        return Response.ok().entity(output).build();   
+    }
+    
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/exportall" )
+    public Response exportAll() throws IOException{        
+
+    	boa.server.importer.json.Stations stations = new boa.server.importer.json.Stations();
+    	for(Station s : Stations.getStations().getAll()){
+    		boa.server.importer.json.Station jsStation = new boa.server.importer.json.Station(s);    		
+    		stations.stationsObjectsList.add(jsStation);
+    	}
+    	
+    	boa.server.importer.json.Routes routes = new boa.server.importer.json.Routes();
+    	for(Route r : Routes.getRoutes().getAll()){
+    		boa.server.importer.json.Route jsRoute = new boa.server.importer.json.Route(r);    		
+    		routes.routesObjectsList.add(jsRoute);
+    	}
+
+    	boa.server.importer.json.Runs runs = new boa.server.importer.json.Runs();
+    	for(Run r : Runs.getRuns().getAll()){
+    		boa.server.importer.json.Run jsRun = new boa.server.importer.json.Run(r);    		
+    		runs.runsObjectsList.add(jsRun);
+    	}
+    	
+    	boa.server.importer.json.Stops stops = new boa.server.importer.json.Stops();
+    	for(Stop s : Stops.getStops().getAll()){
+    		boa.server.importer.json.Stop jsStop = new boa.server.importer.json.Stop(s);    		
+    		stops.stopsObjectsList.add(jsStop);
+    	}
+
+    	boa.server.importer.json.BoaData output = new boa.server.importer.json.BoaData();
+    	output.setStations(stations);
+    	output.setRoutes(routes);
+    	output.setRuns(runs);
+    	output.setStops(stops);
+    	
+        return Response.ok().entity(output).build();   
+    }
+
+    @POST @Consumes("application/json")
+    @Produces( MediaType.APPLICATION_JSON )    
+    @Path("/bulkimportall")            
+    public Response bulkImportAll(final boa.server.importer.json.BoaData input) throws IOException {
+		Stations.getStations().createOrUpdateStations(input.getStations());
+        Routes.getRoutes().createOrUpdateRoutes(input.getRoutes());
+        Runs.getRuns().createOrUpdateRuns(input.getRuns());
+        Stops.getStops().createOrUpdateStops(input.getStops());
+        Stops.getStops().createOrUpdateStops(input.getStops());
+        Runs.getRuns().createOrUpdateRuns(input.getRuns());
+        
+        bulkCreationCheckPoints();
+        
+        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        return Response.ok().entity(jr).build();   
+    }    
 }

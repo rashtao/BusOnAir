@@ -23,6 +23,9 @@ public class Route
 		this.towards = towards;
 	}
 
+    public Route( boa.server.domain.Route r ){
+   		this(r.getId(), r.getLine(), r.getFrom().getId(), r.getTowards().getId());
+    }	
 	
 	public Integer getId() {
 		return id;
