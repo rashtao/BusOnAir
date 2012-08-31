@@ -67,7 +67,7 @@ public class Stops {
         return output;
     }
     
-    public Stop createOrUpdateStop(boa.server.importer.json.Stop js){
+    public Stop createOrUpdateStop(boa.server.plugin.backend.json.Stop js){
 		// creates a new stop having the specified id
     	// if the id already exists then updates the corresponding db record
 
@@ -106,11 +106,11 @@ public class Stops {
 	  	return s;
 	}	
 
-    public void createOrUpdateStops(boa.server.importer.json.Stops stops){
+    public void createOrUpdateStops(boa.server.plugin.backend.json.Stops stops){
 		// creates new stops having the specified ids
     	// if an id already exists then updates the corresponding db record
 
-    	for(boa.server.importer.json.Stop s : stops.stopsObjectsList){
+    	for(boa.server.plugin.backend.json.Stop s : stops.stopsObjectsList){
     		Transaction tx = DbConnection.getDb().beginTx();
     		try{
     			createOrUpdateStop(s);

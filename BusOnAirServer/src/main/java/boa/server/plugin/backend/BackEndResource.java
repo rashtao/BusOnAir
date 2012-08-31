@@ -268,7 +268,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stations/createorupdate")
-    public Response createOrUpdateStation(final boa.server.importer.json.Station  input) throws IOException {        
+    public Response createOrUpdateStation(final boa.server.plugin.backend.json.Station  input) throws IOException {        
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stations.getStations().createOrUpdateStation(input);
@@ -285,7 +285,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stations/bulkimport")            
-    public Response bulkImportStations(final boa.server.importer.json.Stations  input) throws IOException {
+    public Response bulkImportStations(final boa.server.plugin.backend.json.Stations  input) throws IOException {
 		Stations.getStations().createOrUpdateStations(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
@@ -295,7 +295,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/routes/createorupdate" )
-    public Response createOrUpdateRoute(final boa.server.importer.json.Route  input) throws IOException{        
+    public Response createOrUpdateRoute(final boa.server.plugin.backend.json.Route  input) throws IOException{        
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Routes.getRoutes().createOrUpdateRoute(input);
@@ -311,7 +311,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/routes/bulkimport")            
-    public Response bulkImportRoutes(final boa.server.importer.json.Routes input) throws IOException {
+    public Response bulkImportRoutes(final boa.server.plugin.backend.json.Routes input) throws IOException {
 		Routes.getRoutes().createOrUpdateRoutes(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
@@ -321,7 +321,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/runs/createorupdate" )
-    public Response createOrUpdateRun(final boa.server.importer.json.Run  input) throws IOException{        
+    public Response createOrUpdateRun(final boa.server.plugin.backend.json.Run  input) throws IOException{        
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Runs.getRuns().createOrUpdateRun(input);
@@ -338,7 +338,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/runs/bulkimport")            
-    public Response bulkImportRuns(final boa.server.importer.json.Runs  input) throws IOException {
+    public Response bulkImportRuns(final boa.server.plugin.backend.json.Runs  input) throws IOException {
 		Runs.getRuns().createOrUpdateRuns(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
@@ -348,7 +348,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/stops/createorupdate" )
-    public Response createOrUpdateStop(final boa.server.importer.json.Stop  input) throws IOException{        
+    public Response createOrUpdateStop(final boa.server.plugin.backend.json.Stop  input) throws IOException{        
 		// staticTime check 
     	int st = input.getStaticTime();
     	Stop prev = Stops.getStops().getStopById(input.getPrevInRun());
@@ -373,7 +373,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stops/bulkimport")            
-    public Response bulkImportStops(final boa.server.importer.json.Stops  input) throws IOException {
+    public Response bulkImportStops(final boa.server.plugin.backend.json.Stops  input) throws IOException {
 		Stops.getStops().createOrUpdateStops(input);
         
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
@@ -383,7 +383,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/runs/{id}/checkpoints/createorupdate" )
-    public Response createOrUpdateCheckPoint(@PathParam("id") Integer id, final boa.server.importer.json.CheckPoint  input) throws IOException{        
+    public Response createOrUpdateCheckPoint(@PathParam("id") Integer id, final boa.server.plugin.backend.json.CheckPoint  input) throws IOException{        
 	
         Run run = Runs.getRuns().getRunById(id);
         if(run == null)
@@ -447,9 +447,9 @@ public class BackEndResource{
     @Path( "/stations/exportall" )
     public Response exportAllStations() throws IOException{        
 
-    	boa.server.importer.json.Stations output = new boa.server.importer.json.Stations();
+    	boa.server.plugin.backend.json.Stations output = new boa.server.plugin.backend.json.Stations();
     	for(Station s : Stations.getStations().getAll()){
-    		boa.server.importer.json.Station jsStation = new boa.server.importer.json.Station(s);    		
+    		boa.server.plugin.backend.json.Station jsStation = new boa.server.plugin.backend.json.Station(s);    		
     		output.stationsObjectsList.add(jsStation);
     	}
     	
@@ -461,9 +461,9 @@ public class BackEndResource{
     @Path( "/routes/exportall" )
     public Response exportAllRoutes() throws IOException{        
 
-    	boa.server.importer.json.Routes output = new boa.server.importer.json.Routes();
+    	boa.server.plugin.backend.json.Routes output = new boa.server.plugin.backend.json.Routes();
     	for(Route r : Routes.getRoutes().getAll()){
-    		boa.server.importer.json.Route jsRoute = new boa.server.importer.json.Route(r);    		
+    		boa.server.plugin.backend.json.Route jsRoute = new boa.server.plugin.backend.json.Route(r);    		
     		output.routesObjectsList.add(jsRoute);
     	}
     	
@@ -475,9 +475,9 @@ public class BackEndResource{
     @Path( "/runs/exportall" )
     public Response exportAllRuns() throws IOException{        
 
-    	boa.server.importer.json.Runs output = new boa.server.importer.json.Runs();
+    	boa.server.plugin.backend.json.Runs output = new boa.server.plugin.backend.json.Runs();
     	for(Run r : Runs.getRuns().getAll()){
-    		boa.server.importer.json.Run jsRun = new boa.server.importer.json.Run(r);    		
+    		boa.server.plugin.backend.json.Run jsRun = new boa.server.plugin.backend.json.Run(r);    		
     		output.runsObjectsList.add(jsRun);
     	}
     	
@@ -489,9 +489,9 @@ public class BackEndResource{
     @Path( "/stops/exportall" )
     public Response exportAllStops() throws IOException{        
 
-    	boa.server.importer.json.Stops output = new boa.server.importer.json.Stops();
+    	boa.server.plugin.backend.json.Stops output = new boa.server.plugin.backend.json.Stops();
     	for(Stop s : Stops.getStops().getAll()){
-    		boa.server.importer.json.Stop jsStop = new boa.server.importer.json.Stop(s);    		
+    		boa.server.plugin.backend.json.Stop jsStop = new boa.server.plugin.backend.json.Stop(s);    		
     		output.stopsObjectsList.add(jsStop);
     	}
     	
@@ -503,31 +503,31 @@ public class BackEndResource{
     @Path( "/exportall" )
     public Response exportAll() throws IOException{        
 
-    	boa.server.importer.json.Stations stations = new boa.server.importer.json.Stations();
+    	boa.server.plugin.backend.json.Stations stations = new boa.server.plugin.backend.json.Stations();
     	for(Station s : Stations.getStations().getAll()){
-    		boa.server.importer.json.Station jsStation = new boa.server.importer.json.Station(s);    		
+    		boa.server.plugin.backend.json.Station jsStation = new boa.server.plugin.backend.json.Station(s);    		
     		stations.stationsObjectsList.add(jsStation);
     	}
     	
-    	boa.server.importer.json.Routes routes = new boa.server.importer.json.Routes();
+    	boa.server.plugin.backend.json.Routes routes = new boa.server.plugin.backend.json.Routes();
     	for(Route r : Routes.getRoutes().getAll()){
-    		boa.server.importer.json.Route jsRoute = new boa.server.importer.json.Route(r);    		
+    		boa.server.plugin.backend.json.Route jsRoute = new boa.server.plugin.backend.json.Route(r);    		
     		routes.routesObjectsList.add(jsRoute);
     	}
 
-    	boa.server.importer.json.Runs runs = new boa.server.importer.json.Runs();
+    	boa.server.plugin.backend.json.Runs runs = new boa.server.plugin.backend.json.Runs();
     	for(Run r : Runs.getRuns().getAll()){
-    		boa.server.importer.json.Run jsRun = new boa.server.importer.json.Run(r);    		
+    		boa.server.plugin.backend.json.Run jsRun = new boa.server.plugin.backend.json.Run(r);    		
     		runs.runsObjectsList.add(jsRun);
     	}
     	
-    	boa.server.importer.json.Stops stops = new boa.server.importer.json.Stops();
+    	boa.server.plugin.backend.json.Stops stops = new boa.server.plugin.backend.json.Stops();
     	for(Stop s : Stops.getStops().getAll()){
-    		boa.server.importer.json.Stop jsStop = new boa.server.importer.json.Stop(s);    		
+    		boa.server.plugin.backend.json.Stop jsStop = new boa.server.plugin.backend.json.Stop(s);    		
     		stops.stopsObjectsList.add(jsStop);
     	}
 
-    	boa.server.importer.json.BoaData output = new boa.server.importer.json.BoaData();
+    	boa.server.plugin.backend.json.BoaData output = new boa.server.plugin.backend.json.BoaData();
     	output.setStations(stations);
     	output.setRoutes(routes);
     	output.setRuns(runs);
@@ -539,7 +539,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/bulkimportall")            
-    public Response bulkImportAll(final boa.server.importer.json.BoaData input) throws IOException {
+    public Response bulkImportAll(final boa.server.plugin.backend.json.BoaData input) throws IOException {
 		Stations.getStations().createOrUpdateStations(input.getStations());
         Routes.getRoutes().createOrUpdateRoutes(input.getRoutes());
         Runs.getRuns().createOrUpdateRuns(input.getRuns());

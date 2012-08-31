@@ -101,7 +101,7 @@ public class Routes {
         return output;
     }
     
-    public Route createOrUpdateRoute(boa.server.importer.json.Route jr){
+    public Route createOrUpdateRoute(boa.server.plugin.backend.json.Route jr){
 		// creates a new Route having the specified id
     	// if the id already exists then updates the corresponding db record
 
@@ -124,11 +124,11 @@ public class Routes {
 	  	return r;
 	}	    
     
-    public void createOrUpdateRoutes(boa.server.importer.json.Routes routes){
+    public void createOrUpdateRoutes(boa.server.plugin.backend.json.Routes routes){
 		// creates new routes having the specified ids
     	// if an id already exists then updates the corresponding db record
 
-    	for(boa.server.importer.json.Route r : routes.routesObjectsList){
+    	for(boa.server.plugin.backend.json.Route r : routes.routesObjectsList){
     		Transaction tx = DbConnection.getDb().beginTx();
     		try{
     			createOrUpdateRoute(r);

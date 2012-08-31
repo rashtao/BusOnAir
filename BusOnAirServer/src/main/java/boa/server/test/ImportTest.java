@@ -6,7 +6,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
 import boa.server.domain.*;
-import boa.server.importer.json.Coordinate;
+import boa.server.plugin.backend.json.Coordinate;
 
 
 

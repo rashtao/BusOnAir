@@ -1,4 +1,4 @@
-package boa.server.importer.json;
+package boa.server.plugin.backend.json;
 
 import java.util.Collection;
 import java.util.LinkedList;

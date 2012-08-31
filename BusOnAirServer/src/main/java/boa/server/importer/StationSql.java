@@ -1,6 +1,6 @@
 package boa.server.importer;
-import boa.server.importer.json.Station;
-import boa.server.importer.json.Coordinate;
+import boa.server.plugin.backend.json.Coordinate;
+import boa.server.plugin.backend.json.Station;
 
 public class StationSql {
     public int Id_Station;
