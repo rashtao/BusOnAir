@@ -62,42 +62,6 @@ public class BackEndResource{
         this.database = database;
         DbConnection.createDbConnection(database);
     }
-
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/cleardb" )
-    public Response clearDb() throws IOException{        
-//		DbConnection.getDbConnection().shutdown();
-//		DbConnection.clear();
-//		DbConnection.createEmbeddedDbConnection();
-
-    	Map<String, Object> result;
-    	
-		Transaction tx = DbConnection.getDb().beginTx();
-		try{
-			result = DbConnection.getDbConnection().deleteAllNodes();
-			tx.success();
-		}finally{
-			tx.finish();			
-		}    	
-    	
-    	Stations.destroy();
-    	Routes.destroy();
-    	Stops.destroy();
-    	Runs.destroy();
-    	DbConnection.destroy();
-
-    	DbConnection.createDbConnection(database);
-    	
-		int i = 0;
-    	for(String str : DbConnection.getSpatialDb().getLayerNames()){
-    		result.put("lay" + i, str);
-    		i++;
-    	}
-		return Response.status(Status.OK).entity(JsonHelper.createJsonFrom(result)).build();
-//        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
-//        return Response.ok().entity(jr).build();   
-    }
     
     @GET
     @Produces( MediaType.APPLICATION_JSON )

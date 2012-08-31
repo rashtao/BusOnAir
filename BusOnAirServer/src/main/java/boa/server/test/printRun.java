@@ -38,7 +38,7 @@ public class printRun {
 		
 		
 		
-		Route route = Routes.getRoutes().getRouteById(1039);
+		Route route = Routes.getRoutes().getRouteById(10);
 		for(Run run : route.getAllRuns()){
 			System.out.print(run);
 		}

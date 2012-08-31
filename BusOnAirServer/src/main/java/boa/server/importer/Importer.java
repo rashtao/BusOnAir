@@ -39,7 +39,13 @@ public class Importer {
     }
     
     public static void main(String[] args) {     
-    	DbConnection.deleteDbFiles();
+    	try {
+			DbConnection.deleteDbFiles();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		DbConnection.createEmbeddedDbConnection();
 		 		
         dbInserter = new DBInserter();

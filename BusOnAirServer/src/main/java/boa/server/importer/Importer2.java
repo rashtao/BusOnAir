@@ -34,7 +34,12 @@ public class Importer2 {
     private static DBInserter dbInserter;  
 
     public static void main(String[] args) {     
-    	DbConnection.deleteDbFiles();
+    	try {
+			DbConnection.deleteDbFiles();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		DbConnection.createEmbeddedDbConnection();
 		
 		// read Stations from XML

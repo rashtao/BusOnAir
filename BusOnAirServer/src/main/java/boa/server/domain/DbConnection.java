@@ -1,6 +1,7 @@
 package boa.server.domain;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,7 +87,9 @@ public class DbConnection {
         db.shutdown();
     }    
     
-    public static void deleteDbFiles(){
+    public static void deleteDbFiles() throws IOException{
+		Runtime.getRuntime().exec( "sudo chmod 777 " + dbpath + " -R" );
+
         deleteRecursively( new File( dbpath ) );
         //inner = new EmbeddedGraphDatabase( storeDir, params );
     }
