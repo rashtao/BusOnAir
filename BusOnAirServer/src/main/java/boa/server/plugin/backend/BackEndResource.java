@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.configuration.Configuration;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.domain.JsonHelper;
@@ -36,13 +37,14 @@ import org.neo4j.server.rest.domain.JsonHelper;
 @Path( "/backend" )
 public class BackEndResource{
     private final Database database;
+    private final Configuration config;
     private BufferedWriter log;
 
     public BackEndResource( @Context Database database,
-            @Context HttpServletRequest req, @Context OutputFormat output ) throws IOException 
+            @Context HttpServletRequest req, @Context OutputFormat output, @Context Configuration config ) throws IOException 
     {
         this( new SessionFactoryImpl( req.getSession( true ) ), database,
-                output );
+                output, config );
 
         StringBuffer fullURL = req.getRequestURL();
         StringBuffer queryString = new StringBuffer();
@@ -55,11 +57,12 @@ public class BackEndResource{
     }
 
     public BackEndResource( SessionFactoryImpl sessionFactoryImpl,
-            Database database, OutputFormat output ) throws IOException 
+            Database database, OutputFormat output, Configuration config ) throws IOException 
     {
         FileWriter logFile = new FileWriter("/tmp/trasportaqbackend.log");
         log = new BufferedWriter(logFile);
         this.database = database;
+        this.config = config;
         DbConnection.createDbConnection(database);
     }
     
@@ -549,4 +552,24 @@ public class BackEndResource{
         boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
         return Response.ok().entity(jr).build();   
     }    
+
+    @GET
+    @Path("/cleandb")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cleanDb() {
+        try {
+    		DbConnection.cleanDbDirectory(database, config);
+            Stations.destroy();
+            Routes.destroy();
+            Stops.destroy();
+            Runs.destroy();
+            DbConnection.destroy();
+            
+	        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+	        return Response.ok().entity(jr).build();  
+		} catch (Throwable e1) {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonHelper.createJsonFrom(e1.getMessage())).build();
+		}        
+    }    
+
 }
