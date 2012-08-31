@@ -5,9 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -18,9 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
-import org.neo4j.graphalgo.WeightedPath;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
@@ -28,16 +23,9 @@ import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import boa.server.domain.DbConnection;
-import boa.server.domain.Station;
-import boa.server.domain.Stations;
-import boa.server.domain.Stop;
 import boa.server.domain.Stops;
-import boa.server.domain.utils.GeoUtil;
-import boa.server.json.DirectionRoute;
-import boa.server.json.DirectionWalk;
 import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
-import boa.server.routing.myShortest;
 import boa.server.routing.ShortestPathGeo;
 import boa.server.webapp.webappjson.Directions;
 import boa.server.webapp.webappjson.DirectionsList;
@@ -47,8 +35,6 @@ import boa.server.webapp.webappjson.DirectionsWalk;
 @Path( "/directions" )
 public class DirectionsSearch
 {
-    private final Database database;
-    private Transaction tx;
     private BufferedWriter log;
 
     public DirectionsSearch( @Context Database database,
@@ -64,8 +50,6 @@ public class DirectionsSearch
 
     public DirectionsSearch( SessionFactoryImpl sessionFactoryImpl, Database database, OutputFormat output ) throws IOException
     {
-        this.database = database;
-//        threeLayeredTraverserShortestPath = new ShortestPath(database.graph);
         FileWriter logFile = new FileWriter("/tmp/trasportaqdirections.log");
         log = new BufferedWriter(logFile);
         DbConnection.createDbConnection(database);
@@ -104,8 +88,6 @@ public class DirectionsSearch
         boa.server.json.Direction sp = directs.getDirectionsList().iterator().next();
         List<boa.server.json.DirectionRoute> routesDirection = sp.getRoutes();
         List<boa.server.json.DirectionWalk> walksDirection = sp.getWalks();
-//        Collections.reverse(routesDirection);
-//        Collections.reverse(walksDirection);
         
         List<DirectionsRoute> routes = new ArrayList<DirectionsRoute>();
         List<DirectionsWalk> walks = new ArrayList<DirectionsWalk>();      
@@ -127,10 +109,8 @@ public class DirectionsSearch
                     rw.getArrival().getLon(),
                     rw.getDuration()));            	
         }
-        
-
-            directionsList2.add(new Directions(routes, walks));
             
+        directionsList2.add(new Directions(routes, walks));
 
         Response resp = Response.ok().entity( directionsList2 ).build();
         

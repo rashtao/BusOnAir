@@ -16,8 +16,6 @@ import org.apache.commons.configuration.Configuration;
 
 
 public class DbConnection {
-	private static final String dbpath = "/tmp/neo4j/busonairserver/data/graph.db";  
-//	private static final String dbpath = "/home/rashta/neo4j/neo4j/busonairserver/data/graph.db";  
     private static DbConnection instance = null;
     private AbstractGraphDatabase db = null;
     private SpatialDatabaseService spatialDb = null;
@@ -53,12 +51,10 @@ public class DbConnection {
     }
     
     private DbConnection(){
-//        db = new EmbeddedReadOnlyGraphDatabase( dbpath );
-        db = new EmbeddedGraphDatabase( dbpath );
+        db = new EmbeddedGraphDatabase( Config.DBPATH );
         spatialDb = new SpatialDatabaseService(db);
     }
 
-    
     public static AbstractGraphDatabase getDb(){
         return getDbConnection().getDatabase();
     }
@@ -84,9 +80,9 @@ public class DbConnection {
     }    
     
     public static void deleteDbFiles() throws IOException{
-		Runtime.getRuntime().exec( "sudo chmod 777 " + dbpath + " -R" );
+		Runtime.getRuntime().exec( "sudo chmod 777 " + Config.DBPATH + " -R" );
 
-        deleteRecursively( new File( dbpath ) );
+        deleteRecursively( new File( Config.DBPATH ) );
     }
         
     // delete all db files, for standalone application

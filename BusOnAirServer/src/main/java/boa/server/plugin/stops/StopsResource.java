@@ -4,7 +4,6 @@ package boa.server.plugin.stops;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -23,7 +22,6 @@ import boa.server.domain.*;
 
 @Path( "/stops" )
 public class StopsResource{
-    private final Database database;
     private BufferedWriter log;
 
     public StopsResource( @Context Database database,
@@ -47,7 +45,6 @@ public class StopsResource{
     {
         FileWriter logFile = new FileWriter("/tmp/trasportaqstops.log");
         log = new BufferedWriter(logFile);
-        this.database = database;
         DbConnection.createDbConnection(database);
     }
 

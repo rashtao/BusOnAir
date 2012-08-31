@@ -3,12 +3,7 @@ package boa.server.domain;
 import java.util.*;
 
 import org.neo4j.gis.spatial.EditableLayer;
-import org.neo4j.gis.spatial.EditableLayerImpl;
-import org.neo4j.gis.spatial.Layer;
 import org.neo4j.gis.spatial.SpatialDatabaseRecord;
-import org.neo4j.gis.spatial.SpatialDatabaseService;
-import org.neo4j.gis.spatial.WKTGeometryEncoder;
-import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.gis.spatial.pipes.GeoPipeline;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -18,8 +13,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
-import boa.server.importer.domain.StationImporter;
 
 public class Stations {
     protected EditableLayer stationSpatialIndex;
@@ -67,14 +60,6 @@ public class Stations {
     		Stops.getStops().deleteStop(stop);
     	}
     	
-//    	for(Run run : s.getAllRuns()){
-//    		Runs.getRuns().deleteRun(run);
-//    	}
-    	
-//    	for(Route route : s.getAllRoutes()){
-//    		Routes.getRoutes().deleteRoute(route);    		    		
-//    	}
-    	
     	for(Relationship rel : s.getUnderlyingNode().getRelationships(RelTypes.ROUTEFROM, Direction.INCOMING)){
     		Route route = new Route(rel.getStartNode());
     		Routes.getRoutes().deleteRoute(route);
@@ -87,11 +72,6 @@ public class Stations {
     	
     	stationSpatialIndex.removeFromIndex(s.getUnderlyingNode().getId());
     	stationIndex.remove(s.getUnderlyingNode());
-    	
-//		System.out.println("\n\nDELETING Station " + s.getId());
-//    	for(Relationship rel : s.getUnderlyingNode().getRelationships()){
-//    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
-//    	}
     	
     	s.deleteStopIndex();
     	s.getUnderlyingNode().delete();    	
@@ -161,23 +141,8 @@ public class Stations {
     	Station s = getStationById(js.getId());
 	  	if(s != null){	// update (latLon cannot be updated)
 			s.setName(s.getName());
-//			s.setLatitude(js.getLatLon().getLat());
-//			s.setLongitude(js.getLatLon().getLon());    	
-//	  		updateSpatialIndex(s);
-	  		
-	  		// update CheckPoints associati
-//	  		for(Stop stop : s.getAllStops()){
-//		  		for(Relationship rel : stop.getUnderlyingNode().getRelationships(RelTypes.CHECKPOINTFROM, Direction.INCOMING)){
-//		  			CheckPoint cp = new CheckPoint(rel.getStartNode());
-//		  			if(cp.getTowards().equals(stop)){	// checkpoint in the station position
-//		  				cp.setLatitude(s.getLatitude());
-//		  				cp.setLongitude(s.getLongitude());
-//		  				stop.getRun().updateCpSpatialIndex(cp);		  				
-//		  			}
-//		  		}
-//	  		}
 	  	} else {		// create
-	  		s = new StationImporter(
+	  		s = new Station(
 		  			  DbConnection.getDb().createNode(), 
 		  			  js.getId(),
 		  			  js.getName(),
@@ -215,7 +180,6 @@ public class Stations {
         ArrayList<Station> output = new ArrayList<Station>();
         List<SpatialDatabaseRecord> results = GeoPipeline.start(stationSpatialIndex).toSpatialDatabaseRecordList();
 		for(SpatialDatabaseRecord ris : results){
-			//System.out.print("\n" + ris.getGeometry());
 			Node node = DbConnection.getDb().getNodeById(ris.getNodeId());
 			Station s = new Station(node);
 			output.add(s);

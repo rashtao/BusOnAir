@@ -188,12 +188,13 @@ public class ShortestPathGeo {
 					}
 				}	
 				
-				Collections.sort(arrivals, new DirectionComparator(secondCriterion));
+				DirectionComparator dirC = new DirectionComparator(secondCriterion);
+				Collections.sort(arrivals, dirC);
 
 				
 				// --- ELIMINAZIONE ESITI DOMINATI
 				Direction prev = null;
-				DirectionComparator comp = new DirectionComparator(secondCriterion);
+				DirectionComparator comp = dirC;
 				
 				for(Direction d : arrivals){
 //					System.out.print("\n\n---------- Comparing: \nd:\n" + d + "\nprev:\n" + prev + "\nRIS: " +comp.secondCriterionCompare(d, prev) + "\n-------\n\n");
@@ -518,90 +519,6 @@ public class ShortestPathGeo {
             }
         }
     }            
-
-//    public void topologicalVisit(){
-//
-//        Stack<Stop> toVisit = new Stack<Stop>();
-//        
-//        for(Stop s : startStack){        	
-//			double dist = GeoUtil.getDistance2(lat1, lon1, s.getStation().getLatitude(), s.getStation().getLongitude());
-//			
-//			s.departureTime = s.getTime();
-//			s.walkDistance = (int) (dist * 1000.0);
-//			
-//    		toVisit.push(s);
-//        }        
-//        
-//        while(!toVisit.isEmpty()){
-//            Stop s = toVisit.pop();
-//            Stop nir = s.nextInRun;
-//            Stop nis = s.nextInStation;
-//            Stop niw = s.nextWalk;
-//                        
-//            if(nir != null){
-//                // UPDATE Shortest path e cambi
-//                if(nir.prevSP == null){
-//                    nir.prevSP = s;
-//                    nir.numeroCambi = s.numeroCambi;
-//                } else if(s.numeroCambi < nir.numeroCambi){
-//                    nir.prevSP = s;
-//                    nir.numeroCambi = s.numeroCambi;
-//                }
-//
-//                // Gestione visita topologica
-//                nir.prevInRun = null;
-//                if(nir.prevInStation == null && nir.prevWalk == null){
-//                    toVisit.push(nir);
-//                }
-//            }
-//            
-//            if(nis != null){
-//                // UPDATE Shortest path e cambi
-//                int cambio = 0;
-//                if((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))){
-//                    cambio = 1;
-//                }
-//                
-//                int cambiPerNis = s.numeroCambi + cambio;                
-//                if(nis.prevSP == null){
-//                    nis.prevSP = s;
-//                    nis.numeroCambi = cambiPerNis;
-//                } else if(cambiPerNis <= nis.numeroCambi){
-//                    nis.prevSP = s;
-//                    nis.numeroCambi = cambiPerNis;
-//                }
-//
-//                // Gestione visita topologica
-//                nis.prevInStation = null;
-//                if(nis.prevInRun == null && nis.prevWalk == null){
-//                    toVisit.push(nis);
-//                }            
-//            }
-//            
-//            
-//            if(niw != null){
-//                // UPDATE Shortest path e cambi
-//                if(niw.prevSP == null){
-//                    niw.prevSP = s;
-//                    niw.numeroCambi = s.numeroCambi;
-//                } else if(s.numeroCambi < niw.numeroCambi){
-//                    niw.prevSP = s;
-//                    niw.numeroCambi = s.numeroCambi;
-//                }
-//
-//                // Gestione visita topologica
-//                niw.prevWalk = null;
-//                if(niw.prevInStation == null && niw.prevInRun == null){
-//                    toVisit.push(niw);
-//                }
-//            }
-//            
-//            if(s.prevSP != null){
-//            	s.departureTime = s.prevSP.departureTime;
-//            	s.walkDistance = s.prevSP.walkDistance;
-//            }
-//        }
-//    }     
     
      public class StopExplorer implements StopEvaluator{
 //        int count = 0;

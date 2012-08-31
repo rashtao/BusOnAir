@@ -1,6 +1,5 @@
 package boa.server.plugin.stations;
 
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,7 +24,6 @@ import boa.server.domain.*;
 @Path( "/stations" )
 public class StationsResource
 {
-    private final Database database;
     private BufferedWriter log;
 
     public StationsResource( @Context Database database,
@@ -49,7 +47,6 @@ public class StationsResource
     {
         FileWriter logFile = new FileWriter("/tmp/trasportaqstations.log");
         log = new BufferedWriter(logFile);
-        this.database = database;
         DbConnection.createDbConnection(database);
     }
 
@@ -98,16 +95,10 @@ public class StationsResource
         	stations = boa.server.domain.Stations.getStations().getNearestStations(lat, lon);
         else
         	stations = boa.server.domain.Stations.getStations().getNearestStations(lat, lon, range);
-              
-//        if(stations.size() == 0){
-//            return Response.status( 204 ).entity(
-//                "No Station in specified range (" + range + ")").build();
-//        }
         
         if(stations.size() == 0)
         	return Response.ok().entity(null).build();
-        
-        
+               
         if(obj != null && obj){
             boa.server.json.StationsObjects stationList = new boa.server.json.StationsObjects();
             
@@ -142,11 +133,7 @@ public class StationsResource
         	return Response.ok().entity(new boa.server.json.Response(400, "Id cannot be blank")).build();
         
     	boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
-    	
-//    	if (s == null) 
-//    		return Response.status( 204 ).entity(
-//                    "No Station having specified id (" + id + ")").build();
-    	
+    		
     	if (s != null){ 
     		boa.server.json.Station js = new boa.server.json.Station(s);
     		return Response.ok().entity(js).build();
@@ -241,7 +228,5 @@ public class StationsResource
             	   
             return Response.ok().entity(jstops).build();        	
         }
-    }
-    
-    
+    }   
 }

@@ -8,13 +8,10 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-import boa.server.json.Coordinate;
-
 public class Route {
 	protected static final String ID = "id";
 	protected static final String TYPE = "type";
     protected static final String LINE = "line";
-
     
     protected Node underlyingNode;
     
@@ -27,6 +24,35 @@ public class Route {
     	underlyingNode = node;
         runIndex = DbConnection.getDb().index().forNodes("runIndex" + getId());
     }  
+    
+	public Route(Node node, String line){
+		this(node, (int) node.getId(), line, null, null);
+	}   
+	
+    public Route(Route r) {
+		this(r.getUnderlyingNode());
+	}
+
+	public Route(Node node, int id, String line, Integer from, Integer towards){
+        underlyingNode = node;
+        setLine(line);
+	    setType();
+	    setId(id);
+	    Station fromS = null;
+	    Station towS = null;
+	    
+	    if(from != null){
+	    	fromS = Stations.getStations().getStationById(from);
+	    } 
+	    
+	    if(towards != null){
+	    	towS = Stations.getStations().getStationById(towards);
+	    } 
+	    
+	    setFrom(fromS);
+	    setTowards(towS);
+        runIndex = DbConnection.getDb().index().forNodes("runIndex" + getId());		
+	}    
     
     public void removeRun(Run r){
     	runIndex.remove(r.getUnderlyingNode());

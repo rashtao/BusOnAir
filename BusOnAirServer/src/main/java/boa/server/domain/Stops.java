@@ -1,10 +1,6 @@
 package boa.server.domain;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -12,9 +8,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-
-import boa.server.importer.domain.StationImporter;
-import boa.server.importer.domain.StopImporter;
 
 public class Stops {
     protected Index<Node> stopsIndex;
@@ -76,7 +69,7 @@ public class Stops {
   		Run run = Runs.getRuns().getRunById(js.getRun());
 
     	if(s == null){		// create	  		
-	  		s = new StopImporter(
+	  		s = new Stop(
 		  			  DbConnection.getDb().createNode(), 
 		  			  js.getId(),
 		  			  js.getStaticTime(),

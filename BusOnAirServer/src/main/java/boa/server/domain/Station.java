@@ -1,10 +1,7 @@
 package boa.server.domain;
 
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,10 +10,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
-
-import boa.server.domain.RelTypes;
-import boa.server.domain.utils.TimeComparator;
-import boa.server.json.Coordinate;
 
 public class Station {
     protected static final String ID = "id";
@@ -37,6 +30,22 @@ public class Station {
     	underlyingNode = node;
         stopIndex = DbConnection.getDb().index().forNodes("stopIndex" + getId());
     }  
+
+    public Station(Node node, int id, String name, double latitude, double longitude, boolean isSchool, boolean isTerminal){
+    	underlyingNode = node;
+        setId(id);
+        setName(name);	
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setIsSchool(isSchool);
+        setIsSchool(isTerminal);
+        setType();
+        stopIndex = DbConnection.getDb().index().forNodes("stopIndex" + getId());
+    }   
+
+    public Station(Node node, int id, String name, double latitude, double longitude){
+        this(node, id, name, latitude, longitude, false, false);
+    }       
 
     public void removeStop(Stop s){
     	stopIndex.remove(s.getUnderlyingNode());

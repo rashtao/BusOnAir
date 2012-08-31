@@ -1,20 +1,12 @@
 
 package boa.server.routing;
 
-
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Stack;
-import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.*;
 
 import boa.server.domain.*;
 
-/**
- *
- * @author rashta
- */
 public class myShortest {
     private StopMediator cache;
     private Stop source;
@@ -70,42 +62,7 @@ public class myShortest {
         return outPath;
 
     }
-    
-    
-//    public json.Directions getDirections(){
-//    	json.Directions output = new json.Directions();
-//
-//    	Stop arrivo = getShortestPath();
-//
-//    	while(arrivo != null){
-//    		output.add(getDirection(arrivo));
-//    		
-//    		//prende il successivo arrivalstop
-//    		while(arrivo != null && arrivo.prevSP == null){
-//	            arrivo = arrivo.getNextInStation();
-//	            if(arrivo != null)
-//	                arrivo = cache.get(arrivo);            
-//	        }
-//    	}
-//    	
-//    	return output;
-//    }
-//    
-//    public json.Direction getDirection(Stop arrivo){
-//    	json.Direction output = new json.Direction();
-//    	
-//    	
-//        outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStazione().getId() + ":TIME" + arrivo.getTime() + ")";
-//
-//        Stop arr = arrivo;
-//        while(!arr.equals(source)){
-//            arr = arr.prevSP;
-//            outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStazione().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
-//        }
-//    }
-    
-    
-    
+        
     public ArrayList<Stop> getWeightedPath() {
         ArrayList<Stop> stopList = new ArrayList<Stop>();
         

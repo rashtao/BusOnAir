@@ -88,19 +88,4 @@ public class Direction {
 				+ ":DURATION:" + getDuration() + "]";
 	}
 	
-	
-//  @Override
-//	public String toString(){
-//		return ("Direction: " +
-//			"\n\tstop: " + stop + 
-//			"\n\tlatitude: " + lat +
-//			"\n\tlongitude: " + lon);
-//  		
-//  }
-  
-	
-	
-  
-  
-	
 }

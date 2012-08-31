@@ -2,15 +2,9 @@ package boa.server.domain;
 
 import java.util.ArrayList;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.index.lucene.QueryContext;
-import org.neo4j.index.lucene.ValueContext;
-
-import boa.server.importer.domain.RouteImporter;
-import boa.server.importer.domain.RunImporter;
 
 public class Runs {
     protected Index<Node> runsIndex;
@@ -137,7 +131,7 @@ public class Runs {
 	  		Route oldRoute = r.getRoute();
 	  		oldRoute.removeRun(r);
 	  	} else {		// create
-	    	r = new RunImporter(
+	    	r = new Run(
 	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId());
 	    	addRun(r);

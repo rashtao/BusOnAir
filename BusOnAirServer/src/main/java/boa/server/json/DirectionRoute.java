@@ -18,10 +18,6 @@ public class DirectionRoute
 		setArrival(arrival);
     }   
     
-    private DirectionRoute(Stop dep, Stop arr){
-    	this(dep.getId(), arr.getId());
-    }
-    
     public DirectionRoute(boa.server.domain.Stop dep, boa.server.domain.Stop arr){
     	this(dep.getId(), arr.getId());
     }
@@ -58,13 +54,10 @@ public class DirectionRoute
     	return Integer.parseInt(arrival);
     }
     
-    
-    
     @Override
 	public String toString(){
 		return ("\nDirectionRoute: " +
 				"\n\tdep: " + departure + 
 				"\n\tarr: " + arrival); 
-  
     }	    
 }

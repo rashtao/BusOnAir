@@ -1,17 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package boa.server.domain.utils;
 
 import java.util.Comparator;
 
 import boa.server.domain.Stop;
 
-/**
- *
- * @author rashta
- */
      public class TimeComparator implements Comparator{
         
         @Override 
@@ -27,7 +19,5 @@ import boa.server.domain.Stop;
             else
                 return 0;    
         }
-
-
 
     }

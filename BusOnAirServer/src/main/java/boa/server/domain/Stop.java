@@ -39,6 +39,18 @@ public class Stop {
     	underlyingNode = node;
     }  
 
+    public Stop(Node node, int id, int time, Station s, Run r){
+    	this(node);
+    	setId(id);
+        setTime(time);	    
+        setType();
+        setStation(s);        
+        setRun(r);          
+        Stops.getStops().addStop(this);
+        if(s != null)
+        	s.addStop(this);
+    }  
+    
     public void deleteAllRels(){
     	setNextInRun(null);
     	setNextInStation(null);

@@ -1,3 +1,5 @@
+// This class maps the db objects and grants that every db object has at most one Stop object instance
+
 package boa.server.routing;
 
 import java.util.HashMap;

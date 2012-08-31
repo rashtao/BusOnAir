@@ -9,10 +9,6 @@ import org.neo4j.graphdb.Direction;
 
 import boa.server.domain.*;
 
-/**
- *
- * @author rashta
- */
 public class myShortest2 {
     private StopMediator cache;
     private Stop source;

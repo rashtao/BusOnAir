@@ -5,13 +5,9 @@ import java.util.ArrayList;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-
-import boa.server.importer.domain.RouteImporter;
-import boa.server.importer.domain.StationImporter;
 
 public class Routes {
     protected Index<Node> routesIndex;
@@ -57,12 +53,7 @@ public class Routes {
 	    r.deleteRunIndex();	
 		routesIndex.remove(r.getUnderlyingNode());
 		r.setFrom(null);
-		r.setTowards(null);
-
-//    	for(Relationship rel : r.getUnderlyingNode().getRelationships()){
-//    		System.out.println(rel + " (" + rel.getType() + ") :  " +  rel.getStartNode() + " --> " + rel.getEndNode());
-//    	}
-		
+		r.setTowards(null);		
 		r.getUnderlyingNode().delete();
     }
     
@@ -111,7 +102,7 @@ public class Routes {
 	  		r.updateTowards(Stations.getStations().getStationById(jr.getTowards()));
 	  		r.updateFrom(Stations.getStations().getStationById(jr.getFrom()));
 	  	} else {		// create			
-	    	r = new RouteImporter(
+	    	r = new Route(
 	    			  DbConnection.getDb().createNode(), 
 		  			  jr.getId(),
 		  			  jr.getLine(),

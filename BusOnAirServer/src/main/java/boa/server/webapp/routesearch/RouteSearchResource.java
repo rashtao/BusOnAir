@@ -13,16 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.lucene.index.IndexNotFoundException;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.index.lucene.QueryContext;
-import org.neo4j.kernel.AbstractGraphDatabase;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
@@ -30,7 +21,6 @@ import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 import boa.server.domain.*;
 import boa.server.webapp.webappjson.RouteStop;
 import boa.server.webapp.webappjson.Routes;
-import boa.server.webapp.xml.Stop;
 
 
 @Path( "/routesearch" )
@@ -38,8 +28,6 @@ public class RouteSearchResource
 {
 
     private Routes routeList;
-    private Index<Node> stopLayer;
-    private final Database database;
     private BufferedWriter log;
 
     public RouteSearchResource( @Context Database database,
@@ -61,7 +49,6 @@ public class RouteSearchResource
     {
         FileWriter logFile = new FileWriter("/tmp/trasportaqroutes.log");
         log = new BufferedWriter(logFile);
-        this.database = database;
         DbConnection.createDbConnection(database);
     }
 

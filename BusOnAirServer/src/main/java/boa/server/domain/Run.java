@@ -2,19 +2,11 @@ package boa.server.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.neo4j.collections.rtree.Listener;
 import org.neo4j.gis.spatial.EditableLayer;
 import org.neo4j.gis.spatial.SpatialDatabaseRecord;
-import org.neo4j.gis.spatial.indexprovider.LayerNodeIndex;
 import org.neo4j.gis.spatial.pipes.GeoPipeline;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -25,7 +17,6 @@ import org.neo4j.graphdb.index.IndexHits;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import boa.server.domain.utils.*;
-import boa.server.importer.domain.StationImporter;
 
 public class Run {
 	protected static final String ID = "id";
@@ -50,6 +41,13 @@ public class Run {
     	cpSpatialIndex = DbConnection.getSpatialDb().getOrCreatePointLayer("cpSpatialIndex" + getId(), "lon", "lat");;
     }  
 
+    public Run(Node node, int id){
+    	underlyingNode = node;
+        setId(id);
+        setType();
+    	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
+    }   
+    
 	public void deleteAllIntermediateCheckPoints() {
 		// cancella tutti i checkpoints non associati agli stops
 		
@@ -72,15 +70,12 @@ public class Run {
 		cpSpatialIndex.delete(new Listener() {			
 			@Override
 			public void worked(int arg0) {
-				// TODO Auto-generated method stub			
 			}			
 			@Override
 			public void done() {
-				// TODO Auto-generated method stub				
 			}			
 			@Override
 			public void begin(int arg0) {
-				// TODO Auto-generated method stub				
 			}
 		});		
 	}

@@ -4,12 +4,9 @@ package boa.server.plugin.runs;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -25,7 +22,6 @@ import boa.server.domain.*;
 
 @Path( "/runs" )
 public class RunsResource{
-    private final Database database;
     private BufferedWriter log;
 
     public RunsResource( @Context Database database,
@@ -49,7 +45,6 @@ public class RunsResource{
     {
         FileWriter logFile = new FileWriter("/tmp/trasportaqruns.log");
         log = new BufferedWriter(logFile);
-        this.database = database;
         DbConnection.createDbConnection(database);
     }
 
