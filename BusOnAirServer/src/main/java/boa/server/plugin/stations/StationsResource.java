@@ -58,16 +58,16 @@ public class StationsResource
         ArrayList<Station> stations = boa.server.domain.Stations.getStations().getAll();
 
         if(obj != null && obj){
-	        boa.server.json.StationsObjects stationList = new boa.server.json.StationsObjects();        
+	        boa.server.plugin.json.StationsObjects stationList = new boa.server.plugin.json.StationsObjects();        
 	        for(Station s : stations){
-	        	boa.server.json.Station js = new boa.server.json.Station(s);  
+	        	boa.server.plugin.json.Station js = new boa.server.plugin.json.Station(s);  
 	        	stationList.add(js);        	
 	        }
 	        return Response.ok().entity(stationList).build();
         } else {
-	        boa.server.json.Stations stationList = new boa.server.json.Stations();        
+	        boa.server.plugin.json.Stations stationList = new boa.server.plugin.json.Stations();        
 	        for(Station s : stations){
-	        	boa.server.json.Station js = new boa.server.json.Station(s);  
+	        	boa.server.plugin.json.Station js = new boa.server.plugin.json.Station(s);  
 	        	stationList.add(js);        	
 	        }
 	        return Response.ok().entity(stationList).build();
@@ -87,7 +87,7 @@ public class StationsResource
         log.flush();
         
         if ( (lat == null) || (lon == null))
-        	return Response.ok().entity(new boa.server.json.Response(400, "Lat and Lon cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "Lat and Lon cannot be blank")).build();
 
         Collection<Station> stations;
         
@@ -100,19 +100,19 @@ public class StationsResource
         	return Response.ok().entity(null).build();
                
         if(obj != null && obj){
-            boa.server.json.StationsObjects stationList = new boa.server.json.StationsObjects();
+            boa.server.plugin.json.StationsObjects stationList = new boa.server.plugin.json.StationsObjects();
             
             for(Station s : stations){
-            	boa.server.json.Station js = new boa.server.json.Station(s);  
+            	boa.server.plugin.json.Station js = new boa.server.plugin.json.Station(s);  
             	stationList.add(js);        	
             }
 
             return Response.ok().entity(stationList).build();        	
         } else {
-            boa.server.json.Stations stationList = new boa.server.json.Stations();
+            boa.server.plugin.json.Stations stationList = new boa.server.plugin.json.Stations();
             
             for(Station s : stations){
-            	boa.server.json.Station js = new boa.server.json.Station(s);  
+            	boa.server.plugin.json.Station js = new boa.server.plugin.json.Station(s);  
             	stationList.add(js);        	
             }
 
@@ -130,15 +130,15 @@ public class StationsResource
         log.flush();
     	
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "Id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "Id cannot be blank")).build();
         
     	boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
     		
     	if (s != null){ 
-    		boa.server.json.Station js = new boa.server.json.Station(s);
+    		boa.server.plugin.json.Station js = new boa.server.plugin.json.Station(s);
     		return Response.ok().entity(js).build();
     	} else {
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No station having the specified id.")).build();
     	}
     }
     
@@ -155,7 +155,7 @@ public class StationsResource
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         
         if(s == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No station having the specified id.")).build();
         
         if (time == null)
         	time = new Integer(0);
@@ -165,7 +165,7 @@ public class StationsResource
         if(fs == null)
         	return Response.ok().entity("").build();
         
-        boa.server.json.Stop js = new boa.server.json.Stop(fs);        
+        boa.server.plugin.json.Stop js = new boa.server.plugin.json.Stop(fs);        
         return Response.ok().entity(js).build();
     }
 
@@ -178,7 +178,7 @@ public class StationsResource
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         
         if(s == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No station having the specified id.")).build();
         
         Collection<Route> routes = s.getAllRoutes();
         
@@ -186,13 +186,13 @@ public class StationsResource
         	return Response.ok().entity("").build();
         	
         if(obj != null && obj){
-        	boa.server.json.RoutesObjects jroutes = new boa.server.json.RoutesObjects();
+        	boa.server.plugin.json.RoutesObjects jroutes = new boa.server.plugin.json.RoutesObjects();
             for(boa.server.domain.Route r : routes)
             	jroutes.add(r);
             	   
             return Response.ok().entity(jroutes).build();
         } else {
-        	boa.server.json.Routes jroutes = new boa.server.json.Routes();
+        	boa.server.plugin.json.Routes jroutes = new boa.server.plugin.json.Routes();
             for(boa.server.domain.Route r : routes)
             	jroutes.add(r);
             	   
@@ -208,7 +208,7 @@ public class StationsResource
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         
         if(s == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No station having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No station having the specified id.")).build();
         
         Collection<Stop> stops = (Collection<Stop>) s.getAllStops();
         
@@ -216,13 +216,13 @@ public class StationsResource
         	return Response.ok().entity("").build();
         	
         if(obj != null && obj){
-        	boa.server.json.StopsObjects jstops = new boa.server.json.StopsObjects();
+        	boa.server.plugin.json.StopsObjects jstops = new boa.server.plugin.json.StopsObjects();
             for(boa.server.domain.Stop stop : stops)
             	jstops.add(stop);
             	   
             return Response.ok().entity(jstops).build();
         } else {
-        	boa.server.json.Stops jstops = new boa.server.json.Stops();
+        	boa.server.plugin.json.Stops jstops = new boa.server.plugin.json.Stops();
             for(boa.server.domain.Stop stop : stops)
             	jstops.add(stop);
             	   

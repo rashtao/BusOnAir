@@ -56,17 +56,17 @@ public class RoutesResource{
         Iterable<Route> routes = boa.server.domain.Routes.getRoutes().getAll();
 
         if(obj != null && obj){
-            boa.server.json.RoutesObjects routeList = new boa.server.json.RoutesObjects();
+            boa.server.plugin.json.RoutesObjects routeList = new boa.server.plugin.json.RoutesObjects();
             for(Route r : routes){
-            	boa.server.json.Route jr = new boa.server.json.Route(r);  
+            	boa.server.plugin.json.Route jr = new boa.server.plugin.json.Route(r);  
             	routeList.add(jr);        	
             }
 
             return Response.ok().entity(routeList).build();        	
         } else {
-	        boa.server.json.Routes routeList = new boa.server.json.Routes();        
+	        boa.server.plugin.json.Routes routeList = new boa.server.plugin.json.Routes();        
 	        for(Route r : routes){
-	        	boa.server.json.Route jr = new boa.server.json.Route(r);  
+	        	boa.server.plugin.json.Route jr = new boa.server.plugin.json.Route(r);  
 	        	routeList.add(jr);        	
 	        }
 	
@@ -83,15 +83,15 @@ public class RoutesResource{
         log.flush();
     	
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Route route = boa.server.domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route != null){
-    		boa.server.json.Route jr = new boa.server.json.Route(route);    	
+    		boa.server.plugin.json.Route jr = new boa.server.plugin.json.Route(route);    	
     		return Response.ok().entity(jr).build();
     	} else {
-        	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No route having the specified id value.")).build();
     	}
     }
         
@@ -100,12 +100,12 @@ public class RoutesResource{
     @Path("{id}/getallruns")
     public Response getAllRuns(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Route route = boa.server.domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No route having the specified id value.")).build();
 
     	ArrayList<Run> runs = route.getAllRuns();
     	
@@ -113,13 +113,13 @@ public class RoutesResource{
         	return Response.ok().entity("").build();
 
         if(obj != null && obj){
-            boa.server.json.RunsObjects jruns = new boa.server.json.RunsObjects();
+            boa.server.plugin.json.RunsObjects jruns = new boa.server.plugin.json.RunsObjects();
             for(boa.server.domain.Run r : runs)
             	jruns.add(r);
             	   
             return Response.ok().entity(jruns).build();        	
         } else {
-            boa.server.json.Runs jruns = new boa.server.json.Runs();
+            boa.server.plugin.json.Runs jruns = new boa.server.plugin.json.Runs();
             for(boa.server.domain.Run r : runs)
             	jruns.add(r);
             	   
@@ -132,12 +132,12 @@ public class RoutesResource{
     @Path("{id}/getallstations")
     public Response getAllStations(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Route route = boa.server.domain.Routes.getRoutes().getRouteById(id);
     	 
     	if (route == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No route having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No route having the specified id value.")).build();
 
     	ArrayList<Station> stations = route.getAllStations();
     	
@@ -145,13 +145,13 @@ public class RoutesResource{
         	return Response.ok().entity("").build();
 
         if(obj != null && obj){
-            boa.server.json.StationsObjects jstations = new boa.server.json.StationsObjects();
+            boa.server.plugin.json.StationsObjects jstations = new boa.server.plugin.json.StationsObjects();
             for(boa.server.domain.Station s : stations)
             	jstations.add(s);
             	   
             return Response.ok().entity(jstations).build();        	
         } else {
-            boa.server.json.Stations jstations = new boa.server.json.Stations();
+            boa.server.plugin.json.Stations jstations = new boa.server.plugin.json.Stations();
             for(boa.server.domain.Station s : stations)
             	jstations.add(s);
             	   

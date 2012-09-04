@@ -122,7 +122,7 @@ public class Runs {
     	addRun(r);
     }
     
-    public Run createOrUpdateRun(boa.server.plugin.backend.json.Run jr){
+    public Run createOrUpdateRun(boa.server.domain.json.Run jr){
 		// creates a new Run having the specified id
     	// if the id already exists then updates the corresponding db record
 
@@ -145,11 +145,11 @@ public class Runs {
 	  	return r;
 	}	    
         
-    public void createOrUpdateRuns(boa.server.plugin.backend.json.Runs runs){
+    public void createOrUpdateRuns(boa.server.domain.json.Runs runs){
 		// creates new runs having the specified ids
     	// if an id already exists then updates the corresponding db record
 
-    	for(boa.server.plugin.backend.json.Run r : runs.runsObjectsList){
+    	for(boa.server.domain.json.Run r : runs.runsObjectsList){
     		Transaction tx = DbConnection.getDb().beginTx();
     		try{
     			createOrUpdateRun(r);

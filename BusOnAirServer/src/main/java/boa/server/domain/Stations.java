@@ -134,7 +134,7 @@ public class Stations {
         }
     }    
 
-    public Station createOrUpdateStation(boa.server.plugin.backend.json.Station js){
+    public Station createOrUpdateStation(boa.server.domain.json.Station js){
 		// creates a new station having the specified id
     	// if the id already exists then updates the corresponding db record
 
@@ -155,11 +155,11 @@ public class Stations {
 	  	return s;
 	}	
 
-    public void createOrUpdateStations(boa.server.plugin.backend.json.Stations stations){
+    public void createOrUpdateStations(boa.server.domain.json.Stations stations){
 		// creates new stations having the specified ids
     	// if an id already exists then updates the corresponding db record
 
-    	for(boa.server.plugin.backend.json.Station s : stations.stationsObjectsList){
+    	for(boa.server.domain.json.Station s : stations.stationsObjectsList){
     		Transaction tx = DbConnection.getDb().beginTx();
     		try{
     			createOrUpdateStation(s);

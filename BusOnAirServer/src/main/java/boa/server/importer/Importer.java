@@ -9,7 +9,7 @@ import java.util.Map;
 import org.neo4j.graphdb.Transaction;
 
 import boa.server.domain.DbConnection;
-import boa.server.plugin.backend.json.*;
+import boa.server.domain.json.*;
 import boa.server.test.ImportTest;
 
 public class Importer {

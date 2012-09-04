@@ -42,7 +42,7 @@ import org.neo4j.kernel.Traversal;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import boa.server.domain.*;
-import boa.server.json.Directions;
+import boa.server.plugin.json.Directions;
 import boa.server.routing.Criteria;
 import boa.server.routing.StopMediator;
 import boa.server.routing.myShortest;
@@ -105,8 +105,8 @@ public class ShortestPath8 {
 
         	ShortestPathGeo mysp = new ShortestPathGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
             mysp.shortestPath(); 
-            boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lon1,lat1), mysp.getArrivalList());
-            for(boa.server.json.Direction d : directs.getDirectionsList()){
+            boa.server.plugin.json.Directions directs = new boa.server.plugin.json.Directions(new Coordinate(lon1,lat1), mysp.getArrivalList());
+            for(boa.server.plugin.json.Direction d : directs.getDirectionsList()){
             	log.write(d.toString());
             }
             

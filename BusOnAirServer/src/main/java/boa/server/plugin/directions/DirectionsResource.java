@@ -65,7 +65,7 @@ public class DirectionsResource
         log.flush();
         
         if ( lat1 == null || lon1 == null || lat2 == null || lon2 == null || departureday == null || departuretime == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "lat1, lon1, lat2, lon2, departureday, departuretime cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "lat1, lon1, lat2, lon2, departureday, departuretime cannot be blank")).build();
            	
 
         if(maxwalkdistance == null)
@@ -84,7 +84,7 @@ public class DirectionsResource
         
     	ShortestPathGeo mysp = new ShortestPathGeo(departuretime, 1440, lat1, lon1, lat2, lon2, maxwalkdistance, crit);
         mysp.shortestPath(); 
-        boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lon1, lat1), mysp.getArrivalList());   
+        boa.server.plugin.json.Directions directs = new boa.server.plugin.json.Directions(new Coordinate(lon1, lat1), mysp.getArrivalList());   
     	return Response.ok().entity(directs).build();
     } 
 }

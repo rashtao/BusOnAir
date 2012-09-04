@@ -77,7 +77,7 @@ public class DirectionsSearch
         
     	ShortestPathGeo mysp = new ShortestPathGeo((int) time, 1000, lat1, lon1, lat2, lon2, 500, Criteria.MINCHANGES);
         StopMediator cache = mysp.shortestPath(); 
-        boa.server.json.Directions directs = new boa.server.json.Directions(new Coordinate(lon1, lat1), mysp.getArrivalList());      
+        boa.server.plugin.json.Directions directs = new boa.server.plugin.json.Directions(new Coordinate(lon1, lat1), mysp.getArrivalList());      
         
         DirectionsList  directionsList2  = new DirectionsList();
 
@@ -85,14 +85,14 @@ public class DirectionsSearch
             return Response.ok().entity( null ).build();
         }
 
-        boa.server.json.Direction sp = directs.getDirectionsList().iterator().next();
-        List<boa.server.json.DirectionRoute> routesDirection = sp.getRoutes();
-        List<boa.server.json.DirectionWalk> walksDirection = sp.getWalks();
+        boa.server.plugin.json.Direction sp = directs.getDirectionsList().iterator().next();
+        List<boa.server.plugin.json.DirectionRoute> routesDirection = sp.getRoutes();
+        List<boa.server.plugin.json.DirectionWalk> walksDirection = sp.getWalks();
         
         List<DirectionsRoute> routes = new ArrayList<DirectionsRoute>();
         List<DirectionsWalk> walks = new ArrayList<DirectionsWalk>();      
 
-        for(boa.server.json.DirectionRoute rd : routesDirection){
+        for(boa.server.plugin.json.DirectionRoute rd : routesDirection){
         	boa.server.domain.Stop s1 = cache.get(Stops.getStops().getStopById(rd.getDepId()));
         	boa.server.domain.Stop s2 = cache.get(Stops.getStops().getStopById(rd.getArrId()));
         	log.write("\n" + s1);
@@ -101,7 +101,7 @@ public class DirectionsSearch
         	routes.add(new DirectionsRoute(s1, s2));
         }
         
-        for(boa.server.json.DirectionWalk rw : walksDirection){
+        for(boa.server.plugin.json.DirectionWalk rw : walksDirection){
             walks.add(new DirectionsWalk(
                     rw.getDeparture().getLat(),
                     rw.getDeparture().getLon(),

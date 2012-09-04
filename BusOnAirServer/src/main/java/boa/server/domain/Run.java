@@ -602,7 +602,7 @@ public class Run {
     	return "/runs/" + getId();
     }
 
-	public CheckPoint createOrUpdateCheckPoint(boa.server.plugin.backend.json.CheckPoint js) {
+	public CheckPoint createOrUpdateCheckPoint(boa.server.domain.json.CheckPoint js) {
 		// creates a new checkPoint having the specified id
     	// if the id already exists then updates the corresponding db record
 

@@ -55,16 +55,16 @@ public class RunsResource{
         Iterable<Run> runs = boa.server.domain.Runs.getRuns().getAll();
 
         if(obj != null && obj){
-        	boa.server.json.RunsObjects runList = new boa.server.json.RunsObjects();        	
+        	boa.server.plugin.json.RunsObjects runList = new boa.server.plugin.json.RunsObjects();        	
             for(Run r : runs){
-            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	boa.server.plugin.json.Run jr = new boa.server.plugin.json.Run(r);  
             	runList.add(jr);        	
             }
             return Response.ok().entity(runList).build();   
         } else {
-            boa.server.json.Runs runList = new boa.server.json.Runs();
+            boa.server.plugin.json.Runs runList = new boa.server.plugin.json.Runs();
             for(Run r : runs){
-            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	boa.server.plugin.json.Run jr = new boa.server.plugin.json.Run(r);  
             	runList.add(jr);        	
             }
             return Response.ok().entity(runList).build();              	
@@ -78,16 +78,16 @@ public class RunsResource{
         Iterable<Run> runs = boa.server.domain.Runs.getRuns().getAllRunningBuses();
 
         if(obj != null && obj){
-        	boa.server.json.RunsObjects runList = new boa.server.json.RunsObjects();        	
+        	boa.server.plugin.json.RunsObjects runList = new boa.server.plugin.json.RunsObjects();        	
             for(Run r : runs){
-            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	boa.server.plugin.json.Run jr = new boa.server.plugin.json.Run(r);  
             	runList.add(jr);        	
             }
             return Response.ok().entity(runList).build();   
         } else {
-            boa.server.json.Runs runList = new boa.server.json.Runs();
+            boa.server.plugin.json.Runs runList = new boa.server.plugin.json.Runs();
             for(Run r : runs){
-            	boa.server.json.Run jr = new boa.server.json.Run(r);  
+            	boa.server.plugin.json.Run jr = new boa.server.plugin.json.Run(r);  
             	runList.add(jr);        	
             }
             return Response.ok().entity(runList).build();              	
@@ -103,15 +103,15 @@ public class RunsResource{
         log.flush();
 
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
     	 
     	if (run != null){
-    		boa.server.json.Run jr = new boa.server.json.Run(run);    	
+    		boa.server.plugin.json.Run jr = new boa.server.plugin.json.Run(run);    	
     		return Response.ok().entity(jr).build();
     	} else {
-    		return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id value.")).build();
+    		return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id value.")).build();
     	}
     }
     
@@ -124,20 +124,20 @@ public class RunsResource{
     		@QueryParam( "time" ) Integer time) throws IOException{
         
         if ( id == null || checkpointid == null || time == null )
-        	return Response.ok().entity(new boa.server.json.Response(400, "id, checkpointid, time cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id, checkpointid, time cannot be blank")).build();
 
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
         
         boa.server.domain.CheckPoint cp = run.getCheckPointById(checkpointid);
         
         if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No checkpoint having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No checkpoint having the specified id.")).build();
                 
         run.checkPointPass(cp, time);
         	   
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
         
         return Response.ok().entity(jr).build();
     }
@@ -150,18 +150,18 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
 
         
         if(obj != null && obj){
-        	boa.server.json.StopsObjects jstops = new boa.server.json.StopsObjects();
+        	boa.server.plugin.json.StopsObjects jstops = new boa.server.plugin.json.StopsObjects();
             for(Stop s : run.getAllStops())
             	jstops.add(s);
             	        	   
             return Response.ok().entity(jstops).build();
         	
         } else {
-        	boa.server.json.Stops jstops = new boa.server.json.Stops();
+        	boa.server.plugin.json.Stops jstops = new boa.server.plugin.json.Stops();
             for(Stop s : run.getAllStops())
             	jstops.add(s);
             	        	   
@@ -177,16 +177,16 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
 
         if(obj != null && obj){
-        	boa.server.json.CheckPointsObjects cps = new boa.server.json.CheckPointsObjects();
+        	boa.server.plugin.json.CheckPointsObjects cps = new boa.server.plugin.json.CheckPointsObjects();
             for(CheckPoint cp : run.getAllCheckPoints())
             	cps.add(cp);
             	        	   
             return Response.ok().entity(cps).build();        	
         } else {       
-	    	boa.server.json.CheckPoints cps = new boa.server.json.CheckPoints();
+	    	boa.server.plugin.json.CheckPoints cps = new boa.server.plugin.json.CheckPoints();
 	        for(CheckPoint cp : run.getAllCheckPoints())
 	        	cps.add(cp);
 	        	        	   
@@ -205,14 +205,14 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
     	
         CheckPoint cp = run.getCheckPointById(idcp);
         
         if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No CheckPoint having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No CheckPoint having the specified id.")).build();
         
-        boa.server.json.CheckPoint jscp = new boa.server.json.CheckPoint(cp);
+        boa.server.plugin.json.CheckPoint jscp = new boa.server.plugin.json.CheckPoint(cp);
 
         return Response.ok().entity(jscp).build();
     }
@@ -226,14 +226,14 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
     	
         CheckPoint cp = run.getCheckPointById(idcp);
         
         if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No CheckPoint having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No CheckPoint having the specified id.")).build();
         
-        boa.server.json.Time jt = new boa.server.json.Time(cp.getTimeInSeconds());
+        boa.server.plugin.json.Time jt = new boa.server.plugin.json.Time(cp.getTimeInSeconds());
 
         return Response.ok().entity(jt).build();
     }
@@ -249,11 +249,11 @@ public class RunsResource{
                 
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
         
         run.restore();
                 	   
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
         return Response.ok().entity(jr).build();
     }
 
@@ -265,11 +265,11 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
         
     	Stop stop = run.getLastGPSStop();
                 	
-        boa.server.json.Stop jstop = new boa.server.json.Stop(stop);
+        boa.server.plugin.json.Stop jstop = new boa.server.plugin.json.Stop(stop);
         	   
         return Response.ok().entity(jstop).build();
     }
@@ -285,11 +285,11 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
         
     	Stop stop = run.calculateLastStop();
                 	
-        boa.server.json.Stop jstop = new boa.server.json.Stop(stop);
+        boa.server.plugin.json.Stop jstop = new boa.server.plugin.json.Stop(stop);
         	   
         return Response.ok().entity(jstop).build();
     }
@@ -302,14 +302,14 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
      
         CheckPoint cp = run.getLastGPSCheckPoint();
         
         if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(500, "GRAVE: No CheckPoint found.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(500, "GRAVE: No CheckPoint found.")).build();
         
-        boa.server.json.CheckPoint jscp = new boa.server.json.CheckPoint(cp);
+        boa.server.plugin.json.CheckPoint jscp = new boa.server.plugin.json.CheckPoint(cp);
         
         return Response.ok().entity(jscp).build();
     }    
@@ -322,14 +322,14 @@ public class RunsResource{
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
      
         CheckPoint cp = run.calculateLastCheckPoint();
         
         if(cp == null)
-        	return Response.ok().entity(new boa.server.json.Response(500, "GRAVE: No CheckPoint found.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(500, "GRAVE: No CheckPoint found.")).build();
         
-        boa.server.json.CheckPoint jscp = new boa.server.json.CheckPoint(cp);
+        boa.server.plugin.json.CheckPoint jscp = new boa.server.plugin.json.CheckPoint(cp);
         
         return Response.ok().entity(jscp).build();
     }    
@@ -344,15 +344,15 @@ public class RunsResource{
     		@QueryParam( "lon" ) Double lon) throws IOException{
     	
         if ( id == null || lat == null || lon == null )
-        	return Response.ok().entity(new boa.server.json.Response(400, "id, lat, lon cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id, lat, lon cannot be blank")).build();
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
                 
         run.updatePosition(lat,lon,time);
         	   
-        return Response.ok().entity(new boa.server.json.Response(200, "OK")).build();
+        return Response.ok().entity(new boa.server.plugin.json.Response(200, "OK")).build();
     }
     
     @GET
@@ -366,12 +366,12 @@ public class RunsResource{
     	
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         if(run == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id.")).build();
                 
         run.addCheckPoint(lat,lon,time);
         
         	   
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
         return Response.ok().entity(jr).build();
     }
     
@@ -383,7 +383,7 @@ public class RunsResource{
         for(Run r : boa.server.domain.Runs.getRuns().getAll())
         	r.restore();
         	   
-        boa.server.json.Response jr = new boa.server.json.Response(200, "OK");
+        boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
         return Response.ok().entity(jr).build();
     }
 
@@ -393,15 +393,15 @@ public class RunsResource{
     public Response getLastGPSPosition(@PathParam("id") Integer id) throws IOException{
     	
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
     	 
     	if (run != null){
-    		boa.server.json.Position p = new boa.server.json.Position(new boa.server.json.Coordinate(run.getLastGPSLatitude(), run.getLastGPSLongitude()), run.getLastUpdateTime());    	
+    		boa.server.plugin.json.Position p = new boa.server.plugin.json.Position(new boa.server.plugin.json.Coordinate(run.getLastGPSLatitude(), run.getLastGPSLongitude()), run.getLastUpdateTime());    	
     		return Response.ok().entity(p).build();
     	} else {
-        	return Response.ok().entity(new boa.server.json.Response(404, "No run having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No run having the specified id value.")).build();
     	}
     }        
 

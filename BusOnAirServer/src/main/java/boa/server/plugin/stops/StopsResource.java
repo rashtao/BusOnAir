@@ -56,17 +56,17 @@ public class StopsResource{
         Iterable<Stop> stops = boa.server.domain.Stops.getStops().getAll();
 
         if(obj != null && obj){
-            boa.server.json.StopsObjects stopList = new boa.server.json.StopsObjects();
+            boa.server.plugin.json.StopsObjects stopList = new boa.server.plugin.json.StopsObjects();
             for(Stop r : stops){
-            	boa.server.json.Stop jr = new boa.server.json.Stop(r);  
+            	boa.server.plugin.json.Stop jr = new boa.server.plugin.json.Stop(r);  
             	stopList.add(jr);        	
             }
 
             return Response.ok().entity(stopList).build();        	
         } else {
-            boa.server.json.Stops stopList = new boa.server.json.Stops();
+            boa.server.plugin.json.Stops stopList = new boa.server.plugin.json.Stops();
             for(Stop r : stops){
-            	boa.server.json.Stop jr = new boa.server.json.Stop(r);  
+            	boa.server.plugin.json.Stop jr = new boa.server.plugin.json.Stop(r);  
             	stopList.add(jr);        	
             }
 
@@ -80,15 +80,15 @@ public class StopsResource{
     public Response getStop(@PathParam("id") Integer id) throws IOException{
 
     	if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
     	boa.server.domain.Stop stop = boa.server.domain.Stops.getStops().getStopById(id);
     	 
     	if (stop != null){
-    		boa.server.json.Stop jr = new boa.server.json.Stop(stop);    	
+    		boa.server.plugin.json.Stop jr = new boa.server.plugin.json.Stop(stop);    	
     		return Response.ok().entity(jr).build();
     	} else {
-        	return Response.ok().entity(new boa.server.json.Response(404, "No stop having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No stop having the specified id value.")).build();
     	}
     }
     
@@ -101,19 +101,19 @@ public class StopsResource{
         log.flush();
         
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
         boa.server.domain.Stop stop = boa.server.domain.Stops.getStops().getStopById(id);
     	    	 
     	if (stop == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No stop having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No stop having the specified id value.")).build();
 
     	Stop ns = stop.getNextInStation();
     	
         if(ns == null)
         	return Response.ok().entity("").build();
         	
-        boa.server.json.Stop jstop = new boa.server.json.Stop(ns);
+        boa.server.plugin.json.Stop jstop = new boa.server.plugin.json.Stop(ns);
         return Response.ok().entity(jstop).build();
     }
     
@@ -127,19 +127,19 @@ public class StopsResource{
         log.flush();
         
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
         boa.server.domain.Stop stop = boa.server.domain.Stops.getStops().getStopById(id);
     	    	 
     	if (stop == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No stop having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No stop having the specified id value.")).build();
 
     	Stop ns = stop.getPrevInStation();
     	
         if(ns == null)
         	return Response.ok().entity("").build();
         	
-        boa.server.json.Stop jstop = new boa.server.json.Stop(ns);
+        boa.server.plugin.json.Stop jstop = new boa.server.plugin.json.Stop(ns);
         return Response.ok().entity(jstop).build();
     }
     
@@ -152,14 +152,14 @@ public class StopsResource{
         log.flush();
         
         if ( id == null)
-        	return Response.ok().entity(new boa.server.json.Response(400, "id cannot be blank")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
         boa.server.domain.Stop stop = boa.server.domain.Stops.getStops().getStopById(id);
     	    	 
     	if (stop == null)
-        	return Response.ok().entity(new boa.server.json.Response(404, "No stop having the specified id value.")).build();
+        	return Response.ok().entity(new boa.server.plugin.json.Response(404, "No stop having the specified id value.")).build();
 
-    	boa.server.json.Time jt = new boa.server.json.Time(stop.getTime());
+    	boa.server.plugin.json.Time jt = new boa.server.plugin.json.Time(stop.getTime());
     	return Response.ok().entity(jt).build();
     }
         
