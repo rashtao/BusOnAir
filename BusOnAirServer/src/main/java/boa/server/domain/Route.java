@@ -66,11 +66,11 @@ public class Route {
         return (Integer) underlyingNode.getProperty(ID);
     }
     
-    public void setId(int id){
+    private void setId(int id){
         underlyingNode.setProperty(Route.ID, id);
     }
         
-	public void setType() {
+	private void setType() {
             underlyingNode.setProperty(Route.TYPE, "Route");		
 	}
 
@@ -121,7 +121,7 @@ public class Route {
 		return (String) underlyingNode.getProperty(LINE);
 	}
 		
-	public void setLine(String line){
+	private void setLine(String line){
 		underlyingNode.setProperty(Route.LINE, line);
 	}
 

@@ -113,7 +113,7 @@ public class Run {
 		restore();
 	}
 	
-	public void setType() {
+	private void setType() {
         underlyingNode.setProperty(Run.TYPE, "Run");		
     }
 
@@ -125,7 +125,7 @@ public class Run {
         return (Integer) underlyingNode.getProperty(ID);
     }
 
-    public void setId(int id){
+    private void setId(int id){
         underlyingNode.setProperty(Run.ID, id);
     }
     
@@ -614,9 +614,9 @@ public class Run {
     	CheckPoint cp = getCheckPointById(js.getId());
 	  	if(cp != null){	// update
 	  		cp.setDt(js.getDt());
-	  		cp.setLatitude(js.getLatLon().getLat());
-	  		cp.setLongitude(js.getLatLon().getLon());
-	  		updateCpSpatialIndex(cp);
+//	  		cp.setLatitude(js.getLatLon().getLat());
+//	  		cp.setLongitude(js.getLatLon().getLon());
+//	  		updateCpSpatialIndex(cp);
 	  	} else {		// create
 	  		cp = new CheckPoint(
 		  			  DbConnection.getDb().createNode(), 

@@ -6,3 +6,6 @@ istruzioni di installazione in linux:
       sudo npm install nomepacchetto -g
   - moduli node tutti all'ultima versione
  
+
+ 
+ 

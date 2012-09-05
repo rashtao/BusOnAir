@@ -35,7 +35,7 @@ public class CheckPoint {
     	return (String) underlyingNode.getProperty(TYPE);
     }
 
-    public void setType() {
+    private void setType() {
             underlyingNode.setProperty(CheckPoint.TYPE, "CheckPoint");		
     }
 
@@ -51,12 +51,12 @@ public class CheckPoint {
             return (Double) underlyingNode.getProperty(LONGITUDE);
     }
 
-    public void setLatitude(double lat){
+    private void setLatitude(double lat){
     	// after changing lat/lon call run.updatePosition() to update cpSpatialIndex
         underlyingNode.setProperty(CheckPoint.LATITUDE, lat);
     }
 
-    public void setLongitude(double lng){
+    private void setLongitude(double lng){
     	// after changing lat/lon call run.updatePosition() to update cpSpatialIndex
     	underlyingNode.setProperty(CheckPoint.LONGITUDE, lng);
     }

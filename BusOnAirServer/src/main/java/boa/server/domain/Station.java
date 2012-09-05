@@ -51,7 +51,7 @@ public class Station {
     	stopIndex.remove(s.getUnderlyingNode());
     }
     
-    public void setType() {
+    private void setType() {
         underlyingNode.setProperty(Station.TYPE, "Station");		
     }
 
@@ -83,7 +83,7 @@ public class Station {
             return (Boolean) underlyingNode.getProperty(IS_TERMINAL);
     }
 
-    public void setId(int id){
+    private void setId(int id){
             underlyingNode.setProperty(Station.ID, id);
     }
     
@@ -91,12 +91,12 @@ public class Station {
         underlyingNode.setProperty(Station.NAME, name);
     }
     
-    public void setLatitude(double lat){
+    private void setLatitude(double lat){
     	// after changing lat/lon call updatePosition() to update stationSpatialIndex
         underlyingNode.setProperty(Station.LATITUDE, lat);
     }
 
-    public void setLongitude(double lng){
+    private void setLongitude(double lng){
     	// after changing lat/lon call updatePosition() to update stationSpatialIndex
         underlyingNode.setProperty(Station.LONGITUDE, lng);
     }
@@ -105,12 +105,8 @@ public class Station {
         Stations.getStations().updateSpatialIndex(this);
     }
 
-    public void setIsSchool(boolean isSchool){
+    private void setIsSchool(boolean isSchool){
             underlyingNode.setProperty(Station.IS_SCHOOL, isSchool);
-    }
-
-    public void setIsTerminal(boolean isTerminal){
-            underlyingNode.setProperty(Station.IS_TERMINAL, isTerminal);
     }
     
     public void addStop(Stop s){

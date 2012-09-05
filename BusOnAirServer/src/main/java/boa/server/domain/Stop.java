@@ -67,7 +67,7 @@ public class Stop {
 		return (Integer) underlyingNode.getProperty(ID);
 	}
 
-	public void setId(int id){
+	private void setId(int id){
 		underlyingNode.setProperty(Stop.ID, id);		
 	}
 	
@@ -75,7 +75,7 @@ public class Stop {
     	return (String) underlyingNode.getProperty(TYPE);
     }
 	
-    public void setType() {
+    private void setType() {
             underlyingNode.setProperty(Stop.TYPE, "Stop");		
     }
 
@@ -91,7 +91,7 @@ public class Stop {
         return (Integer) underlyingNode.getProperty(STATICTIME);
     }
 
-	public void setStaticTime(int staticTime){
+	private void setStaticTime(int staticTime){
 	        underlyingNode.setProperty(Stop.STATICTIME, staticTime);		
 	}
 
@@ -146,10 +146,6 @@ public class Stop {
     	
     	if(stop != null)
     		underlyingNode.createRelationshipTo(stop.getUnderlyingNode(), RelTypes.NEXTINSTATION);
-    }
-
-    public void setPrevInStation(Stop stop){
-    	stop.setNextInStation(this);
     }
 
     public Stop getNextInRun(){

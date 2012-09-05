@@ -63,9 +63,9 @@ Station:
 		try{
 //			staz.setLatitude(43.352);
 //			staz.setLongitude(14.349);
-			staz.setLatitude(42.353);
-			staz.setLongitude(13.35);
-			Stations.getStations().updateSpatialIndex(staz);
+//			staz.setLatitude(42.353);
+//			staz.setLongitude(13.35);
+//			Stations.getStations().updateSpatialIndex(staz);
 			tx.success();
 		}finally{
 			tx.finish();			
