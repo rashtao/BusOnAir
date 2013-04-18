@@ -1,0 +1,36 @@
+login:	boa
+passw:	boa
+
+ssh NATport: 2222
+ssh boa@127.0.0.1 -p 2222
+
+
+-----
+Avvio di BusOnAirServer
+-----
+
+./1compile.sh
+./2install.sh
+
+
+-----
+Importer
+-----
+
+./3import.sh		# importa routes.json, runs.json, stations.json e stops.json
+
+
+-----
+Avvio di BusOnAirWeb
+-----
+
+./4webserver.sh
+
+
+-----
+Interfaccia web
+-----
+
+url: http://127.0.0.1:8080/
+
+

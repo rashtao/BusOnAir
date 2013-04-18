@@ -19,12 +19,30 @@
 			<version>1.8.M03</version>
 		</dependency>
 
+<!--    
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-spatial</artifactId>
 			<version>0.9-SNAPSHOT</version>
 		</dependency>
-        
+		-->      
+		
+		<dependency>
+		  <groupId>org.neo4j</groupId>
+		  <artifactId>neo4j-spatial</artifactId>
+		  <version>0.9-SNAPSHOT</version>
+		  <scope>system</scope>
+		  <systemPath>${basedir}/lib/neo4j-spatial-0.9-SNAPSHOT.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.neo4j</groupId>
+		  <artifactId>neo4j-graph-collections</artifactId>
+		  <version>0.4-SNAPSHOT</version>
+		  <scope>system</scope>
+		  <systemPath>${basedir}/lib/neo4j-graph-collections-0.4-SNAPSHOT.jar</systemPath>
+		</dependency>
+      
 		<dependency>
 			<groupId>com.vividsolutions</groupId>
 			<artifactId>jts</artifactId>

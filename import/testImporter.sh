@@ -1,4 +1,4 @@
-export BOA_BASE_URL=http://localhost:7474/plugin
+export BOA_BASE_URL=http://localhost:7777/plugin
 
 #curl $BOA_BASE_URL/backend/stations/exportall > stations.json
 #curl $BOA_BASE_URL/backend/routes/exportall > routes.json
