@@ -22,59 +22,55 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
-@Path( "/routesearch" )
-public class RouteSearchResource
-{
+@Path("/routesearch")
+public class RouteSearchResource {
 
     private BufferedWriter log;
 
-    public RouteSearchResource( @Context Database database,
-            @Context HttpServletRequest req, @Context OutputFormat output ) throws IOException 
-    {
-        this( new SessionFactoryImpl( req.getSession( true ) ), database,
-                output );
+    public RouteSearchResource(@Context Database database,
+                               @Context HttpServletRequest req, @Context OutputFormat output) throws IOException {
+        this(new SessionFactoryImpl(req.getSession(true)), database,
+                output);
 
-        String fullURL = req.getRequestURL().append("?").append( 
-            req.getQueryString()).toString();        
-        log.write("\nHttpServletRequest(" + fullURL +")");
-        log.flush(); 
-        
-        
+        String fullURL = req.getRequestURL().append("?").append(
+                req.getQueryString()).toString();
+        log.write("\nHttpServletRequest(" + fullURL + ")");
+        log.flush();
+
+
     }
 
-    public RouteSearchResource( SessionFactoryImpl sessionFactoryImpl,
-            Database database, OutputFormat output ) throws IOException 
-    {
+    public RouteSearchResource(SessionFactoryImpl sessionFactoryImpl,
+                               Database database, OutputFormat output) throws IOException {
         FileWriter logFile = new FileWriter("/tmp/trasportaqroutes.log");
         log = new BufferedWriter(logFile);
         DbConnection.createDbConnection(database);
     }
 
     @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/" )
-    public Response routeSearch( @QueryParam( "routeId" ) Integer routeId ) throws IOException 
-    {        
-        log.write("\nROUTESEARCH(" + routeId +")");
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
+    public Response routeSearch(@QueryParam("routeId") Integer routeId) throws IOException {
+        log.write("\nROUTESEARCH(" + routeId + ")");
         log.flush();
 
-        if ( routeId == null )
-            return Response.serverError().entity( "routeId cannot be blank" ).build();
+        if (routeId == null)
+            return Response.serverError().entity("routeId cannot be blank").build();
 
         boa.server.domain.Route route = boa.server.domain.Routes.getRoutes().getRouteById(routeId);
-        if(route == null){
-            return Response.status( 400 ).entity(
-                "No Route Found: " + routeId ).build();
+        if (route == null) {
+            return Response.status(400).entity(
+                    "No Route Found: " + routeId).build();
         }
         log.write(route.toString());
         log.flush();
-                
+
         Run run = route.getAllRuns().iterator().next();
-        
+
         boa.server.domain.Stop stop = run.getFirstStop();
 
         Routes routeList = new Routes();
-        while(stop != null){
+        while (stop != null) {
             routeList.add(new RouteStop(stop));
             stop = stop.getNextInRun();
         }

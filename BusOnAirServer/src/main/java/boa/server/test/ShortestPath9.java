@@ -9,24 +9,23 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 
 /**
- *
  * @author rashta
  */
 public class ShortestPath9 {
 
 
     public static void main(String[] args) {
-       		DbConnection.createEmbeddedDbConnection();
+        DbConnection.createEmbeddedDbConnection();
         GraphDatabaseService db = DbConnection.getDb();
-    		
-    		
-            int time = 330;     //9h00
-            Station s1 = Stations.getStations().getStationById(70);
-            Station s2 = Stations.getStations().getStationById(1);
-                
-            System.out.print("\ns1: " + s1);
-            System.out.print("\ns2: " + s2);
-            
+
+
+        int time = 330;     //9h00
+        Station s1 = Stations.getStations().getStationById(70);
+        Station s2 = Stations.getStations().getStationById(1);
+
+        System.out.print("\ns1: " + s1);
+        System.out.print("\ns2: " + s2);
+
 //            shortestpath.BreadthTraverser.shortestPath(s1, s2, time);
 //            Path foundPath = shortestpath.ShortestPath.shortestPath(s1, s2, time);
 //            
@@ -38,35 +37,35 @@ public class ShortestPath9 {
 //            System.out.println( "ShortestPath: NULL");
 //
 //            }
-            Stop firstStop = s1.getFirstStopFromTime(time);
-            int prevTime = time;
-            
-            while(time < 570){            
-                
-                //System.out.print(firstStop);
-                myShortest mysp = new myShortest(firstStop, s2, 1440);
-                mysp.shortestPath();
+        Stop firstStop = s1.getFirstStopFromTime(time);
+        int prevTime = time;
 
-                Stop arrivo = mysp.getShortestPath();
-                //System.out.print("\n\nSTOP ARRIVO" + arrivo);
-                System.out.print("\n-------\ndt: " + (arrivo.getTime() - prevTime));
+        while (time < 570) {
+
+            //System.out.print(firstStop);
+            myShortest mysp = new myShortest(firstStop, s2, 1440);
+            mysp.shortestPath();
+
+            Stop arrivo = mysp.getShortestPath();
+            //System.out.print("\n\nSTOP ARRIVO" + arrivo);
+            System.out.print("\n-------\ndt: " + (arrivo.getTime() - prevTime));
 
 
-                System.out.println( "\t" + mysp.toString());
-                System.out.println( "\n" + firstStop.getPrevInStation());
+            System.out.println("\t" + mysp.toString());
+            System.out.println("\n" + firstStop.getPrevInStation());
 //                String outPath = "";
 //                for(Stop s : mysp.getWeightedPath()){
 //                    outPath = "(" + s.getUnderlyingNode().getId() + ":ID" + s.getId()  + ":STAZID" + s.getStazione().getId() + ":TIME" + s.getTime() + ")-->" + outPath;                
 //
 //                }
-                
-                prevTime = firstStop.getTime();
-                firstStop = firstStop.getNextInStation();
+
+            prevTime = firstStop.getTime();
+            firstStop = firstStop.getNextInStation();
 //                dt = firstStop.getTime() - time;
-                time = firstStop.getTime();
-                
-                
-            }
+            time = firstStop.getTime();
+
+
+        }
 //            Stop arrivo = s2.getFirstStopsFromTime(time);
 //            
 //            while(arrivo != null && !cache.check(arrivo)){
@@ -99,9 +98,9 @@ public class ShortestPath9 {
 //                } while(arrivo != null && arrivo.prevSP == null);
 //            }
 //            
-            
-            DbConnection.turnoff();
-        }
-    
-    
+
+        DbConnection.turnoff();
+    }
+
+
 }

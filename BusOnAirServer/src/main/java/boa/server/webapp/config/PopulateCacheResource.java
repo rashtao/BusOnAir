@@ -15,40 +15,34 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path( "/populatecache" )
-public class PopulateCacheResource
-{
+@Path("/populatecache")
+public class PopulateCacheResource {
 
     private final Database database;
 
-    public PopulateCacheResource( @Context Database database,
-            @Context HttpServletRequest req, @Context OutputFormat output )
-    {
-        this( new SessionFactoryImpl( req.getSession( true ) ), database, output );
+    public PopulateCacheResource(@Context Database database,
+                                 @Context HttpServletRequest req, @Context OutputFormat output) {
+        this(new SessionFactoryImpl(req.getSession(true)), database, output);
     }
 
-    public PopulateCacheResource( SessionFactoryImpl sessionFactoryImpl, Database database, OutputFormat output )
-    {
+    public PopulateCacheResource(SessionFactoryImpl sessionFactoryImpl, Database database, OutputFormat output) {
         this.database = database;
     }
 
     @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/" )
-    public Response populateCache()
-    {
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
+    public Response populateCache() {
         int i = 0;
-        for ( Node node : this.database.graph.getAllNodes() )
-        {
+        for (Node node : this.database.graph.getAllNodes()) {
             node.getPropertyKeys();
             node.getPropertyValues();
-            for ( Relationship relationship : node.getRelationships( Direction.OUTGOING ) )
-            {
+            for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
                 relationship.getPropertyKeys();
                 relationship.getPropertyValues();
             }
         }
-        return Response.ok().entity( i + "" ).build();
+        return Response.ok().entity(i + "").build();
     }
 }
 

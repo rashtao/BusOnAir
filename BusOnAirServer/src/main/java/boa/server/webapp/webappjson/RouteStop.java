@@ -8,68 +8,58 @@ import org.neo4j.graphdb.Node;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-@XmlRootElement( name = "stop" )
-public class RouteStop
-{
+@XmlRootElement(name = "stop")
+public class RouteStop {
 
     private String stopId;
     private String stopName;
     private Coordinate latLon;
 
-    public RouteStop()
-    {
+    public RouteStop() {
     }
 
-    public RouteStop( String stopId, String stopName, Coordinate latLon )
-    {
+    public RouteStop(String stopId, String stopName, Coordinate latLon) {
         super();
         this.stopId = stopId;
         this.stopName = stopName;
         this.latLon = latLon;
     }
 
-    public RouteStop( Node hit )
-    {
-        Stop stop = new Stop( hit );
+    public RouteStop(Node hit) {
+        Stop stop = new Stop(hit);
         this.stopId = stop.getStopId();
         this.stopName = stop.getStopName();
         this.latLon = stop.getCoordinate();
     }
-    
-    public RouteStop(boa.server.domain.Stop s){
+
+    public RouteStop(boa.server.domain.Stop s) {
         Station staz = s.getStation();
         stopId = staz.getId().toString();
         stopName = staz.getName();
-        latLon = new Coordinate(staz.getLatitude(), staz.getLongitude());       
+        latLon = new Coordinate(staz.getLatitude(), staz.getLongitude());
     }
 
-    public String getStopId()
-    {
+    public String getStopId() {
         return stopId;
     }
 
-    public void setStopId( String stopId )
-    {
+    public void setStopId(String stopId) {
         this.stopId = stopId;
     }
 
-    public String getStopName()
-    {
+    public String getStopName() {
         return stopName;
     }
 
-    public void setStopName( String stopName )
-    {
+    public void setStopName(String stopName) {
         this.stopName = stopName;
     }
 
-    public Coordinate getLatLon()
-    {
+    public Coordinate getLatLon() {
         return latLon;
     }
 
-    public void setLatLon( Coordinate latLon )
-    {
+    public void setLatLon(Coordinate latLon) {
         this.latLon = latLon;
     }
 

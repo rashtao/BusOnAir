@@ -3,38 +3,35 @@ package boa.server.plugin.json;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Response
-{
+public class Response {
 
     private int status;
     private String message;
-    
-    public Response(){
-    	
+
+    public Response() {
+
     }
-    
-	public Response(int status, String message){
-		this.status = status;
-		this.message = message;
-	}
 
-	public int getStatus() {
-		return status;
-	}
+    public Response(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-    
-    
+    public String getMessage() {
+        return message;
+    }
 
-    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+
 }

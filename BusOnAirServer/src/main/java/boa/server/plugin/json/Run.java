@@ -2,74 +2,70 @@ package boa.server.plugin.json;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement( name = "run" )
-public class Run
-{
+@XmlRootElement(name = "run")
+public class Run {
     private int id;
     private String route;
     private String firstStop;
-    private String firstCheckPoint;    
+    private String firstCheckPoint;
     private String url;
-    
-    public Run()
-    {
+
+    public Run() {
     }
 
-    private Run(int id){
+    private Run(int id) {
         this.id = id;
     }
 
-    public Run( boa.server.domain.Run r )
-    {
-    	this(r.getId());
-    	setRoute(r.getRoute().getUrl());
-    	setFirstStop(r.getFirstStop().getUrl());
-    	setFirstCheckPoint(r.getFirstCheckPoint().getUrl());
-    	setUrl(r.getUrl());
-    	
-    }
-    
-    public int getId(){
-    	return id;
-    }
-    
-    public void setId(int id){
-    	this.id = id;
+    public Run(boa.server.domain.Run r) {
+        this(r.getId());
+        setRoute(r.getRoute().getUrl());
+        setFirstStop(r.getFirstStop().getUrl());
+        setFirstCheckPoint(r.getFirstCheckPoint().getUrl());
+        setUrl(r.getUrl());
+
     }
 
-	public String getRoute() {
-		return route;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setRoute(String route) {
-		this.route = route;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getFirstStop() {
-		return firstStop;
-	}
+    public String getRoute() {
+        return route;
+    }
 
-	public void setFirstStop(String firstStop) {
-		this.firstStop = firstStop;
-	}
+    public void setRoute(String route) {
+        this.route = route;
+    }
 
-	
-	public String getFirstCheckPoint() {
-		return firstCheckPoint;
-	}
+    public String getFirstStop() {
+        return firstStop;
+    }
 
-	public void setFirstCheckPoint(String firstCheckPoint) {
-		this.firstCheckPoint = firstCheckPoint;
-	}
+    public void setFirstStop(String firstStop) {
+        this.firstStop = firstStop;
+    }
 
-	public String getUrl() {
-		return url;
-	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-    
-	
-    
+    public String getFirstCheckPoint() {
+        return firstCheckPoint;
+    }
+
+    public void setFirstCheckPoint(String firstCheckPoint) {
+        this.firstCheckPoint = firstCheckPoint;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+
 }

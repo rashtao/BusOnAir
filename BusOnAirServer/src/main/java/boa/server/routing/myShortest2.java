@@ -16,158 +16,157 @@ public class myShortest2 {
     private Stop source;
     private int stopTime;
     private Station dest;
-    
-    public myShortest2(Stop _source, Station _dest, int _timeInterval){
-        cache = new StopMediator();   
+
+    public myShortest2(Stop _source, Station _dest, int _timeInterval) {
+        cache = new StopMediator();
         source = cache.get(_source);
         source.numeroCambi = 0;
         stopTime = source.getTime() + _timeInterval;
         dest = _dest;
     }
-    
-    public StopMediator shortestPath(){
+
+    public StopMediator shortestPath() {
         loadSubgraph();
         topologicalVisit();
-        return cache;        
+        return cache;
     }
-    
-    public Stop getShortestPath(){
+
+    public Stop getShortestPath() {
         Stop arrivo = dest.getFirstStopFromTime(source.getTime());
-        if(arrivo != null)
+        if (arrivo != null)
             arrivo = cache.get(arrivo);
-        
-        while(arrivo != null && arrivo.prevSP == null){
+
+        while (arrivo != null && arrivo.prevSP == null) {
             arrivo = arrivo.getNextInStation();
-            if(arrivo != null)
-                arrivo = cache.get(arrivo);            
+            if (arrivo != null)
+                arrivo = cache.get(arrivo);
         }
-    
+
         return arrivo;
     }
-        
-    public void loadSubgraph(){
-        
+
+    public void loadSubgraph() {
+
         Traverser graphTrav = source.getUnderlyingNode().traverse(
                 Traverser.Order.BREADTH_FIRST,
                 new StopExplorer(),
-                ReturnableEvaluator.ALL, 
+                ReturnableEvaluator.ALL,
                 RelTypes.NEXTINRUN,
                 Direction.OUTGOING,
                 RelTypes.NEXTINSTATION,
                 Direction.OUTGOING);
-        
-        for (Node n : graphTrav){
+
+        for (Node n : graphTrav) {
             Stop s = cache.get(n);
             Stop nir = s.getNextInRun();
             Stop nis = s.getNextInStation();
-            
-            if(s.equals(source.getNextInStation())){
+
+            if (s.equals(source.getNextInStation())) {
                 nir = null;
-                nis = null;    
+                nis = null;
                 source.nextInStation = null;
             }
-            
-            if(s.getStation().equals(dest)){
+
+            if (s.getStation().equals(dest)) {
                 nir = null;
-                nis = null;                
+                nis = null;
             }
-            
-            if(nir != null){
-                nir = cache.get(nir);      
+
+            if (nir != null) {
+                nir = cache.get(nir);
                 s.nextInRun = nir;
                 nir.prevInRun = s;
             }
-            
-            if(nis != null){
+
+            if (nis != null) {
                 nis = cache.get(nis);
                 s.nextInStation = nis;
-                nis.prevInStation = s;                    
+                nis.prevInStation = s;
             }
-        }        
+        }
     }
-    
-    public void topologicalVisit(){
+
+    public void topologicalVisit() {
 
         Stack<Stop> toVisit = new Stack<Stop>();
         toVisit.push(source);
-        
-        while(!toVisit.isEmpty()){
+
+        while (!toVisit.isEmpty()) {
             Stop s = toVisit.pop();
             Stop nir = s.nextInRun;
             Stop nis = s.nextInStation;
-            
-            
-                        
-            if(nir != null){
+
+
+            if (nir != null) {
                 // UPDATE Shortest path e cambi
-                if(nir.prevSP == null){
+                if (nir.prevSP == null) {
                     nir.prevSP = s;
                     nir.numeroCambi = s.numeroCambi;
-                } else if(s.numeroCambi < nir.numeroCambi){
+                } else if (s.numeroCambi < nir.numeroCambi) {
                     nir.prevSP = s;
                     nir.numeroCambi = s.numeroCambi;
                 }
 
                 // Gestione visita topologica
                 nir.prevInRun = null;
-                if(nir.prevInStation == null){
+                if (nir.prevInStation == null) {
                     toVisit.push(nir);
                 }
             }
-            
-            if(nis != null){
+
+            if (nis != null) {
                 // UPDATE Shortest path e cambi
                 int cambio = 0;
-                if((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))){
+                if ((s.prevSP != null) && (s.prevSP.equals(s.getPrevInRun()))) {
                     cambio = 1;
                 }
-                
-                int cambiPerNis = s.numeroCambi + cambio;                
-                if(nis.prevSP == null){
+
+                int cambiPerNis = s.numeroCambi + cambio;
+                if (nis.prevSP == null) {
                     nis.prevSP = s;
                     nis.numeroCambi = cambiPerNis;
-                } else if(cambiPerNis <= nis.numeroCambi){
+                } else if (cambiPerNis <= nis.numeroCambi) {
                     nis.prevSP = s;
                     nis.numeroCambi = cambiPerNis;
                 }
 
                 // Gestione visita topologica
                 nis.prevInStation = null;
-                if(nis.prevInRun == null){
+                if (nis.prevInRun == null) {
                     toVisit.push(nis);
-                }            
+                }
             }
         }
     }
 
     public String toString() {
         Stop arrivo = getShortestPath();
-        String outPath = "";    
-        if(arrivo != null){
+        String outPath = "";
+        if (arrivo != null) {
             outPath = "(" + arrivo.getUnderlyingNode().getId() + ":ID" + arrivo.getId() + ":STAZID" + arrivo.getStation().getId() + ":TIME" + arrivo.getTime() + ")";
 
             Stop arr = arrivo;
-            while(!arr.equals(source)){
+            while (!arr.equals(source)) {
                 arr = arr.prevSP;
-                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId()  + ":STAZID" + arr.getStation().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;                
+                outPath = "(" + arr.getUnderlyingNode().getId() + ":ID" + arr.getId() + ":STAZID" + arr.getStation().getId() + ":TIME" + arr.getTime() + ")-->" + outPath;
             }
         }
         return outPath;
 
     }
-    
-     public class StopExplorer implements StopEvaluator{
+
+    public class StopExplorer implements StopEvaluator {
 //        int count = 0;
 
         @Override
-        public boolean isStopNode(TraversalPosition tp) {            
+        public boolean isStopNode(TraversalPosition tp) {
 //            System.out.println( "\nVisited nodes: " + count++);
-            Stop currentStop = cache.get(tp.currentNode());         
-            if(currentStop.prevInStation != null && currentStop.prevInStation.equals(source)){  //esclude l'attesa nella stazione di partenza!
+            Stop currentStop = cache.get(tp.currentNode());
+            if (currentStop.prevInStation != null && currentStop.prevInStation.equals(source)) {  //esclude l'attesa nella stazione di partenza!
                 return true;
-            }else if(currentStop.getStation().equals(dest)){
+            } else if (currentStop.getStation().equals(dest)) {
                 return true;
-            }else return (currentStop.getTime() > stopTime);
+            } else return (currentStop.getTime() > stopTime);
         }
-    }   
+    }
 }

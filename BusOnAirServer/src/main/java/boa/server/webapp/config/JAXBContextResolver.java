@@ -15,23 +15,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Provider
-public final class JAXBContextResolver implements ContextResolver<JAXBContext>
-{
+public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
     private final JAXBContext context;
 
     private final Set<Class> types;
 
-    public JAXBContextResolver() throws Exception
-    {
+    public JAXBContextResolver() throws Exception {
         Class[] cTypes = {DirectionsList.class, Directions.class, Coordinate.class};
-        this.types = new HashSet( Arrays.asList(cTypes) );
+        this.types = new HashSet(Arrays.asList(cTypes));
         this.context = new JSONJAXBContext(
                 JSONConfiguration.natural().build(), cTypes);
     }
 
-    public JAXBContext getContext( Class<?> objectType )
-    {
-        return ( types.contains( objectType ) ) ? context : null;
+    public JAXBContext getContext(Class<?> objectType) {
+        return (types.contains(objectType)) ? context : null;
     }
 }

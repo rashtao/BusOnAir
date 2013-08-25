@@ -5,23 +5,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement( name = "List" )
-public class Runs
-{
-    @XmlElement( name = "runlist" )
+@XmlRootElement(name = "List")
+public class Runs {
+    @XmlElement(name = "runlist")
     List<String> runlist = new ArrayList<String>();
 
-    public Runs()
-    {
+    public Runs() {
     }
 
-    public void add( Run r )
-    {
+    public void add(Run r) {
         runlist.add(r.getUrl());
     }
 
-    public void add( boa.server.domain.Run r )
-    {
+    public void add(boa.server.domain.Run r) {
         runlist.add(r.getUrl());
     }
 
