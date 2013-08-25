@@ -16,7 +16,6 @@
 //
 
 // NB: output in /tmp/sp1.log
- 
 
 
 package boa.server.test;
@@ -36,33 +35,29 @@ import java.io.IOException;
 
 
 /**
- *
  * @author rashta
  */
 public class ShortestPath8 {
-		private static GraphDatabaseService db;
-		private static BufferedWriter log;
 
-        public static void main(String[] args) throws IOException {     
-    		DbConnection.createEmbeddedDbConnection();
-    		db = DbConnection.getDb();
-    		
-    		
-            FileWriter logFile = new FileWriter("/tmp/sp1.log");
-            log = new BufferedWriter(logFile);
+    public static void main(String[] args) throws IOException {
+        DbConnection.createEmbeddedDbConnection();
+        GraphDatabaseService db = DbConnection.getDb();
 
-            
-            
-            int time = 0;     //9h00
+
+        FileWriter logFile = new FileWriter("/tmp/sp1.log");
+        BufferedWriter log = new BufferedWriter(logFile);
+
+
+        int time = 0;     //9h00
 //            Station s1 = Stations.getStations().getStationById(70);
 //            Station s2 = Stations.getStations().getStationById(1);
-                
-            Station s1 = Stations.getStations().getStationById(22);
-            Station s2 = Stations.getStations().getStationById(33);
-                
-            log.write("\ns1: " + s1);
-            log.write("\ns2: " + s2);
-            
+
+        Station s1 = Stations.getStations().getStationById(22);
+        Station s2 = Stations.getStations().getStationById(33);
+
+        log.write("\ns1: " + s1);
+        log.write("\ns2: " + s2);
+
 //            shortestpath.BreadthTraverser.shortestPath(s1, s2, time);
 //            Path foundPath = shortestpath.ShortestPath.shortestPath(s1, s2, time);
 //            
@@ -74,46 +69,40 @@ public class ShortestPath8 {
 //            log.writeln( "ShortestPath: NULL");
 //
 //            }
-            Stop firstStop = s1.getFirstStopFromTime(time);
-            int prevTime = time;
-            
-                
-                
-                //log.write(firstStop);
+        Stop firstStop = s1.getFirstStopFromTime(time);
+//            int prevTime = time;
+
+
+        //log.write(firstStop);
 //                myShortest mysp = new myShortest(firstStop, s2, 1440);
 //                myShortestGeo mysp = new myShortestGeo(firstStop, s2, 1440);
-  
-        	double lat1 = 42.3799;
-        	double lon1 = 13.298555;
-        	
-        	double lat2 = 42.34300;
-        	double lon2 = 13.46300;
 
-        	ShortestPathGeo mysp = new ShortestPathGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
-            mysp.shortestPath(); 
-            boa.server.plugin.json.Directions directs = new boa.server.plugin.json.Directions(new Coordinate(lon1,lat1), mysp.getArrivalList());
-            for(boa.server.plugin.json.Direction d : directs.getDirectionsList()){
-            	log.write(d.toString());
-            }
-            
-            
+        double lat1 = 42.3799;
+        double lon1 = 13.298555;
 
-                
+        double lat2 = 42.34300;
+        double lon2 = 13.46300;
+
+        ShortestPathGeo mysp = new ShortestPathGeo(time, 1400, lat1, lon1, lat2, lon2, 1000, Criteria.MINCHANGES);
+        mysp.shortestPath();
+        boa.server.plugin.json.Directions directs = new boa.server.plugin.json.Directions(new Coordinate(lon1, lat1), mysp.getArrivalList());
+        for (boa.server.plugin.json.Direction d : directs.getDirectionsList()) {
+            log.write(d.toString());
+        }
+
+
 //                Stop arrivo = mysp.getShortestPath();
-                //log.write("\n\nSTOP ARRIVO" + arrivo);
+        //log.write("\n\nSTOP ARRIVO" + arrivo);
 //                log.write("\n-------\ndt: " + (arrivo.getTime() - prevTime));
 
 
-                log.write( "\n\n" + mysp.toString());
+        log.write("\n\n" + mysp.toString());
 //                String outPath = "";
 //                for(Stop s : mysp.getWeightedPath()){
 //                    outPath = "(" + s.getUnderlyingNode().getId() + ":ID" + s.getId()  + ":STAZID" + s.getStazione().getId() + ":TIME" + s.getTime() + ")-->" + outPath;                
 //
 //                }
-                
 
-                
-                
 
 //            Stop arrivo = s2.getFirstStopsFromTime(time);
 //            
@@ -148,11 +137,11 @@ public class ShortestPath8 {
 //            }
 //            
 
-                
-                log.flush(); 
-            
-            DbConnection.turnoff();
-        }
-    
-    
+
+        log.flush();
+
+        DbConnection.turnoff();
+    }
+
+
 }

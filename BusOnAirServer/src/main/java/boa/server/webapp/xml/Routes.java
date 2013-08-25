@@ -3,18 +3,15 @@ package boa.server.webapp.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Routes
-{
+public class Routes {
     private List<Route> routeList;
 
-    public Routes()
-    {
+    public Routes() {
         super();
         routeList = new ArrayList<Route>();
     }
 
-    public List<Route> getRouteList()
-    {
+    public List<Route> getRouteList() {
         return routeList;
     }
 

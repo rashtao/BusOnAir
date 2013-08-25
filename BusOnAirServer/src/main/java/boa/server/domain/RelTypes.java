@@ -20,12 +20,12 @@ package boa.server.domain;
 
 import org.neo4j.graphdb.RelationshipType;
 
-public enum RelTypes implements RelationshipType{
-    NEXTINRUN, 
-    NEXTINSTATION, 
-    STOP_RUN, 
+public enum RelTypes implements RelationshipType {
+    NEXTINRUN,
+    NEXTINSTATION,
+    STOP_RUN,
     STOP_STATION,
-    RUN_ROUTE, 
+    RUN_ROUTE,
     RUN_FIRSTSTOP,
     RUN_FIRSTCHECKPOINT,
     RUN_LASTCHECKPOINT,

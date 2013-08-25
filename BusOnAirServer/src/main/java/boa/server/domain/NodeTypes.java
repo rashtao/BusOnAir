@@ -19,35 +19,35 @@
 package boa.server.domain;
 
 public enum NodeTypes {
-    STOP{
+    STOP {
         public String toString() {
             return "Stop";
-        }    	
+        }
     },
-    
-    RUN{
+
+    RUN {
         public String toString() {
             return "Run";
-        }    	
+        }
     },
-    
-    STATION{
+
+    STATION {
         public String toString() {
             return "Station";
-        }    	
+        }
     },
-    
-    ROUTE{
+
+    ROUTE {
         public String toString() {
             return "Route";
-        }    	
+        }
     },
-        
-    CHECKPOINT{
+
+    CHECKPOINT {
         public String toString() {
             return "CheckPoint";
-        }    	
+        }
     }
-        
-    
+
+
 }
