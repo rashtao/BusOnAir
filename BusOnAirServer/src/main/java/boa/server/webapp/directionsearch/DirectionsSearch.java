@@ -1,11 +1,19 @@
 package boa.server.webapp.directionsearch;
 
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import boa.server.domain.DbConnection;
+import boa.server.domain.Stops;
+import boa.server.routing.Criteria;
+import boa.server.routing.ShortestPathGeo;
+import boa.server.routing.StopMediator;
+import boa.server.webapp.webappjson.Directions;
+import boa.server.webapp.webappjson.DirectionsList;
+import boa.server.webapp.webappjson.DirectionsRoute;
+import boa.server.webapp.webappjson.DirectionsWalk;
+import com.vividsolutions.jts.geom.Coordinate;
+import org.neo4j.server.database.Database;
+import org.neo4j.server.rest.repr.OutputFormat;
+import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -15,22 +23,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.neo4j.server.database.Database;
-import org.neo4j.server.rest.repr.OutputFormat;
-import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
-
-import com.vividsolutions.jts.geom.Coordinate;
-
-import boa.server.domain.DbConnection;
-import boa.server.domain.Stops;
-import boa.server.routing.Criteria;
-import boa.server.routing.StopMediator;
-import boa.server.routing.ShortestPathGeo;
-import boa.server.webapp.webappjson.Directions;
-import boa.server.webapp.webappjson.DirectionsList;
-import boa.server.webapp.webappjson.DirectionsRoute;
-import boa.server.webapp.webappjson.DirectionsWalk;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path( "/directions" )
 public class DirectionsSearch

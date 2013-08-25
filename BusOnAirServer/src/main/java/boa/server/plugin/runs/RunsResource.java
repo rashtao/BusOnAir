@@ -1,24 +1,22 @@
 package boa.server.plugin.runs;
 
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import boa.server.domain.CheckPoint;
+import boa.server.domain.DbConnection;
+import boa.server.domain.Run;
+import boa.server.domain.Stop;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
-import boa.server.domain.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 @Path( "/runs" )
 public class RunsResource{

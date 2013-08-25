@@ -1,22 +1,21 @@
 package boa.server.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import boa.server.domain.utils.GeoUtil;
+import boa.server.domain.utils.GeomUtil;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.neo4j.collections.rtree.Listener;
 import org.neo4j.gis.spatial.EditableLayer;
 import org.neo4j.gis.spatial.SpatialDatabaseRecord;
 import org.neo4j.gis.spatial.pipes.GeoPipeline;
 import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
-import boa.server.domain.utils.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class Run {
 	protected static final String ID = "id";

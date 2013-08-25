@@ -22,17 +22,14 @@ package boa.server.routing;
 */
 
 
-
+import boa.server.domain.*;
+import boa.server.domain.utils.GeoUtil;
+import org.neo4j.graphdb.*;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Stack;
-
-import org.neo4j.graphdb.*;
-
-import boa.server.domain.*;
-import boa.server.domain.utils.GeoUtil;
 
 public class ShortestPathGeo {
     private StopMediator cache;

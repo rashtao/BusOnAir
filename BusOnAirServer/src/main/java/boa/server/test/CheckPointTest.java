@@ -1,16 +1,9 @@
 package boa.server.test;
 
-import java.util.ArrayList;
-
-import org.neo4j.graphdb.GraphDatabaseService;
-
 import boa.server.domain.DbConnection;
-import boa.server.domain.Route;
-import boa.server.domain.Routes;
 import boa.server.domain.Run;
 import boa.server.domain.Runs;
-import boa.server.domain.Stop;
-import boa.server.domain.Stops;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 
 public class CheckPointTest {

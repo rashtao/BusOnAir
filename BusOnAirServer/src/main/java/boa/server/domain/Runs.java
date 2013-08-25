@@ -1,10 +1,11 @@
 package boa.server.domain;
 
-import java.util.ArrayList;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+
+import java.util.ArrayList;
 
 public class Runs {
     protected Index<Node> runsIndex;

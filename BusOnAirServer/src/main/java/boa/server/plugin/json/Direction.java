@@ -1,8 +1,7 @@
 package boa.server.plugin.json;
 
-import java.util.LinkedList;
-
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.LinkedList;
 
 @XmlRootElement( name = "directions" )
 public class Direction

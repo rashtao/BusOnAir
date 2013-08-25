@@ -1,14 +1,14 @@
 package boa.server.test;
 
-import java.util.Collection;
-
+import boa.server.domain.DbConnection;
+import boa.server.domain.Station;
+import boa.server.domain.Stations;
+import boa.server.domain.utils.GeoUtil;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
-import boa.server.domain.*;
-import boa.server.domain.utils.GeoUtil;
+import java.util.Collection;
 
 
 

@@ -1,16 +1,13 @@
 package boa.server.webapp.webappjson;
 
 
-
-import java.util.Arrays;
-import java.util.List;
+import boa.server.webapp.xml.Stop;
+import org.neo4j.graphdb.PropertyContainer;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.neo4j.graphdb.PropertyContainer;
-
-import boa.server.webapp.xml.Stop;
+import java.util.Arrays;
+import java.util.List;
 
 
 @XmlRootElement

@@ -1,10 +1,11 @@
 package boa.server.test;
 
 
+import boa.server.domain.DbConnection;
+import boa.server.domain.Station;
+import boa.server.domain.Stations;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-
-import boa.server.domain.*;
 
 
 

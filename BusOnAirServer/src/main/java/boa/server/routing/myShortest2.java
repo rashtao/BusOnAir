@@ -3,11 +3,13 @@
 
 package boa.server.routing;
 
-import java.util.Stack;
-import org.neo4j.graphdb.*;
+import boa.server.domain.RelTypes;
+import boa.server.domain.Station;
+import boa.server.domain.Stop;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.*;
 
-import boa.server.domain.*;
+import java.util.Stack;
 
 public class myShortest2 {
     private StopMediator cache;

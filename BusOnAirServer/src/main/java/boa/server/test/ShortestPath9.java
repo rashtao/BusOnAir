@@ -1,21 +1,11 @@
 package boa.server.test;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Stack;
-import org.neo4j.graphalgo.GraphAlgoFactory;
-import org.neo4j.graphalgo.PathFinder;
-import org.neo4j.graphalgo.WeightedPath;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Expander;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.kernel.Traversal;
-
-import boa.server.domain.*;
-import boa.server.routing.StopMediator;
+import boa.server.domain.DbConnection;
+import boa.server.domain.Station;
+import boa.server.domain.Stations;
+import boa.server.domain.Stop;
 import boa.server.routing.myShortest;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 
 /**

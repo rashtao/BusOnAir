@@ -1,8 +1,8 @@
 package boa.server.domain.utils;
 
-import java.util.Comparator;
-
 import boa.server.domain.Stop;
+
+import java.util.Comparator;
 
      public class TimeComparator implements Comparator{
         

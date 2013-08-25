@@ -1,18 +1,18 @@
 package boa.server.domain;
 
-import static org.neo4j.server.configuration.Configurator.DATABASE_LOCATION_PROPERTY_KEY;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.io.FileUtils;
+import org.neo4j.gis.spatial.SpatialDatabaseService;
+import org.neo4j.kernel.AbstractGraphDatabase;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.server.database.Database;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-import org.neo4j.gis.spatial.SpatialDatabaseService;
-import org.neo4j.kernel.AbstractGraphDatabase;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.server.database.Database;
-import org.apache.commons.configuration.Configuration;
+import static org.neo4j.server.configuration.Configurator.DATABASE_LOCATION_PROPERTY_KEY;
 
 
 public class DbConnection {

@@ -4,14 +4,9 @@
  */
 package boa.server.test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import boa.server.domain.*;
-import boa.server.domain.utils.AlphanumComparator;
+import boa.server.domain.DbConnection;
+import boa.server.domain.Route;
+import boa.server.domain.Routes;
 
 
 

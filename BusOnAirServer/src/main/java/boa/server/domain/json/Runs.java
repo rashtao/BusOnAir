@@ -1,10 +1,9 @@
 package boa.server.domain.json;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement( name = "List" )
 public class Runs{

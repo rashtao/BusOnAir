@@ -1,12 +1,7 @@
 package boa.server.test;
 
-import java.util.ArrayList;
-
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
-
 import boa.server.domain.*;
-import boa.server.domain.json.Coordinate;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 
 

@@ -2,10 +2,10 @@
 
 package boa.server.routing;
 
-import java.util.HashMap;
+import boa.server.domain.Stop;
 import org.neo4j.graphdb.Node;
 
-import boa.server.domain.Stop;
+import java.util.HashMap;
 
 public final class StopMediator {
     private HashMap<Long, Stop> cache;

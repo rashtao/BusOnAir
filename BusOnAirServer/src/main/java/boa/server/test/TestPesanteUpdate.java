@@ -1,10 +1,12 @@
 package boa.server.test;
 
+import boa.server.domain.DbConnection;
+import boa.server.domain.Run;
+import boa.server.domain.Runs;
+import boa.server.domain.Stop;
+import boa.server.test.utils.Chronometer;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-
-import boa.server.domain.*;
-import boa.server.test.utils.Chronometer;
 
 
 

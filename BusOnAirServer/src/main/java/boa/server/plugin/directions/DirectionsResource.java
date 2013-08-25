@@ -1,9 +1,13 @@
 package boa.server.plugin.directions;
 
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import boa.server.domain.DbConnection;
+import boa.server.routing.Criteria;
+import boa.server.routing.ShortestPathGeo;
+import com.vividsolutions.jts.geom.Coordinate;
+import org.neo4j.server.database.Database;
+import org.neo4j.server.rest.repr.OutputFormat;
+import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -13,16 +17,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.neo4j.server.database.Database;
-import org.neo4j.server.rest.repr.OutputFormat;
-import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
-
-import com.vividsolutions.jts.geom.Coordinate;
-
-import boa.server.domain.DbConnection;
-import boa.server.routing.Criteria;
-import boa.server.routing.ShortestPathGeo;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 @Path( "/directions/getdirections" )
 public class DirectionsResource

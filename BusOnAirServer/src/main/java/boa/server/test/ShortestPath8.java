@@ -21,32 +21,18 @@
 
 package boa.server.test;
 
+import boa.server.domain.DbConnection;
+import boa.server.domain.Station;
+import boa.server.domain.Stations;
+import boa.server.domain.Stop;
+import boa.server.routing.Criteria;
+import boa.server.routing.ShortestPathGeo;
+import com.vividsolutions.jts.geom.Coordinate;
+import org.neo4j.graphdb.GraphDatabaseService;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Stack;
-
-
-import org.neo4j.graphalgo.GraphAlgoFactory;
-import org.neo4j.graphalgo.PathFinder;
-import org.neo4j.graphalgo.WeightedPath;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Expander;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.kernel.Traversal;
-
-import com.vividsolutions.jts.geom.Coordinate;
-
-import boa.server.domain.*;
-import boa.server.plugin.json.Directions;
-import boa.server.routing.Criteria;
-import boa.server.routing.StopMediator;
-import boa.server.routing.myShortest;
-import boa.server.routing.ShortestPathGeo;
 
 
 /**

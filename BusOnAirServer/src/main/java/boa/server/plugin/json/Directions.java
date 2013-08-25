@@ -1,16 +1,15 @@
 package boa.server.plugin.json;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import boa.server.domain.Station;
 import boa.server.domain.Stop;
 import boa.server.domain.utils.GeoUtil;
-import boa.server.routing.*;
+import boa.server.routing.Config;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 @XmlRootElement( name = "List" )

@@ -1,5 +1,12 @@
 package boa.server.webapp.config;
 
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.server.database.Database;
+import org.neo4j.server.rest.repr.OutputFormat;
+import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -7,13 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.server.database.Database;
-import org.neo4j.server.rest.repr.OutputFormat;
-import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 @Path( "/populatecache" )
 public class PopulateCacheResource

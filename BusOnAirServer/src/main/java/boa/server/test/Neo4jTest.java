@@ -1,46 +1,21 @@
 package boa.server.test;
-import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import junit.framework.AssertionFailedError;
-
-import org.geotools.data.neo4j.StyledImageExporter;
-import org.junit.Test;
-import org.neo4j.collections.graphdb.DatabaseService;
-import org.neo4j.collections.*;
-import org.neo4j.collections.rtree.Envelope;
+import boa.server.domain.DbConnection;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.neo4j.collections.rtree.Listener;
-import org.neo4j.gis.spatial.EditableLayer;
-import org.neo4j.gis.spatial.LayerIndexReader;
-import org.neo4j.gis.spatial.SimplePointLayer;
-import org.neo4j.gis.spatial.SpatialDatabaseRecord;
-import org.neo4j.gis.spatial.SpatialDatabaseService;
-import org.neo4j.gis.spatial.SpatialRecord;
-import org.neo4j.gis.spatial.pipes.GeoPipeFlow;
+import org.neo4j.gis.spatial.*;
 import org.neo4j.gis.spatial.pipes.GeoPipeline;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.index.lucene.ValueContext;
-import org.neo4j.kernel.AbstractGraphDatabase;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import boa.server.domain.DbConnection;
-import boa.server.domain.Station;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateList;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Neo4jTest{

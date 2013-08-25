@@ -1,22 +1,18 @@
 package boa.server.webapp.config;
 
 
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import boa.server.webapp.webappjson.Coordinate;
+import boa.server.webapp.webappjson.Directions;
+import boa.server.webapp.webappjson.DirectionsList;
+import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.api.json.JSONJAXBContext;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
-
-
-import boa.server.webapp.webappjson.Coordinate;
-import boa.server.webapp.webappjson.Directions;
-import boa.server.webapp.webappjson.DirectionsList;
-
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.api.json.JSONJAXBContext;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Provider
 public final class JAXBContextResolver implements ContextResolver<JAXBContext>

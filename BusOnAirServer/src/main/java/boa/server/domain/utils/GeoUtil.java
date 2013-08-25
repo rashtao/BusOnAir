@@ -1,21 +1,7 @@
 package boa.server.domain.utils;
 
-import org.geotools.referencing.datum.DefaultEllipsoid;
-
 import com.vividsolutions.jts.geom.Coordinate;
-
-/**
- * The DateUtil is used as a Utility Class for Dates.
- * 
- * @author Robin Sharp
- */
-
-/**
- * @param start (starting point (lon, lat))
- * @param destination (end point (lon, lat))
- * @return Distance in meters
- */
-
+import org.geotools.referencing.datum.DefaultEllipsoid;
 
 public class GeoUtil {
 

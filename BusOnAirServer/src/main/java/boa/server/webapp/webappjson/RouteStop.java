@@ -1,12 +1,11 @@
 package boa.server.webapp.webappjson;
 
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.neo4j.graphdb.Node;
-
 import boa.server.domain.Station;
 import boa.server.webapp.xml.Stop;
+import org.neo4j.graphdb.Node;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 @XmlRootElement( name = "stop" )
