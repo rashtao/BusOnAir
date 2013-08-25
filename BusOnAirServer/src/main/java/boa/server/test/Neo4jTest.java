@@ -18,194 +18,201 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Neo4jTest {
+public class Neo4jTest{
 
-    private static GraphDatabaseService db;
+	private static GraphDatabaseService db;
 
-    private static GraphDatabaseService graph;
-
-    private static Index<Node> nodesIndex;
-
-    public static void main(String[] args) {
-        //testSimplePointLayer();
-        //simpleTest();
-
-        try {
-            DbConnection.deleteDbFiles();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        DbConnection.createEmbeddedDbConnection();
-        graph = DbConnection.getDb();
-        nodesIndex = DbConnection.getDb().index().forNodes("nodesIndex");
-        simpleNodeTest();
-
+	private static GraphDatabaseService graph;
+		
+	private static Index<Node> nodesIndex;
+	
+    public static void main(String[] args) {     
+    	//testSimplePointLayer();
+    	//simpleTest();
+    	
+    	try {
+			DbConnection.deleteDbFiles();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		DbConnection.createEmbeddedDbConnection();
+		graph = DbConnection.getDb();
+		nodesIndex = DbConnection.getDb().index().forNodes("nodesIndex");
+    	simpleNodeTest();
+    	
     }
+    
+	
+	private static void simpleNodeTest() {
+		
+		SpatialDatabaseService db = new SpatialDatabaseService(graph);
+		int count = 0;
+		for(Node n : GlobalGraphOperations.at(graph).getAllNodes()){
+			count++;
+		}
+		System.out.print("\n\nDbCount: " + count);
+		
+		//SimplePointLayer layer = db.createSimplePointLayer("my-points", "x", "y");
+		EditableLayer layer = db.getOrCreatePointLayer("my-points", "x", "y");
+		//EditableLayer layer = (EditableLayer) db.createSimplePointLayer("my-points", "x", "y");
+		
+		List<Coordinate> coords = new ArrayList<Coordinate>();
+		coords.add(new Coordinate(15.3, 56.2));
+		coords.add(new Coordinate(15.9, 56.9));
+		
+		int i = 0;
+		long id = 0;
+		for (Coordinate coordinate : coords) {
+			i++;
+			Transaction tx = graph.beginTx();
+			try {
+				Node n = graph.createNode();
+				n.setProperty("x", coordinate.x);
+				n.setProperty("y", coordinate.y);
+				n.setProperty("value", "nodo" + i);
 
-
-    private static void simpleNodeTest() {
-
-        SpatialDatabaseService db = new SpatialDatabaseService(graph);
-        int count = 0;
-        for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
-            count++;
-        }
-        System.out.print("\n\nDbCount: " + count);
-
-        //SimplePointLayer layer = db.createSimplePointLayer("my-points", "x", "y");
-        EditableLayer layer = db.getOrCreatePointLayer("my-points", "x", "y");
-        //EditableLayer layer = (EditableLayer) db.createSimplePointLayer("my-points", "x", "y");
-
-        List<Coordinate> coords = new ArrayList<Coordinate>();
-        coords.add(new Coordinate(15.3, 56.2));
-        coords.add(new Coordinate(15.9, 56.9));
-
-        int i = 0;
-        long id = 0;
-        for (Coordinate coordinate : coords) {
-            i++;
-            Transaction tx = graph.beginTx();
-            try {
-                Node n = graph.createNode();
-                n.setProperty("x", coordinate.x);
-                n.setProperty("y", coordinate.y);
-                n.setProperty("value", "nodo" + i);
-
-                id = n.getId();
-
-                nodesIndex.add(n, "id", n.getId());
-                layer.add(n);
-                tx.success();
-            } finally {
-                tx.finish();
-            }
-        }
-
-        System.out.print("\n\nNodesIndex: ");
+				id = n.getId();
+				
+				nodesIndex.add(n, "id", n.getId());
+				layer.add(n);
+				tx.success();
+			} finally {
+				tx.finish();
+			}
+		}
+		
+		System.out.print("\n\nNodesIndex: ");
         IndexHits<Node> result = nodesIndex.query("id", "*");
-        for (Node n : result) {
-            System.out.print("\n" + n);
-        }
+        for(Node n : result){
+            System.out.print("\n" + n);           
+        }        
         result.close();
 
-
-        System.out.print("\n\nLayer: " + layer);
-
-        LayerIndexReader index = layer.getIndex();
-
-        System.out.print("\n\nSpatialCount: " + index.count());
-
-        count = 0;
-        for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
-            count++;
-        }
-        System.out.print("\n\nDbCount: " + count);
-
-        List<SpatialDatabaseRecord> results = GeoPipeline.start(layer).toSpatialDatabaseRecordList();
-        for (SpatialDatabaseRecord ris : results) {
-            Node n = graph.getNodeById(ris.getNodeId());
-            System.out.print("\n" + n + " " + n.getProperty("value") + " " + n.getProperty("x") + " " + n.getProperty("y"));
-        }
-
-        //Distance query
-        System.out.print("\n\nNearestNeighborLatLon: ");
+		
+		
+		
+		System.out.print("\n\nLayer: " + layer);
+	
+		LayerIndexReader index = layer.getIndex();
+		
+		System.out.print("\n\nSpatialCount: " + index.count());	
+			
+		count = 0;
+		for(Node n : GlobalGraphOperations.at(graph).getAllNodes()){
+			count++;
+		}
+		System.out.print("\n\nDbCount: " + count);
+		
+		List<SpatialDatabaseRecord> results = GeoPipeline.start(layer).toSpatialDatabaseRecordList();
+		for(SpatialDatabaseRecord ris : results){
+			Node n = graph.getNodeById(ris.getNodeId());
+			System.out.print("\n" + n + " " + n.getProperty("value") + " " + n.getProperty("x") + " " + n.getProperty("y"));
+		}
+		
+		//Distance query
+		System.out.print("\n\nNearestNeighborLatLon: ");		
 //		Coordinate query = new Coordinate(16, 57);
-        Coordinate query = new Coordinate(15, 56);
-        results = GeoPipeline.startNearestNeighborLatLonSearch(layer, query, 1000.0).sort("OrthodromicDistance").toSpatialDatabaseRecordList();
-        for (SpatialDatabaseRecord ris : results) {
-            Node n = graph.getNodeById(ris.getNodeId());
-            System.out.print("\n" + n + " " + n.getProperty("value") + " " + n.getProperty("x") + " " + n.getProperty("y"));
-        }
+		Coordinate query = new Coordinate(15, 56);
+		results = GeoPipeline.startNearestNeighborLatLonSearch(layer, query, 1000.0).sort("OrthodromicDistance").toSpatialDatabaseRecordList();		
+		for(SpatialDatabaseRecord ris : results){
+			Node n = graph.getNodeById(ris.getNodeId());
+			System.out.print("\n" + n + " " + n.getProperty("value") + " " + n.getProperty("x") + " " + n.getProperty("y"));
+		}
+		
 
 
-        Node nodo5 = graph.getNodeById(2);
+		
+
+		Node nodo5 = graph.getNodeById(2);
 //		System.out.print("\nNODO5: " + nodo5 + " " + nodo5.getProperty("value") + " " + nodo5.getProperty("x") + " " + nodo5.getProperty("y"));
 //		layer.delete(5);	// rimuove dall'indice e cancella il nodo
-        //layer.removeFromIndex(5);	// rimuove dall'indice il nodo
-        System.out.print("\nNODO5: " + nodo5);
-        //System.out.print("\nNODO5: " + nodo5 + " " + nodo5.getProperty("value") + " " + nodo5.getProperty("x") + " " + nodo5.getProperty("y"));
+		//layer.removeFromIndex(5);	// rimuove dall'indice il nodo
+		System.out.print("\nNODO5: " + nodo5);
+		//System.out.print("\nNODO5: " + nodo5 + " " + nodo5.getProperty("value") + " " + nodo5.getProperty("x") + " " + nodo5.getProperty("y"));
+		
+		//layer.update(id, new Coordinate(10.0, 50.0));
 
-        //layer.update(id, new Coordinate(10.0, 50.0));
+		System.out.print("\n\nLayer after update: " + layer);
+		System.out.print("\n\nSpatialCount: " + index.count());
+		count = 0;
+		for(Node n : GlobalGraphOperations.at(graph).getAllNodes()){
+			count++;
+		}
+		System.out.print("\n\nDbCount: " + count);
 
-        System.out.print("\n\nLayer after update: " + layer);
-        System.out.print("\n\nSpatialCount: " + index.count());
-        count = 0;
-        for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
-            count++;
-        }
-        System.out.print("\n\nDbCount: " + count);
-
-
-        //Node list
-        results = GeoPipeline.start(layer).toSpatialDatabaseRecordList();
-        for (SpatialDatabaseRecord ris : results) {
-            Node n = graph.getNodeById(ris.getNodeId());
-            System.out.print("\n" + n + " " + n.getProperty("value") + " " + n.getProperty("x") + " " + n.getProperty("y"));
-        }
-
-
-        System.out.print("\n\nNodesIndex: ");
+		
+		//Node list
+		results = GeoPipeline.start(layer).toSpatialDatabaseRecordList();
+		for(SpatialDatabaseRecord ris : results){
+			Node n = graph.getNodeById(ris.getNodeId());
+			System.out.print("\n" + n + " " + n.getProperty("value") + " " + n.getProperty("x") + " " + n.getProperty("y"));
+		}	
+		
+				
+		System.out.print("\n\nNodesIndex: ");
         result = nodesIndex.query("id", "*");
-        for (Node n : result) {
-            System.out.print("\n" + n);
-        }
+        for(Node n : result){
+            System.out.print("\n" + n);           
+        }        
         result.close();
 
         System.out.print("\n\nSpatialIndex Deletion: ");
 
-        //Spatial Index Removal
-        results = GeoPipeline.start(layer).toSpatialDatabaseRecordList();
-        for (SpatialDatabaseRecord ris : results) {
-            layer.removeFromIndex(ris.getNodeId());
-        }
-
+		//Spatial Index Removal
+		results = GeoPipeline.start(layer).toSpatialDatabaseRecordList();
+		for(SpatialDatabaseRecord ris : results){
+			layer.removeFromIndex(ris.getNodeId());
+		}	
+        
         layer.delete(new Listener() {
-
-            @Override
-            public void worked(int arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void done() {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void begin(int arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-
+			
+			@Override
+			public void worked(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void done() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void begin(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
         // index removal
         Transaction tx = graph.beginTx();
-        try {
-            nodesIndex.delete();
-            tx.success();
-        } finally {
-            tx.finish();
-        }
-
-        count = 0;
-        for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
-            count++;
-        }
-        System.out.print("\n\nDbCount: " + count);
-
+        try{        
+        nodesIndex.delete();
+        tx.success();
+    }
+    finally
+    {
+      tx.finish();
     }
 
-    private static void simpleTest() {
-        GraphDatabaseService graph = new EmbeddedGraphDatabase("/home/rashta/neo4j/test/data/graph.db");
-        SpatialDatabaseService db = new SpatialDatabaseService(graph);
+		count = 0;
+		for(Node n : GlobalGraphOperations.at(graph).getAllNodes()){
+			count++;
+		}
+		System.out.print("\n\nDbCount: " + count);
 
-        EditableLayer layer = (EditableLayer) db.createSimplePointLayer("test", "Longitude", "Latitude");
+	}
 
-        SpatialRecord record = layer.add(layer.getGeometryFactory().createPoint(new Coordinate(15.3, 56.2)));
-
-
+	private static void simpleTest() {
+		GraphDatabaseService graph = new EmbeddedGraphDatabase("/home/rashta/neo4j/test/data/graph.db");
+		SpatialDatabaseService db = new SpatialDatabaseService(graph);
+		
+		EditableLayer layer = (EditableLayer) db.createSimplePointLayer("test", "Longitude", "Latitude");
+		
+		SpatialRecord record = layer.add(layer.getGeometryFactory().createPoint(new Coordinate(15.3, 56.2)));
+		
+		
 //		//SimplePointLayer layer = db.createSimplePointLayer("neo-text");
 //		Coordinate a = new Coordinate(15.3, 56.2);
 //		Coordinate b = new Coordinate(15.9, 56.9);
@@ -222,39 +229,39 @@ public class Neo4jTest {
 //    	}
 //		
 //		Coordinate myPos = new Coordinate(15.8, 56.8);
+		
+	}
 
-    }
 
-
-    public static void testSimplePointLayer() {
-        GraphDatabaseService graph = new EmbeddedGraphDatabase("/home/rashta/neo4j/test/data/graph.db");
+	public static void testSimplePointLayer() {
+		GraphDatabaseService graph = new EmbeddedGraphDatabase("/home/rashta/neo4j/test/data/graph.db");
 //		AbstractGraphDatabase datab = new EmbeddedGraphDatabase( "/home/rashta/neo4j/test/data/graph.db/" );
-        SpatialDatabaseService db = new SpatialDatabaseService(graph);
-        EditableLayer layer = (EditableLayer) db.createSimplePointLayer("test2", "Longitude", "Latitude");
-        //assertNotNull(layer);
-        SpatialRecord record = layer.add(layer.getGeometryFactory().createPoint(new Coordinate(15.3, 56.2)));
-        //assertNotNull(record);
+		SpatialDatabaseService db = new SpatialDatabaseService(graph);
+		EditableLayer layer = (EditableLayer) db.createSimplePointLayer("test2", "Longitude", "Latitude");
+		//assertNotNull(layer);
+		SpatialRecord record = layer.add(layer.getGeometryFactory().createPoint(new Coordinate(15.3, 56.2)));
+		//assertNotNull(record);
 
-        // finds geometries that contain the given geometry
-        List<SpatialDatabaseRecord> results = GeoPipeline
-                .startContainSearch(layer, layer.getGeometryFactory().toGeometry(new com.vividsolutions.jts.geom.Envelope(15.0, 16.0, 56.0, 57.0)))
-                .toSpatialDatabaseRecordList();
+		// finds geometries that contain the given geometry
+		List<SpatialDatabaseRecord> results = GeoPipeline
+			.startContainSearch(layer, layer.getGeometryFactory().toGeometry(new com.vividsolutions.jts.geom.Envelope(15.0, 16.0, 56.0, 57.0)))
+			.toSpatialDatabaseRecordList();
 
-        // should not be contained
-        //assertEquals(0, results.size());
-        if (results.size() == 0)
-            System.out.print("TRUE");
+		// should not be contained
+		//assertEquals(0, results.size());
+		if(results.size() == 0)
+			System.out.print("TRUE");
+		
+		results = GeoPipeline
+			.startWithinSearch(layer, layer.getGeometryFactory().toGeometry(new com.vividsolutions.jts.geom.Envelope(15.0, 16.0, 56.0, 57.0)))
+			.toSpatialDatabaseRecordList();
 
-        results = GeoPipeline
-                .startWithinSearch(layer, layer.getGeometryFactory().toGeometry(new com.vividsolutions.jts.geom.Envelope(15.0, 16.0, 56.0, 57.0)))
-                .toSpatialDatabaseRecordList();
-
-        //assertEquals(1, results.size());
-        if (results.size() == 1)
-            System.out.print("TRUE");
-
-    }
-
+		//assertEquals(1, results.size());
+		if(results.size() == 1)
+			System.out.print("TRUE");
+		
+	}
+	
     
 	    
 /*

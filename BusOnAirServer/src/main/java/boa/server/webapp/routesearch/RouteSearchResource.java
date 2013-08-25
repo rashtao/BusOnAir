@@ -7,6 +7,7 @@ import boa.server.webapp.webappjson.RouteStop;
 import boa.server.webapp.webappjson.Routes;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.rest.repr.OutputFormat;
+import org.neo4j.server.webadmin.rest.SessionFactoryImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -21,54 +22,60 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
-@Path("/routesearch")
-public class RouteSearchResource {
+@Path( "/routesearch" )
+public class RouteSearchResource
+{
 
+    private Routes routeList;
     private BufferedWriter log;
 
-    public RouteSearchResource(@Context Database database,
-                               @Context HttpServletRequest req, @Context OutputFormat output) throws IOException {
-        this(database
-        );
+    public RouteSearchResource( @Context Database database,
+            @Context HttpServletRequest req, @Context OutputFormat output ) throws IOException 
+    {
+        this( new SessionFactoryImpl( req.getSession( true ) ), database,
+                output );
 
-        String fullURL = req.getRequestURL().append("?").append(
-                req.getQueryString()).toString();
-        log.write("\nHttpServletRequest(" + fullURL + ")");
-        log.flush();
-
-
+        String fullURL = req.getRequestURL().append("?").append( 
+            req.getQueryString()).toString();        
+        log.write("\nHttpServletRequest(" + fullURL +")");
+        log.flush(); 
+        
+        
     }
 
-    public RouteSearchResource(Database database) throws IOException {
+    public RouteSearchResource( SessionFactoryImpl sessionFactoryImpl,
+            Database database, OutputFormat output ) throws IOException 
+    {
         FileWriter logFile = new FileWriter("/tmp/trasportaqroutes.log");
         log = new BufferedWriter(logFile);
         DbConnection.createDbConnection(database);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
-    public Response routeSearch(@QueryParam("routeId") Integer routeId) throws IOException {
-        log.write("\nROUTESEARCH(" + routeId + ")");
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/" )
+    public Response routeSearch( @QueryParam( "routeId" ) Integer routeId ) throws IOException 
+    {        
+        log.write("\nROUTESEARCH(" + routeId +")");
         log.flush();
 
-        if (routeId == null)
-            return Response.serverError().entity("routeId cannot be blank").build();
+        if ( routeId == null )
+            return Response.serverError().entity( "routeId cannot be blank" ).build();
 
         boa.server.domain.Route route = boa.server.domain.Routes.getRoutes().getRouteById(routeId);
-        if (route == null) {
-            return Response.status(400).entity(
-                    "No Route Found: " + routeId).build();
+        if(route == null){
+            return Response.status( 400 ).entity(
+                "No Route Found: " + routeId ).build();
         }
         log.write(route.toString());
         log.flush();
-
+                
         Run run = route.getAllRuns().iterator().next();
-
+        
         boa.server.domain.Stop stop = run.getFirstStop();
-
-        Routes routeList = new Routes();
-        while (stop != null) {
+        
+        routeList = new Routes();
+        while(stop != null){
             routeList.add(new RouteStop(stop));
             stop = stop.getNextInRun();
         }

@@ -5,19 +5,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement(name = "List")
-public class Routes {
-    @XmlElement(name = "routelist")
+@XmlRootElement( name = "List" )
+public class Routes
+{
+    @XmlElement( name = "routelist" )
     List<String> routelist = new ArrayList<String>();
 
-    public Routes() {
+    public Routes()
+    {
     }
 
-    public void add(Route r) {
+    public void add( Route r )
+    {
         routelist.add(r.getUrl());
     }
 
-    public void add(boa.server.domain.Route r) {
+    public void add( boa.server.domain.Route r )
+    {
         routelist.add(r.getUrl());
     }
 

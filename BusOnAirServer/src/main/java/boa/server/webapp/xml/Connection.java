@@ -2,7 +2,8 @@ package boa.server.webapp.xml;
 
 import org.neo4j.graphdb.RelationshipType;
 
-public class Connection {
+public class Connection
+{
 
     public static final String COST = "cost";
     public static final String TIME = "time";
@@ -13,8 +14,9 @@ public class Connection {
     public static final double MINWAITINGTIME = 5.0;
     public static final double TRANSFERPENALTY = 300.0;
 
-
-    public enum Type implements RelationshipType {
+    
+    public enum Type implements RelationshipType
+    {
         WALK1, WALK2, HUBBUS1, HUBBUS2, TRANSFER
     }
 }

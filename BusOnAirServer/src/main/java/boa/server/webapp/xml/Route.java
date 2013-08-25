@@ -2,7 +2,8 @@ package boa.server.webapp.xml;
 
 import java.util.List;
 
-public class Route {
+public class Route
+{
 
     public String type;
     public String direction;
@@ -12,11 +13,13 @@ public class Route {
     public Double[] deptTimes;
     public List<Stop> stopList;
 
-    public Route() {
+    public Route()
+    {
         super();
     }
 
-    public List<Stop> getStopList() {
+    public List<Stop> getStopList()
+    {
         return stopList;
     }
 
