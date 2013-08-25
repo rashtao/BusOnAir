@@ -167,10 +167,7 @@ public class myShortest2 {
                 return true;
             }else if(currentStop.getStation().equals(dest)){
                 return true;
-            }else if((currentStop.getTime() > stopTime))
-                return true;    
-            else
-                return false;            
+            }else return (currentStop.getTime() > stopTime);
         }
     }   
 }

@@ -66,11 +66,9 @@ public class Run
         	return false;
         
         Run otherRun = (Run) other;
-        
-        if(getId() != otherRun.getId())
-        	return false;
-        
-        return true;
+
+        return getId() == otherRun.getId();
+
     }
 
 	@Override

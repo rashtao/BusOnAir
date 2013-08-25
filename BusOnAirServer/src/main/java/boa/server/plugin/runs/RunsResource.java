@@ -49,7 +49,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) {
         Iterable<Run> runs = boa.server.domain.Runs.getRuns().getAll();
 
         if(obj != null && obj){
@@ -72,7 +72,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getallrunningbuses" )
-    public Response getAllRunningBuses(@QueryParam( "objects" ) Boolean obj) throws IOException{        
+    public Response getAllRunningBuses(@QueryParam( "objects" ) Boolean obj) {
         Iterable<Run> runs = boa.server.domain.Runs.getRuns().getAllRunningBuses();
 
         if(obj != null && obj){
@@ -119,7 +119,7 @@ public class RunsResource{
     public Response checkPointPass(
     		@PathParam("id") Integer id,
     		@QueryParam( "checkpointid" ) Integer checkpointid,
-    		@QueryParam( "time" ) Integer time) throws IOException{
+    		@QueryParam( "time" ) Integer time) {
         
         if ( id == null || checkpointid == null || time == null )
         	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id, checkpointid, time cannot be blank")).build();
@@ -143,7 +143,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/getallstops")
-    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) {
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -170,7 +170,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/checkpoints/getall")
-    public Response getAllCheckPoints(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllCheckPoints(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) {
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -219,7 +219,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/checkpoints/{idcp}/gettime")
-    public Response getCheckPointTime(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
+    public Response getCheckPointTime(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) {
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -258,7 +258,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/rt/getlastgpsstop")
-    public Response getLastGPSStop(@PathParam("id") Integer id) throws IOException{
+    public Response getLastGPSStop(@PathParam("id") Integer id) {
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -295,7 +295,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/rt/getlastgpscheckpoint")
-    public Response getLastGPSCheckPoint(@PathParam("id") Integer id) throws IOException{
+    public Response getLastGPSCheckPoint(@PathParam("id") Integer id) {
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -315,7 +315,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/rt/calculatelastcheckpoint")
-    public Response calculateLastCheckPoint(@PathParam("id") Integer id) throws IOException{
+    public Response calculateLastCheckPoint(@PathParam("id") Integer id) {
         
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
@@ -339,7 +339,7 @@ public class RunsResource{
     		@PathParam("id") Integer id,
     		@QueryParam( "time" ) Integer time,
     		@QueryParam( "lat" ) Double lat,
-    		@QueryParam( "lon" ) Double lon) throws IOException{
+    		@QueryParam( "lon" ) Double lon) {
     	
         if ( id == null || lat == null || lon == null )
         	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id, lat, lon cannot be blank")).build();
@@ -360,7 +360,7 @@ public class RunsResource{
     		@PathParam("id") Integer id,
     		@QueryParam( "time" ) Integer time,
     		@QueryParam( "lat" ) Double lat,
-    		@QueryParam( "lon" ) Double lon) throws IOException{
+    		@QueryParam( "lon" ) Double lon) {
     	
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         if(run == null)
@@ -376,7 +376,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/restoreall")
-    public Response restoreAll() throws IOException{
+    public Response restoreAll() {
 
         for(Run r : boa.server.domain.Runs.getRuns().getAll())
         	r.restore();
@@ -388,7 +388,7 @@ public class RunsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/{id}/rt/getlastgpsposition")
-    public Response getLastGPSPosition(@PathParam("id") Integer id) throws IOException{
+    public Response getLastGPSPosition(@PathParam("id") Integer id) {
     	
         if ( id == null)
         	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();

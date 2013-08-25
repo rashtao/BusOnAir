@@ -44,7 +44,7 @@ public class BackEndResource{
     }
 
     public BackEndResource( SessionFactoryImpl sessionFactoryImpl,
-            Database database, OutputFormat output, Configuration config ) throws IOException 
+            Database database, OutputFormat output, Configuration config ) throws IOException
     {
         FileWriter logFile = new FileWriter("/tmp/trasportaqbackend.log");
         log = new BufferedWriter(logFile);
@@ -56,7 +56,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/{id}/delete" )
-    public Response deleteRun(@PathParam("id") Integer id) throws IOException{        
+    public Response deleteRun(@PathParam("id") Integer id) {
 
         Run run = Runs.getRuns().getRunById(id);
 
@@ -78,7 +78,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stations/{id}/delete" )
-    public Response deleteStation(@PathParam("id") Integer id) throws IOException{        
+    public Response deleteStation(@PathParam("id") Integer id) {
 
         Station staz = Stations.getStations().getStationById(id);
 
@@ -100,7 +100,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/routes/{id}/delete" )
-    public Response deleteRoute(@PathParam("id") Integer id) throws IOException{        
+    public Response deleteRoute(@PathParam("id") Integer id) {
 
         Route route = Routes.getRoutes().getRouteById(id);
 
@@ -122,7 +122,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/routes/deleteall" )
-    public Response deleteAllRoutes() throws IOException{        
+    public Response deleteAllRoutes() {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Routes.getRoutes().deleteAllRoutes();
@@ -138,7 +138,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stops/{id}/delete" )
-    public Response deleteStop(@PathParam("id") Integer id) throws IOException{        
+    public Response deleteStop(@PathParam("id") Integer id) {
 
         Stop stop = Stops.getStops().getStopById(id);
 
@@ -160,7 +160,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/deleteall" )
-    public Response deleteAllRuns() throws IOException{        
+    public Response deleteAllRuns() {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Runs.getRuns().deleteAllRuns();
@@ -176,7 +176,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stops/deleteall" )
-    public Response deleteAllStops() throws IOException{        
+    public Response deleteAllStops() {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stops.getStops().deleteAllStops();
@@ -192,7 +192,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stations/deleteall" )
-    public Response deleteAllStations() throws IOException{        
+    public Response deleteAllStations() {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stations.getStations().deleteAllStations();
@@ -208,7 +208,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/runs/{id}/checkpoints/{idcp}/delete")
-    public Response deleteCheckPoint(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) throws IOException{
+    public Response deleteCheckPoint(@PathParam("id") Integer id, @PathParam("idcp") Integer idcp) {
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
@@ -234,7 +234,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/{id}/checkpoints/deleteall" )
-    public Response deleteAllCheckPoints(@PathParam("id") Integer id) throws IOException{ 
+    public Response deleteAllCheckPoints(@PathParam("id") Integer id) {
         boa.server.domain.Run run = boa.server.domain.Runs.getRuns().getRunById(id);
         
         if(run == null)
@@ -255,7 +255,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stations/createorupdate")
-    public Response createOrUpdateStation(final boa.server.domain.json.Station  input) throws IOException {        
+    public Response createOrUpdateStation(final boa.server.domain.json.Station  input) {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Stations.getStations().createOrUpdateStation(input);
@@ -272,7 +272,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stations/bulkimport")            
-    public Response bulkImportStations(final boa.server.domain.json.Stations  input) throws IOException {
+    public Response bulkImportStations(final boa.server.domain.json.Stations  input) {
 		Stations.getStations().createOrUpdateStations(input);
         
         boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
@@ -282,7 +282,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/routes/createorupdate" )
-    public Response createOrUpdateRoute(final boa.server.domain.json.Route  input) throws IOException{        
+    public Response createOrUpdateRoute(final boa.server.domain.json.Route  input) {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Routes.getRoutes().createOrUpdateRoute(input);
@@ -298,7 +298,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/routes/bulkimport")            
-    public Response bulkImportRoutes(final boa.server.domain.json.Routes input) throws IOException {
+    public Response bulkImportRoutes(final boa.server.domain.json.Routes input) {
 		Routes.getRoutes().createOrUpdateRoutes(input);
         
         boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
@@ -308,7 +308,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/runs/createorupdate" )
-    public Response createOrUpdateRun(final boa.server.domain.json.Run  input) throws IOException{        
+    public Response createOrUpdateRun(final boa.server.domain.json.Run  input) {
 		Transaction tx = DbConnection.getDb().beginTx();
 		try{
 			Runs.getRuns().createOrUpdateRun(input);
@@ -325,7 +325,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/runs/bulkimport")            
-    public Response bulkImportRuns(final boa.server.domain.json.Runs  input) throws IOException {
+    public Response bulkImportRuns(final boa.server.domain.json.Runs  input) {
 		Runs.getRuns().createOrUpdateRuns(input);
         
         boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
@@ -335,7 +335,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/stops/createorupdate" )
-    public Response createOrUpdateStop(final boa.server.domain.json.Stop  input) throws IOException{        
+    public Response createOrUpdateStop(final boa.server.domain.json.Stop  input) {
 		// staticTime check 
     	int st = input.getStaticTime();
     	Stop prev = Stops.getStops().getStopById(input.getPrevInRun());
@@ -360,7 +360,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("/stops/bulkimport")            
-    public Response bulkImportStops(final boa.server.domain.json.Stops  input) throws IOException {
+    public Response bulkImportStops(final boa.server.domain.json.Stops  input) {
 		Stops.getStops().createOrUpdateStops(input);
         
         boa.server.plugin.json.Response jr = new boa.server.plugin.json.Response(200, "OK");
@@ -370,7 +370,7 @@ public class BackEndResource{
     @POST @Consumes("application/json")
     @Produces( MediaType.APPLICATION_JSON )   
     @Path( "/runs/{id}/checkpoints/createorupdate" )
-    public Response createOrUpdateCheckPoint(@PathParam("id") Integer id, final boa.server.domain.json.CheckPoint  input) throws IOException{        
+    public Response createOrUpdateCheckPoint(@PathParam("id") Integer id, final boa.server.domain.json.CheckPoint  input) {
 	
         Run run = Runs.getRuns().getRunById(id);
         if(run == null)
@@ -391,7 +391,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/{id}/createallcheckpoints" )
-    public Response createAllCheckPoints(@PathParam("id") Integer id) throws IOException{        
+    public Response createAllCheckPoints(@PathParam("id") Integer id) {
 
         Run run = Runs.getRuns().getRunById(id);
 
@@ -413,7 +413,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/checkpoints/bulkcreation" )
-    public Response bulkCreationCheckPoints() throws IOException{        
+    public Response bulkCreationCheckPoints() {
 
     	for(Run run : Runs.getRuns().getAll()){
 			Transaction tx = DbConnection.getDb().beginTx();
@@ -432,7 +432,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stations/exportall" )
-    public Response exportAllStations() throws IOException{        
+    public Response exportAllStations() {
 
     	boa.server.domain.json.Stations output = new boa.server.domain.json.Stations();
     	for(Station s : Stations.getStations().getAll()){
@@ -446,7 +446,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/routes/exportall" )
-    public Response exportAllRoutes() throws IOException{        
+    public Response exportAllRoutes() {
 
     	boa.server.domain.json.Routes output = new boa.server.domain.json.Routes();
     	for(Route r : Routes.getRoutes().getAll()){
@@ -460,7 +460,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/runs/exportall" )
-    public Response exportAllRuns() throws IOException{        
+    public Response exportAllRuns() {
 
     	boa.server.domain.json.Runs output = new boa.server.domain.json.Runs();
     	for(Run r : Runs.getRuns().getAll()){
@@ -474,7 +474,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/stops/exportall" )
-    public Response exportAllStops() throws IOException{        
+    public Response exportAllStops() {
 
     	boa.server.domain.json.Stops output = new boa.server.domain.json.Stops();
     	for(Stop s : Stops.getStops().getAll()){
@@ -488,7 +488,7 @@ public class BackEndResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/exportall" )
-    public Response exportAll() throws IOException{        
+    public Response exportAll() {
 
     	boa.server.domain.json.Stations stations = new boa.server.domain.json.Stations();
     	for(Station s : Stations.getStations().getAll()){

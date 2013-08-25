@@ -14,12 +14,10 @@ import java.util.Collection;
 
 public class Geotest {
 
-	private static GraphDatabaseService db;
 
-
-	public static void main(String[] args) {    
+    public static void main(String[] args) {
 		DbConnection.createEmbeddedDbConnection();
-		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
 
 		int range = 829;
 		

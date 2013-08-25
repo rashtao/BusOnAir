@@ -51,7 +51,7 @@ public class StationsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) {
 
         ArrayList<Station> stations = boa.server.domain.Stations.getStations().getAll();
 
@@ -171,7 +171,7 @@ public class StationsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallroutes")
-    public Response getAllRoutes(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllRoutes(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) {
 
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         
@@ -201,7 +201,7 @@ public class StationsResource
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallstops")
-    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllStops(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) {
 
         boa.server.domain.Station s = boa.server.domain.Stations.getStations().getStationById(id);
         

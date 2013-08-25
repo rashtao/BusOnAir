@@ -8,9 +8,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 public class CheckPointTest {
 
-	private static GraphDatabaseService db;
-
-	/**
+    /**
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -19,7 +17,7 @@ public class CheckPointTest {
 	}
 
 	public static void importTest(){
-		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
 
 		for(Run r : Runs.getRuns().getAll()){
 			System.out.print("\n" + r.getAllCheckPoints().size() + ", " + r.getAllStops().size());

@@ -224,8 +224,7 @@ public class Station {
 			set.add(s.getRun().getRoute());			
 		}
 
-		ArrayList<Route> result = new ArrayList<Route>(set);
-		return result;
+        return new ArrayList<Route>(set);
 	}
 
 	public ArrayList<Run> getAllRuns() {
@@ -235,8 +234,7 @@ public class Station {
 			set.add(s.getRun());			
 		}
 
-		ArrayList<Run> result = new ArrayList<Run>(set);
-		return result;
+        return new ArrayList<Run>(set);
 	}
 	
     public String getUrl(){

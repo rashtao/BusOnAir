@@ -9,12 +9,10 @@ import org.neo4j.graphdb.Transaction;
 
 public class DelayTest {
 
-	private static GraphDatabaseService db;
-    
 
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
-		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
 
 		Run r = Runs.getRuns().getRunById(11);
 

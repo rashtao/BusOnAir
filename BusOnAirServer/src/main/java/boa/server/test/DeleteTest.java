@@ -11,12 +11,10 @@ import org.neo4j.graphdb.Transaction;
 
 public class DeleteTest {
 
-	private static GraphDatabaseService db;
-    
 
     public static void main(String[] args) {     
 		DbConnection.createEmbeddedDbConnection();
-		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
 		//Stations.getStations().deleteAllStations();
 		
 //		Transaction tx = DbConnection.getDb().beginTx();

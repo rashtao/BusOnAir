@@ -41,10 +41,8 @@ public final class StopMediator {
     public boolean check(Node n){
         if(n == null)
             return false;
-        
-        if(cache.get(n.getId()) == null)
-            return false;
-        return true;        
+
+        return cache.get(n.getId()) != null;
     }
     
     public boolean check(Stop s) {

@@ -389,12 +389,8 @@ public class DateUtil
         {
             return false;
         }
-        
-        if (end.before(start)&&(!(d.after(end)||d.before(start))))
-        {
-            return false;
-        }   
-        return true;
+
+        return !(end.before(start) && (!(d.after(end) || d.before(start))));
     }
 
     public static  int getYear( Date date )
@@ -482,14 +478,12 @@ public class DateUtil
 
         dateFormat = new SimpleDateFormat("ss");
         date = new java.util.Date();
-        int second = Integer.parseInt(dateFormat.format(date));   
+        int second = Integer.parseInt(dateFormat.format(date));
 
-        long secondsSinceMidnight = (hour* 3600) + (minute * 60) + second;      
-
-//        System.out.println("Current Time:" + hour + ":" + minute + ":" + second);
+        //        System.out.println("Current Time:" + hour + ":" + minute + ":" + second);
 //        System.out.print("Seconds Since Midnight: " + secondsSinceMidnight);       
         
-        return secondsSinceMidnight;
+        return (hour* 3600) + (minute * 60) + second;
 
      }    
 }

@@ -109,8 +109,6 @@ public class DirectionsSearch
             
         directionsList2.add(new Directions(routes, walks));
 
-        Response resp = Response.ok().entity( directionsList2 ).build();
-        
-        return resp;
+        return Response.ok().entity( directionsList2 ).build();
     }
 }

@@ -47,7 +47,7 @@ public class StopsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) {
 
         Iterable<Stop> stops = boa.server.domain.Stops.getStops().getAll();
 
@@ -73,7 +73,7 @@ public class StopsResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}")
-    public Response getStop(@PathParam("id") Integer id) throws IOException{
+    public Response getStop(@PathParam("id") Integer id) {
 
     	if ( id == null)
         	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();

@@ -22,13 +22,12 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext>
 
     private final Set<Class> types;
 
-    private final Class[] cTypes = { DirectionsList.class, Directions.class, Coordinate.class };
-
     public JAXBContextResolver() throws Exception
     {
-        this.types = new HashSet( Arrays.asList( cTypes ) );
+        Class[] cTypes = {DirectionsList.class, Directions.class, Coordinate.class};
+        this.types = new HashSet( Arrays.asList(cTypes) );
         this.context = new JSONJAXBContext(
-                JSONConfiguration.natural().build(), cTypes );
+                JSONConfiguration.natural().build(), cTypes);
     }
 
     public JAXBContext getContext( Class<?> objectType )

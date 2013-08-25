@@ -26,7 +26,6 @@ import java.io.IOException;
 public class RouteSearchResource
 {
 
-    private Routes routeList;
     private BufferedWriter log;
 
     public RouteSearchResource( @Context Database database,
@@ -73,8 +72,8 @@ public class RouteSearchResource
         Run run = route.getAllRuns().iterator().next();
         
         boa.server.domain.Stop stop = run.getFirstStop();
-        
-        routeList = new Routes();
+
+        Routes routeList = new Routes();
         while(stop != null){
             routeList.add(new RouteStop(stop));
             stop = stop.getNextInRun();

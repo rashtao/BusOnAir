@@ -128,8 +128,7 @@ public class Stations {
 		Node node = DbConnection.getDb().getNodeById(results.iterator().next().getNodeId());
 		        
         if(node != null){
-            Station out = new Station(node);
-            return out;
+            return new Station(node);
         } else {
             return null;
         }

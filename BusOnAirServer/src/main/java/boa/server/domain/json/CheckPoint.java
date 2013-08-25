@@ -91,11 +91,9 @@ public class CheckPoint {
         	return false;
         
         CheckPoint otherCheckPoint = (CheckPoint) other;
-        
-        if(getId() != otherCheckPoint.getId())
-        	return false;
-        
-        return true;
+
+        return getId() == otherCheckPoint.getId();
+
     }
 	
 }

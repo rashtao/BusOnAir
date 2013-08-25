@@ -11,9 +11,9 @@ public class Stops{
 
 	public Stops() {
 		stopsObjectsList = new LinkedList<Stop>();
-	};
+	}
 
-	public Stops(Collection<Stop> stopsObjectsList) {
+    public Stops(Collection<Stop> stopsObjectsList) {
 		super();
 		this.stopsObjectsList = (stopsObjectsList != null) ? new LinkedList<Stop>(stopsObjectsList) : new LinkedList<Stop>();
 	}

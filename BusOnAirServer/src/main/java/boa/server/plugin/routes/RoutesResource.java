@@ -50,7 +50,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( "/getall" )
-    public Response getAll(@QueryParam( "objects" ) Boolean obj) throws IOException{        
+    public Response getAll(@QueryParam( "objects" ) Boolean obj) {
 
         Iterable<Route> routes = boa.server.domain.Routes.getRoutes().getAll();
 
@@ -97,7 +97,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallruns")
-    public Response getAllRuns(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllRuns(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) {
         if ( id == null)
         	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         
@@ -129,7 +129,7 @@ public class RoutesResource{
     @GET
     @Produces( MediaType.APPLICATION_JSON )    
     @Path("{id}/getallstations")
-    public Response getAllStations(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) throws IOException{
+    public Response getAllStations(@PathParam("id") Integer id, @QueryParam( "objects" ) Boolean obj) {
         if ( id == null)
         	return Response.ok().entity(new boa.server.plugin.json.Response(400, "id cannot be blank")).build();
         

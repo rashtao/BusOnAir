@@ -13,13 +13,11 @@ import org.neo4j.graphdb.GraphDatabaseService;
  * @author rashta
  */
 public class ShortestPath9 {
-	private static GraphDatabaseService db;
 
-    
 
-        public static void main(String[] args) {     
+    public static void main(String[] args) {
        		DbConnection.createEmbeddedDbConnection();
-    		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
     		
     		
             int time = 330;     //9h00

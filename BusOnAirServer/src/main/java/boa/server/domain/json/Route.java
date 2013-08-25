@@ -75,11 +75,9 @@ public class Route
         	return false;
         
         Route otherRoute = (Route) other;
-        
-        if(getId() != otherRoute.getId())
-        	return false;
-        
-        return true;
+
+        return getId() == otherRoute.getId();
+
     }
 
 

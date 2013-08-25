@@ -93,11 +93,9 @@ public class Stop
         	return false;
         
         Stop otherStop = (Stop) other;
-        
-        if(getId() != otherStop.getId())
-        	return false;
-        
-        return true;
+
+        return getId() == otherStop.getId();
+
     }
     
 	@Override

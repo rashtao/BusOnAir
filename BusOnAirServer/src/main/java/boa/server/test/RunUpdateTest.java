@@ -9,12 +9,10 @@ import org.neo4j.graphdb.Transaction;
 
 public class RunUpdateTest {
 
-	private static GraphDatabaseService db;
-    
 
     public static void main(String[] args) throws Exception {     
 		DbConnection.createEmbeddedDbConnection();
-		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
 
 		
 		Run r = Runs.getRuns().getRunById(11);

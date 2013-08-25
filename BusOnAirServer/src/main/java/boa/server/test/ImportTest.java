@@ -7,9 +7,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 public class ImportTest {
 
-	private static GraphDatabaseService db;
-
-	/**
+    /**
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -19,7 +17,7 @@ public class ImportTest {
 
 	public static void importTest(){
     	System.out.print("\n\n ---- IMPORT TEST ---");
-		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
 		
 //		Transaction tx = DbConnection.getDb().beginTx();
 //		try{

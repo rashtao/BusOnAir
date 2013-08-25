@@ -59,11 +59,9 @@ public class Station
         	return false;
         
         Station otherStation = (Station) other;
-        
-        if(getId() != otherStation.getId())
-        	return false;
-        
-        return true;
+
+        return getId() == otherStation.getId();
+
     }
 
 	@Override

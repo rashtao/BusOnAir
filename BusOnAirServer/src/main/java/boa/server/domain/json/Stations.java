@@ -12,9 +12,9 @@ public class Stations{
 
 	public Stations() {
 		stationsObjectsList = new LinkedList<Station>();
-	};
+	}
 
-	public Stations(Collection<Station> stationsObjectsList) {
+    public Stations(Collection<Station> stationsObjectsList) {
 		super();
 		this.stationsObjectsList = (stationsObjectsList != null) ? new LinkedList<Station>(stationsObjectsList) : new LinkedList<Station>();
 	}

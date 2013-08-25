@@ -11,9 +11,9 @@ public class Runs{
 
 	public Runs() {
 		runsObjectsList = new LinkedList<Run>();
-	};
+	}
 
-	public Runs(Collection<Run> runsObjectsList) {
+    public Runs(Collection<Run> runsObjectsList) {
 		super();
 		this.runsObjectsList = (runsObjectsList != null) ? new LinkedList<Run>(runsObjectsList) : new LinkedList<Run>();
 	}

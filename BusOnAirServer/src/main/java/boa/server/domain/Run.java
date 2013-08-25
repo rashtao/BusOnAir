@@ -37,7 +37,7 @@ public class Run {
     public Run(Node node){
     	underlyingNode = node;
     	cpIndex = DbConnection.getDb().index().forNodes("cpIndex" + getId());
-    	cpSpatialIndex = DbConnection.getSpatialDb().getOrCreatePointLayer("cpSpatialIndex" + getId(), "lon", "lat");;
+    	cpSpatialIndex = DbConnection.getSpatialDb().getOrCreatePointLayer("cpSpatialIndex" + getId(), "lon", "lat");
     }  
 
     public Run(Node node, int id){
@@ -588,8 +588,7 @@ public class Run {
 		Node node = DbConnection.getDb().getNodeById(results.iterator().next().getNodeId());
 		        
         if(node != null){
-            CheckPoint out = new CheckPoint(node);
-            return out;
+            return new CheckPoint(node);
         } else {
             return null;
         }

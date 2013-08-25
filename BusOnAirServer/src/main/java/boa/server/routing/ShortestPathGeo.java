@@ -191,11 +191,10 @@ public class ShortestPathGeo {
 				
 				// --- ELIMINAZIONE ESITI DOMINATI
 				Direction prev = null;
-				DirectionComparator comp = dirC;
-				
-				for(Direction d : arrivals){
+
+      for(Direction d : arrivals){
 //					System.out.print("\n\n---------- Comparing: \nd:\n" + d + "\nprev:\n" + prev + "\nRIS: " +comp.secondCriterionCompare(d, prev) + "\n-------\n\n");
-					if(comp.secondCriterionCompare(d, prev) < 0){
+					if(dirC.secondCriterionCompare(d, prev) < 0){
 						arrivalList.add(d);							
 						prev = d;	
 					}
@@ -361,11 +360,8 @@ public class ShortestPathGeo {
 		// utile per evitare paths che passano più volte per la stessa stazione
 		if(result == 0)
 			result = compareMinTravelTime(s, nir);
-		
-		if(result == -1)
-			return false;
-		else
-			return true;
+
+        return result != -1;
 	}
 	
 	private boolean compareNIS(Stop s, Stop nis){
@@ -408,11 +404,8 @@ public class ShortestPathGeo {
 		// utile per evitare paths che passano più volte per la stessa stazione
 		if(result == 0)
 			result = compareMinTravelTime(s, nis);
-		
-		if(result == 1)
-			return true;
-		else
-			return false;		
+
+        return result == 1;
 	}
 	
 	private void linkNIW(Stop s, Stop niw){
@@ -526,11 +519,7 @@ public class ShortestPathGeo {
             Stop currentStop = cache.get(tp.currentNode());   
             if(currentStop.nextInRun != null || currentStop.nextInStation != null){
             	return true;
-            } else if((currentStop.getTime() > stopTime)){
-                return true;    
-            }else{
-                return false;
-            }
+            } else return (currentStop.getTime() > stopTime);
         }
     }
 

@@ -11,9 +11,9 @@ public class Routes{
 
 	public Routes() {
 		routesObjectsList = new LinkedList<Route>();
-	};
+	}
 
-	public Routes(Collection<Route> routesObjectsList) {
+    public Routes(Collection<Route> routesObjectsList) {
 		super();
 		this.routesObjectsList = (routesObjectsList != null) ? new LinkedList<Route>(routesObjectsList) : new LinkedList<Route>();
 	}

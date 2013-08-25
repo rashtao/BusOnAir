@@ -40,16 +40,14 @@ import java.io.IOException;
  * @author rashta
  */
 public class ShortestPath8 {
-		private static GraphDatabaseService db;
-		private static BufferedWriter log;
 
-        public static void main(String[] args) throws IOException {     
+    public static void main(String[] args) throws IOException {
     		DbConnection.createEmbeddedDbConnection();
-    		db = DbConnection.getDb();
+        GraphDatabaseService db = DbConnection.getDb();
     		
     		
             FileWriter logFile = new FileWriter("/tmp/sp1.log");
-            log = new BufferedWriter(logFile);
+        BufferedWriter log = new BufferedWriter(logFile);
 
             
             
@@ -75,11 +73,9 @@ public class ShortestPath8 {
 //
 //            }
             Stop firstStop = s1.getFirstStopFromTime(time);
-            int prevTime = time;
-            
-                
-                
-                //log.write(firstStop);
+
+
+        //log.write(firstStop);
 //                myShortest mysp = new myShortest(firstStop, s2, 1440);
 //                myShortestGeo mysp = new myShortestGeo(firstStop, s2, 1440);
   
@@ -104,7 +100,7 @@ public class ShortestPath8 {
 //                log.write("\n-------\ndt: " + (arrivo.getTime() - prevTime));
 
 
-                log.write( "\n\n" + mysp.toString());
+                log.write("\n\n" + mysp.toString());
 //                String outPath = "";
 //                for(Stop s : mysp.getWeightedPath()){
 //                    outPath = "(" + s.getUnderlyingNode().getId() + ":ID" + s.getId()  + ":STAZID" + s.getStazione().getId() + ":TIME" + s.getTime() + ")-->" + outPath;                
