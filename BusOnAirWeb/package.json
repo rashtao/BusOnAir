@@ -8,7 +8,7 @@
 	"dependencies": {
 		"wwwdude": "0.1.0",
 		"connect": "1.8.3",
-		"express": "2.5.2",
+		"express": "4.17.1",
 		"forever": "0.7.5",
 		"jade": "0.19.0"
 	}
